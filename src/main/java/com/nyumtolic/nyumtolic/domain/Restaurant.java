@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -33,8 +34,8 @@ public class Restaurant {
     @Column(name = "rating")
     private Double rating;
 
-    @Column(name = "menu")
-    private String menu;
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Menu> menu;
 
     @Column(name = "description")
     private String description;
