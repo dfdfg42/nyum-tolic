@@ -4,15 +4,33 @@
     <meta charset="UTF-8">
     <title>맛집 리스트</title>
     <!-- 스타일시트, 자바스크립트 파일 연결 (옵션) -->
+    <style>
+        .restaurant-info {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .restaurant-photo {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
 <h1>맛집 리스트</h1>
 <div>
     <!-- 맛집 리스트를 동적으로 표시 -->
     <ul>
-        <li th:each="restaurant : ${restaurants}">
-            <span th:text="${restaurant.name}">맛집 이름</span>
-            <!-- 추가적으로 맛집 정보 표시 (예: 주소, 평점 등) -->
+        <li th:each="restaurant : ${restaurants}" class="restaurant-info">
+            <img th:if="${restaurant.photo}" th:src="@{${restaurant.photo}}" alt="맛집 사진" class="restaurant-photo"/>
+            <h2 th:text="${restaurant.name}">맛집 이름</h2>
+            <p><strong>주소:</strong> <span th:text="${restaurant.address}">주소</span></p>
+            <p><strong>전화번호:</strong> <span th:text="${restaurant.phoneNumber}">전화번호</span></p>
+            <p><strong>평점:</strong> <span th:text="${restaurant.rating}">평점</span></p>
+            <p><strong>설명:</strong> <span th:text="${restaurant.description}">설명</span></p>
         </li>
     </ul>
 </div>

@@ -20,12 +20,9 @@ public class RestaurantController {
 
     private final RestaurantService restaurantService;
 
-    @GetMapping("/")
-    public RedirectView redirectToRestaurantList() {
-        return new RedirectView("/restaurant/list");
-    }
 
-    @GetMapping("/restaurant/list")
+
+    @GetMapping("/list")
     public String showRestaurantList(Model model) {
         List<Restaurant> restaurants = restaurantService.getAllRestaurants(); // 서비스 계층에서 맛집 리스트를 가져옴
         model.addAttribute("restaurants", restaurants); // 모델에 맛집 리스트 추가
