@@ -4,79 +4,73 @@ package com.nyumtolic.nyumtolic;
 import com.nyumtolic.nyumtolic.domain.Category;
 import com.nyumtolic.nyumtolic.domain.Restaurant;
 import com.nyumtolic.nyumtolic.repository.CategoryRepository;
+import com.nyumtolic.nyumtolic.repository.RestaurantRepository;
 import com.nyumtolic.nyumtolic.service.RestaurantService;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @SpringBootTest
+@Transactional
 public class ExcludedRecommendTest {
 
     @Autowired
     RestaurantService restaurantService;
     @Autowired
+    RestaurantRepository restaurantRepository;
+    @Autowired
     CategoryRepository categoryRepository;
 
+    @AfterEach
+    public void cleanup() {
+        restaurantRepository.deleteAll();
+        categoryRepository.deleteAll();
+    }
+
     @Test
-    void test(){
+    void recommendRestaurantExcludingSpecificCategories() {
+        // given: 카테고리와 레스토랑을 설정
+        setupTestData();
 
-        //given
+        // when: 특정 카테고리(예: "양식")를 제외하고 레스토랑 추천
+        Optional<Restaurant> recommendedRestaurant = restaurantService.recommendRandomRestaurantExcludingCategories("양식");
 
-        Category category1 = new Category();
-        category1.setName("중식");
-        Category category2 = new Category();
-        category2.setName("양식");
-        Category category3 = new Category();
-        category3.setName("면류");
-        Category category4 = new Category();
-        category4.setName("밥류");
-        Category category5 = new Category();
-        category5.setName("한식");
+        // then: 추천된 레스토랑은 "양식" 카테고리를 포함하지 않아야 함
+        Assertions.assertTrue(recommendedRestaurant.isPresent());
+        Assertions.assertFalse(recommendedRestaurant.get().getCategories().stream()
+                        .anyMatch(category -> category.getName().equals("양식")),
+                "추천된 레스토랑은 '양식' 카테고리를 포함하지 않아야 합니다.");
+    }
 
-        List<Category>categories1 = new ArrayList<>(); // 중 면
-        categories1.add(category1);
-        categories1.add(category3);
-        List<Category>categories2 = new ArrayList<>(); // 한 밥
-        categories2.add(category5);
-        categories2.add(category4);
-        List<Category>categories3 = new ArrayList<>(); // 한 면
-        categories3.add(category5);
-        categories3.add(category3);
-        List<Category>categories4 = new ArrayList<>(); // 한 면
-        categories4.add(category5);
+    private void setupTestData() {
+        Category chinese = new Category();
+        chinese.setName("중식");
+        categoryRepository.save(chinese);
+
+        Category western = new Category();
+        western.setName("양식");
+        categoryRepository.save(western);
 
         Restaurant restaurant1 = new Restaurant();
         restaurant1.setName("북경");
-        restaurant1.setCategories(categories1);
-        Restaurant restaurant2 = new Restaurant();
-        restaurant2.setName("꼬밥");
-        restaurant2.setCategories(categories2);
-        Restaurant restaurant3 = new Restaurant();
-        restaurant3.setName("삼복");
-        restaurant3.setCategories(categories4);
-        Restaurant restaurant4 = new Restaurant();
-        restaurant4.setName("메밀꽃");
-        restaurant4.setCategories(categories2);
-
-        //when
-        categoryRepository.save(category1);
-        categoryRepository.save(category2);
-        categoryRepository.save(category3);
-        categoryRepository.save(category4);
-        categoryRepository.save(category5);
-
-
+        restaurant1.setCategories(Arrays.asList(chinese));
         restaurantService.save(restaurant1);
+
+        Restaurant restaurant2 = new Restaurant();
+        restaurant2.setName("피자헛");
+        restaurant2.setCategories(Arrays.asList(western));
         restaurantService.save(restaurant2);
-        restaurantService.save(restaurant3);
-        restaurantService.save(restaurant4);
-
-
-
-
     }
 
+
+
 }
+

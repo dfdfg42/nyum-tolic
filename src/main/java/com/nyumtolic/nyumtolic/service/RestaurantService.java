@@ -20,7 +20,6 @@ public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
 
-    @Transactional
     public void save(Restaurant restaurant){
         restaurantRepository.save(restaurant);
     }
