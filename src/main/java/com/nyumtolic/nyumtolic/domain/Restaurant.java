@@ -29,7 +29,7 @@ public class Restaurant {
     private String phoneNumber;
 
     @ManyToMany
-    private Set<Category> categories;
+    private List<Category> categories;
 
     @Column(name = "rating")
     private Double rating;

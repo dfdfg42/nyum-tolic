@@ -8,6 +8,7 @@ class NyumtolicApplicationTests {
 
 	@Test
 	void contextLoads() {
+
 	}
 
 }
