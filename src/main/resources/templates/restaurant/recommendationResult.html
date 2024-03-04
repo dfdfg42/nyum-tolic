@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Restaurant Recommendation Result</title>
+</head>
+<body>
+<h1>추천 음식점</h1>
+<div th:if="${recommendedRestaurant}">
+    <p>Name: <span th:text="${recommendedRestaurant.name}"></span></p>
+    <p>Address: <span th:text="${recommendedRestaurant.address}"></span></p>
+    <p>Categories:
+        <span th:each="category, iterStat : ${recommendedRestaurant.categories}"
+              th:text="${category.name} + (iterStat.last ? '' : ', ')"></span>
+    </p>
+</div>
+<div th:unless="${recommendedRestaurant}">
+    <p>No restaurant available with the given criteria.</p>
+</div>
+</body>
+</html>

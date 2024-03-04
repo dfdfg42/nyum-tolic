@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Restaurant Recommendation</title>
+</head>
+<body>
+<h1>음식점 추천</h1>
+<form action="/restaurant/recommend" method="post">
+    <label for="excludedCategories">제외 카테고리 음식점 추천:</label>
+    <input type="text" id="excludedCategories" name="excludedCategories" placeholder="제외할 카테고리 입력">
+    <button type="submit">확인</button>
+</form>
+
+<!-- 추천된 음식점 정보 표시 -->
+<div th:if="${recommendedRestaurant}">
+    <h2>추천 음식점</h2>
+    <p>Name: <span th:text="${recommendedRestaurant.name}"></span></p>
+    <p>Address: <span th:text="${recommendedRestaurant.address}"></span></p>
+    <p>Categories:
+        <span th:each="category, iterStat : ${recommendedRestaurant.categories}"
+              th:text="${category.name} + (iterStat.last ? '' : ', ')"></span>
+    </p>
+</div>
+<div th:unless="${recommendedRestaurant}">
+    <p></p>
+</div>
+</body>
+</html>

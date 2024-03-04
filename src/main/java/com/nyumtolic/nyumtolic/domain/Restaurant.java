@@ -28,7 +28,7 @@ public class Restaurant {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Category> categories;
 
     @Column(name = "rating")

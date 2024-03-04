@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest
-@Transactional
 public class ExcludedRecommendTest {
 
     @Autowired
@@ -31,8 +30,8 @@ public class ExcludedRecommendTest {
 
     @AfterEach
     public void cleanup() {
-        restaurantRepository.deleteAll();
-        categoryRepository.deleteAll();
+        //restaurantRepository.deleteAll();
+        //categoryRepository.deleteAll();
     }
 
     @Test
@@ -48,6 +47,12 @@ public class ExcludedRecommendTest {
         Assertions.assertFalse(recommendedRestaurant.get().getCategories().stream()
                         .anyMatch(category -> category.getName().equals("양식")),
                 "추천된 레스토랑은 '양식' 카테고리를 포함하지 않아야 합니다.");
+
+        Restaurant restaurant = recommendedRestaurant.get();
+        List<Category> categories = restaurant.getCategories();
+        for (Category c : categories){
+            System.out.println("c.getName() = " + c.getName());
+        }
     }
 
     private void setupTestData() {
