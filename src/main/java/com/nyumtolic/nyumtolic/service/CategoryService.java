@@ -23,4 +23,13 @@ public class CategoryService {
     public Category findCategoryById(Long id) {
         return categoryRepository.findById(id).orElse(null);
     }
+
+    // 메인 카테고리 조회
+    public List<Category> findMainCategories() {
+        return categoryRepository.findByIsMainCategoryTrue();
+    }
+
+    public List<Category> findOtherCategories() {
+        return categoryRepository.findByIsMainCategoryFalse();
+    }
 }

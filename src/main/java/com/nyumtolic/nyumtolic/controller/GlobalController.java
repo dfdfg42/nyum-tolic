@@ -20,5 +20,16 @@ public class GlobalController {
     @ModelAttribute("categories")
     public List<Category> categories() {
         return categoryService.findAllCategories();
+
+    }
+
+    @ModelAttribute("mainCategories")
+    public List<Category> mainCategories() {
+        return categoryService.findMainCategories();
+    }
+
+    @ModelAttribute("otherCategories")
+    public List<Category> otherCategories() {
+        return categoryService.findOtherCategories();
     }
 }

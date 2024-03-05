@@ -19,10 +19,20 @@
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/restaurant/list}">맛집 리스트</a>
                     </li>
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item" th:each="category : ${categories}">
-                        <a class="nav-link" th:href="@{/restaurant/list(categoryId=${category.id})}" th:text="${category.name}">카테고리 이름</a>
+                    <!-- 메인 카테고리 -->
+                    <li class="nav-item" th:each="category : ${mainCategories}">
+                        <a class="nav-link" th:href="@{/restaurant/list(categoryId=${category.id})}" th:text="${category.name}">메인 카테고리 이름</a>
+                    </li>
+                    <!-- 더보기 드롭다운 -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            더보기
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li th:each="category : ${otherCategories}">
+                                <a class="dropdown-item" th:href="@{/restaurant/list(categoryId=${category.id})}" th:text="${category.name}">기타 카테고리 이름</a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </div>

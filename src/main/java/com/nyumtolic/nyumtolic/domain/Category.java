@@ -17,6 +17,10 @@ public class Category {
 
     private String name;
 
+    // 메인 카테고리 여부를 나타내는 필드 추가
+    @Column(name = "is_main_category")
+    private boolean isMainCategory;
+
     @ManyToMany(mappedBy = "categories")
     private List<Restaurant> restaurants;
 
