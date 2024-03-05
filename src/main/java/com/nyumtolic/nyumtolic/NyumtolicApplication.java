@@ -7,7 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class NyumtolicApplication {
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(NyumtolicApplication.class, args);
+
 	}
 
 }
