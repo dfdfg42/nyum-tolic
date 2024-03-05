@@ -7,10 +7,7 @@ import com.nyumtolic.nyumtolic.service.RestaurantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
@@ -43,6 +40,13 @@ public class RestaurantController {
         Optional<Restaurant> recommendedRestaurant = restaurantService.recommendRandomRestaurantExcludingCategories(categoriesArray);
         model.addAttribute("recommendedRestaurant", recommendedRestaurant.orElse(null));
         return "restaurant/recommendation";
+    }
+
+    @GetMapping("/list/{categoryId}")
+    public String showRestaurantsByCategory(@PathVariable Long categoryId, Model model) {
+        //List<Restaurant> restaurants = restaurantService.findAllByCategoryId(categoryId);
+        //model.addAttribute("restaurants", restaurants);
+        return "restaurant/list"; // 맛집 리스트 페이지로 이동
     }
         
 

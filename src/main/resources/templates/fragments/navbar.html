@@ -20,6 +20,11 @@
                         <a class="nav-link" th:href="@{/restaurant/list}">맛집 리스트</a>
                     </li>
                 </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item" th:each="category : ${categories}">
+                        <a class="nav-link" th:href="@{/restaurant/list(categoryId=${category.id})}" th:text="${category.name}">카테고리 이름</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>

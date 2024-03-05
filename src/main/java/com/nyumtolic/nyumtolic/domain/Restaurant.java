@@ -39,4 +39,7 @@ public class Restaurant {
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "travel_time")
+    private Integer travelTime;
 }
