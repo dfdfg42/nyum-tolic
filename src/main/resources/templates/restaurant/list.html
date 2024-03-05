@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>맛집 리스트</title>
-    <!-- 스타일시트, 자바스크립트 파일 연결 (옵션) -->
+    <!-- Bootstrap CSS 파일 포함 -->
+    <link rel="stylesheet" href="/css/bootstrap.css">
     <style>
         .restaurant-info {
             margin-bottom: 20px;
@@ -20,6 +21,8 @@
     </style>
 </head>
 <body>
+<!-- Navbar 포함 -->
+<div th:replace="fragments/navbar :: navbar"></div>
 <h1>맛집 리스트</h1>
 <div>
     <!-- 맛집 리스트를 동적으로 표시 -->
@@ -34,5 +37,7 @@
         </li>
     </ul>
 </div>
+<!-- Bootstrap JS 추가 -->
+<script src="/js/bootstrap.js"></script>
 </body>
 </html>
