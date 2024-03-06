@@ -27,13 +27,21 @@
         .rating .bi-star {
             color: #e4e5e9; /* 빈 별 색상 */
         }
+        /* 여기에 스타일을 추가합니다. */
+        .title-space {
+            margin-top: 30px; /* Navbar와의 간격 */
+        }
+        .info-placeholder {
+            min-height: 230px; /* 정보 칸의 최소 높이 */
+        }
     </style>
 </head>
 <body>
 <!-- Navbar 포함 -->
 <div th:replace="fragments/navbar :: navbar"></div>
 
-<h1 class="text-center">맛집 랜덤 추천</h1>
+<!-- '맛집 랜덤 추천' 타이틀에 클래스 추가 -->
+<h1 class="text-center title-space">맛집 랜덤 추천</h1>
 
 <!-- 추천된 음식점 정보 표시 -->
 <div th:if="${recommendedRestaurant}" class="container mt-4">
@@ -62,6 +70,10 @@
             </div>
         </div>
     </div>
+</div>
+
+<div th:unless="${recommendedRestaurant}" class="container mt-4 info-placeholder">
+    <!-- 음식점 정보가 없을 경우 보여질 공간 -->
 </div>
 
 <!-- Recommendation form -->
