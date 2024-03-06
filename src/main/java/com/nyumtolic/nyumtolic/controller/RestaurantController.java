@@ -46,6 +46,8 @@ public class RestaurantController {
         String[] categoriesArray = excludedCategories.split("\\s*,\\s*");
         Optional<Restaurant> recommendedRestaurant = restaurantService.recommendRandomRestaurantExcludingCategories(categoriesArray);
         model.addAttribute("recommendedRestaurant", recommendedRestaurant.orElse(null));
+        // 사용자가 선택한 카테고리를 모델에 추가
+        model.addAttribute("excludedCategories", excludedCategories);
         return "restaurant/recommendation";
     }
 

@@ -64,15 +64,15 @@
     </div>
 </div>
 
-<!-- 폼 중앙에 배치 및 입력 필드와 확인 버튼 밀착 배치 -->
+<!-- Recommendation form -->
 <div class="d-flex justify-content-center">
     <form th:action="@{/restaurant/recommend}" method="post" class="w-50">
         <div class="row g-2 align-items-center">
-            <!-- 입력 필드 컬럼 -->
             <div class="col">
-                <input type="text" class="form-control" id="excludedCategories" name="excludedCategories" placeholder="제외할 카테고리 입력">
+                <!-- 사용자가 입력한 카테고리를 유지하기 위해 th:value 속성 사용 -->
+                <input type="text" class="form-control" id="excludedCategories" name="excludedCategories"
+                       th:value="${excludedCategories}" placeholder="제외할 카테고리">
             </div>
-            <!-- 확인 버튼 컬럼 -->
             <div class="col-auto">
                 <button type="submit" class="btn btn-success">확인</button>
             </div>
@@ -131,6 +131,19 @@
         // 변경된 카테고리 목록을 입력 필드에 업데이트
         input.value = categories.join(', ');
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // 페이지 로딩 완료 시 실행
+        const input = document.getElementById('excludedCategories');
+        const categories = input.value ? input.value.split(', ') : [];
+        const buttons = document.querySelectorAll('[data-category-name]');
+
+        buttons.forEach(button => {
+            if (categories.includes(button.getAttribute('data-category-name'))) {
+                button.classList.add('active');
+            }
+        });
+    });
 </script>
 </body>
 </html>
