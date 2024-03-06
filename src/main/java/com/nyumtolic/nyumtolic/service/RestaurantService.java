@@ -34,6 +34,11 @@ public class RestaurantService {
         return restaurantRepository.findById(id);
     }
 
+    //특정 카테고리를 가진 Restaurant를 카테고리id 로 조회해서 반환
+    public List<Restaurant> findAllByCategoryId(Long categoryId) {
+        return restaurantRepository.findAllByCategoryId(categoryId);
+    }
+
     // 특정 카테고리 제외, 나머지 음식점 추천 하는 메서드
     public Optional<Restaurant> recommendRandomRestaurantExcludingCategories(String ... excludedCategories ){
         List<Restaurant> allRestaurants = getAllRestaurants();

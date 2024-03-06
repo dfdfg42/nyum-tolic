@@ -16,42 +16,46 @@ public class DataInitializer {
     @Bean
     CommandLineRunner initDatabase(CategoryRepository categoryRepository, RestaurantService restaurantService) {
         return args -> {
-            // 더미 카테고리 데이터 생성 및 저장
             Category chinese = new Category();
             chinese.setName("중식");
+            chinese.setMainCategory(true); // 메인 카테고리로 설정
             categoryRepository.save(chinese);
 
             Category western = new Category();
             western.setName("양식");
+            western.setMainCategory(true); // 메인 카테고리로 설정
             categoryRepository.save(western);
+
+            // 기타 카테고리 생성 및 저장
+            Category dessert = new Category();
+            dessert.setName("디저트");
+            dessert.setMainCategory(false); // 메인 카테고리가 아님
+            categoryRepository.save(dessert);
 
             Category korean = new Category();
             korean.setName("한식");
+            korean.setMainCategory(false); // 메인 카테고리가 아님
             categoryRepository.save(korean);
 
-            Category noodle = new Category();
-            noodle.setName("면류");
-            categoryRepository.save(noodle);
-
-            // 더미 레스토랑 데이터 생성 및 저장
+            // 레스토랑 생성 및 카테고리 할당
             Restaurant restaurant1 = new Restaurant();
             restaurant1.setName("북경");
-            restaurant1.setCategories(Arrays.asList(chinese,noodle));
+            restaurant1.setCategories(Arrays.asList(chinese)); // 중식 카테고리 할당
             restaurantService.save(restaurant1);
 
             Restaurant restaurant2 = new Restaurant();
             restaurant2.setName("피자헛");
-            restaurant2.setCategories(Arrays.asList(western));
+            restaurant2.setCategories(Arrays.asList(western)); // 양식 카테고리 할당
             restaurantService.save(restaurant2);
 
             Restaurant restaurant3 = new Restaurant();
-            restaurant3.setName("아웃벡");
-            restaurant3.setCategories(Arrays.asList(western));
+            restaurant3.setName("스위트홈");
+            restaurant3.setCategories(Arrays.asList(dessert)); // 디저트 카테고리 할당
             restaurantService.save(restaurant3);
 
             Restaurant restaurant4 = new Restaurant();
-            restaurant4.setName("메밀꽃");
-            restaurant4.setCategories(Arrays.asList(korean));
+            restaurant4.setName("한가람");
+            restaurant4.setCategories(Arrays.asList(korean)); // 한식 카테고리 할당
             restaurantService.save(restaurant4);
         };
     }
