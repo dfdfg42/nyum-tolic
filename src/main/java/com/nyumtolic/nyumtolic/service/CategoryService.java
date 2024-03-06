@@ -14,6 +14,11 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
 
+    //저장
+    public void save(Category category){
+        categoryRepository.save(category);
+    }
+
     // 모든 카테고리를 조회하는 메서드
     public List<Category> findAllCategories() {
         return categoryRepository.findAll();
@@ -31,5 +36,9 @@ public class CategoryService {
 
     public List<Category> findOtherCategories() {
         return categoryRepository.findByIsMainCategoryFalse();
+    }
+
+    public Category findByName(String name){
+        return categoryRepository.findByName(name).get();
     }
 }

@@ -20,9 +20,13 @@ public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
 
+
+    // 저장
     public void save(Restaurant restaurant){
         restaurantRepository.save(restaurant);
     }
+
+
 
     // 전체 Restaurant 리스트를 반환하는 메서드
     public List<Restaurant> getAllRestaurants() {
