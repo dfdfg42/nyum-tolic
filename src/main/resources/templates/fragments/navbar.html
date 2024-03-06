@@ -2,16 +2,22 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Navbar Fragment</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+
+
 </head>
 <body>
+<nav >
+    <!-- Navbar content -->
+</nav>
 <div th:fragment="navbar">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #fa9069;">
         <div class="container-fluid">
             <a class="navbar-brand" th:href="@{/}">냠톨릭</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">]
+            <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/restaurant/recommendation}">맛집 추천</a>
@@ -39,9 +45,11 @@
         </div>
     </nav>
 </div>
-<!-- Popper.js 먼저 로드 -->
-<script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
+
 <!-- 그 다음 Bootstrap JS 로드 -->
-<script src="/js/bootstrap.js"></script>
+
+<!--<script src="/js/bootstrap.js"></script>-->
+<script src="/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
