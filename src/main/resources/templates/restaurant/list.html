@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>맛집 리스트</title>
@@ -8,28 +8,50 @@
     <!-- Bootstrap Icons for the star rating -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/my-fonts.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+        .content-wrap {
+            flex: 1 0 auto;
+        }
+        footer {
+            flex-shrink: 0;
+            background-color: #fa9069;
+            color: black;
+        }
         .rating .bi-star-fill {
-            color: #ffc107; /* 별 색상 */
+            color: #ffc107;
         }
         .rating .bi-star {
-            color: #e4e5e9; /* 빈 별 색상 */
+            color: #e4e5e9;
         }
+        .footer-logo {
+            margin-right: 20px; /* 로고와 정보 사이의 간격 조정 */
+        }
+
     </style>
 </head>
 <body>
-<!-- Navbar 포함 -->
+
+<!-- Navbar Section -->
 <div th:replace="fragments/navbar :: navbar"></div>
-<div class="container mt-3 ps-0">
+
+<!-- Main Content Section -->
+<div class="content-wrap container mt-3 ps-0">
     <p class="text-left text-muted small">냠톨릭-가톨릭대 주변 맛집 사이트</p>
-</div>
-<h1 class="text-center my-4"><strong>맛집 리스트</strong> </h1>
-<div class="container">
-    <div class="row">
-        <!-- 맛집 리스트를 동적으로 카드 형식으로 표시, col-md-4에서 col-md-3으로 변경하여 한 줄에 4개 표시 -->
-        <div th:each="restaurant : ${restaurants}" class="col-md-3 d-flex align-items-stretch">
-            <div class="card mb-4">
-                <div class="card-body">
+    <h1 class="text-center my-4"><strong>맛집 리스트</strong></h1>
+    <div class="container">
+        <div class="row">
+            <div th:each="restaurant : ${restaurants}" class="col-md-3 d-flex align-items-stretch">
+                <div class="card mb-4">
                     <h5 class="card-title" th:text="${restaurant.name}">맛집 이름</h5>
                     <img th:src="@{'/' + ${restaurant.photo}}" class="card-img-top" alt="맛집 사진">
                     <div class="rating mt-2">
@@ -47,7 +69,42 @@
         </div>
     </div>
 </div>
-<!-- Bootstrap JS 추가 -->
+
+<!-- Footer Section -->
+<footer class="mt-auto py-3">
+    <div class="container text-center">
+        <div class="d-flex align-items-center" style="justify-content: flex-start;">
+            <div class="footer-info" style="margin-right: 380px;"> <!-- 오른쪽 간격 조정 -->
+                <div>컴퓨터정보공학부 20 고경우
+                    <a href="https://github.com/dfdfg42" target="_blank">
+                        <i class="bi bi-github" style="margin-left: 10px; color: black"></i>
+                    </a> <a href="https://www.instagram.com/kk_woo2/" target="_blank">
+                        <i class="fab fa-instagram" style="margin-left: 10px;color: black"></i>
+                    </a>
+                </div>
+                <div>컴퓨터정보공학부 20 이건희
+                    <a href="https://github.com/codingssagae" target="_blank">
+                        <i class="bi bi-github" style="margin-left: 10px;color: black"></i>
+                    </a>
+                    </a> <a href="https://www.instagram.com/olollolo115/" target="_blank">
+                        <i class="fab fa-instagram" style="margin-left: 10px;color: black"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-logo" style="margin-right: 300px;"> <!-- 오른쪽 간격 조정 -->
+                <img src="/images/logo.png" alt="Logo" style="height: 30px;"> <strong>냠톨릭</strong>
+            </div>
+
+            <!-- 마지막 요소에는 마진이 필요 없을 수 있으나, 필요에 따라 추가 조정 가능 -->
+            <div class="footer-rights">
+                Copyright(c) 2024 All rights reserved
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Bootstrap JS -->
 <script src="/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

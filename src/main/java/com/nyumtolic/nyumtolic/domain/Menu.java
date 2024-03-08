@@ -21,8 +21,5 @@ public class Menu {
     @Column(name = "price")
     private Double price;
 
-    @ManyToOne(fetch= FetchType.LAZY)
-    @JoinColumn(name = "restaurant_id")
-    private Restaurant restaurant;
 
 }

@@ -34,8 +34,9 @@ public class Restaurant {
     @Column(name = "rating")
     private Double rating;
 
-    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Menu> menu;
+    @ElementCollection
+    @Column(name = "menu")
+    private List<String> menu;
 
     @Column(name = "description")
     private String description;

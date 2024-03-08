@@ -23,7 +23,6 @@ import java.util.List;
 public class ExcelDataLoader implements CommandLineRunner {
 
     private final CategoryService categoryService;
-    private final MenuService menuService;
     private final RestaurantService restaurantService;
 
     @Override
@@ -42,7 +41,6 @@ public class ExcelDataLoader implements CommandLineRunner {
         loadAndSaveRestaurants(restaurantSheet);
 
         // 메뉴 데이터 로드 및 저장
-        loadAndSaveMenu(menuSheet);
 
 
         workbook.close();
@@ -84,10 +82,24 @@ public class ExcelDataLoader implements CommandLineRunner {
 
             restaurant.setAddress(row.getCell(1).getStringCellValue());
             restaurant.setPhoneNumber(row.getCell(2).getStringCellValue());
-            restaurant.setRating((Double) row.getCell(3).getNumericCellValue());
+            restaurant.setRating(row.getCell(3).getNumericCellValue());
             restaurant.setDescription(row.getCell(5).getStringCellValue());
             restaurant.setTravelTime((int) row.getCell(6).getNumericCellValue());
 
+
+            // 메뉴 이름을 기반으로 메뉴에 추가
+
+            String menuName = row.getCell(4).getStringCellValue();
+            List<String> menuNames = new ArrayList<>();
+
+            for (String name: menuName.split(",")){
+                if (name !=null){
+                    menuNames.add(name);
+                }
+            }
+            if (!menuNames.isEmpty()) {
+                restaurant.setMenu(menuNames);
+            }
 
             // 카테고리 이름을 기반으로 카테고리 엔티티를 찾습니다.
             String categoryName = row.getCell(7).getStringCellValue();
@@ -107,9 +119,6 @@ public class ExcelDataLoader implements CommandLineRunner {
                 restaurantService.save(restaurant);
             }
         }
-    }
-    private void loadAndSaveMenu(Sheet menuSheet) {
-        // 메뉴 데이터 읽기 및 저장 로직 구현
     }
 }
 
