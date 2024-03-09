@@ -42,6 +42,8 @@
     </style>
 </head>
 <body>
+<!-- Navbar Section -->
+<div th:replace="fragments/navbar :: navbar"></div>
 <div class="container">
     <form th:action="@{/user/login}" method="post" class="form-signin">
         <h2 class="form-signin-heading">로그인</h2>
