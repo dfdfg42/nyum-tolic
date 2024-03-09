@@ -71,38 +71,7 @@
 </div>
 
 <!-- Footer Section -->
-<footer class="mt-auto py-3">
-    <div class="container text-center">
-        <div class="d-flex align-items-center" style="justify-content: flex-start;">
-            <div class="footer-info" style="margin-right: 380px;"> <!-- 오른쪽 간격 조정 -->
-                <div>컴퓨터정보공학부 20 고경우
-                    <a href="https://github.com/dfdfg42" target="_blank">
-                        <i class="bi bi-github" style="margin-left: 10px; color: black"></i>
-                    </a> <a href="https://www.instagram.com/kk_woo2/" target="_blank">
-                        <i class="fab fa-instagram" style="margin-left: 10px;color: black"></i>
-                    </a>
-                </div>
-                <div>컴퓨터정보공학부 20 이건희
-                    <a href="https://github.com/codingssagae" target="_blank">
-                        <i class="bi bi-github" style="margin-left: 10px;color: black"></i>
-                    </a>
-                    </a> <a href="https://www.instagram.com/olollolo115/" target="_blank">
-                        <i class="fab fa-instagram" style="margin-left: 10px;color: black"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="footer-logo" style="margin-right: 300px;"> <!-- 오른쪽 간격 조정 -->
-                <img src="/images/logo.png" alt="Logo" style="height: 30px;"> <strong>냠톨릭</strong>
-            </div>
-
-            <!-- 마지막 요소에는 마진이 필요 없을 수 있으나, 필요에 따라 추가 조정 가능 -->
-            <div class="footer-rights">
-                Copyright(c) 2024 All rights reserved
-            </div>
-        </div>
-    </div>
-</footer>
-
+<div th:replace="fragments/footer.html :: custom-footer"></div>
 <!-- Bootstrap JS -->
 <script src="/js/bootstrap.bundle.min.js"></script>
 
