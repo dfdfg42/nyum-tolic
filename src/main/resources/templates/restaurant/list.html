@@ -61,9 +61,8 @@
                     <p class="card-text"><strong>설명:</strong> <span th:text="${restaurant.description}">설명</span></p>
                     <button type="button" class="btn btn-primary" th:attr="data-bs-target='#reviewModal'+${restaurant.id}" data-bs-toggle="modal">리뷰 작성</button>
                     <!-- Reviews Section -->
-                    <!-- Collapse를 사용한 리뷰 섹션 -->
-                    <div class="collapse" th:id="'collapseReviews' + ${restaurant.id}">
-                        <div class="reviews-section mt-2">
+                    <div th:if="${restaurant.reviews != null}">
+                        <div class="reviews-section">
                             <h6>리뷰:</h6>
                             <div th:each="review : ${restaurant.reviews}">
                                 <div class="review" th:text="${review.author.username} + ': ' + ${review.content}"></div>
