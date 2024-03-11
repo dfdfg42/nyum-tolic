@@ -106,7 +106,7 @@
         document.querySelectorAll('.card').forEach(card => {
             card.addEventListener('click', function() {
                 currentRestaurantId = this.getAttribute('data-restaurant-id');
-                fetch(`/reviews/${currentRestaurantId}`)
+                fetch(`/review/${currentRestaurantId}`)
                     .then(response => response.json())
                     .then(reviews => {
                         // 기존 리뷰 컨테이너가 있다면 제거
