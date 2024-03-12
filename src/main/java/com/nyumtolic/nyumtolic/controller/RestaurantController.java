@@ -4,7 +4,10 @@ package com.nyumtolic.nyumtolic.controller;
 import com.nyumtolic.nyumtolic.domain.Restaurant;
 import com.nyumtolic.nyumtolic.repository.RestaurantRepository;
 import com.nyumtolic.nyumtolic.service.RestaurantService;
+import groovy.util.logging.Log4j;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +22,21 @@ import java.util.Optional;
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
+    private static final Logger logger = LoggerFactory.getLogger(RestaurantController.class);
+
+
+    @GetMapping(value = "/detail/{id}")
+    public String detail(Model model, @PathVariable("id") Long id) {
+        this.restaurantService.getRestaurantsById(id).ifPresent(restaurant -> model.addAttribute("restaurant", restaurant));
+        Restaurant restaurant = restaurantService.getRestaurantsById(id).orElse(null);
+        restaurant.getReviews().forEach(review ->
+                logger.info("Review by {}: {}", review.getAuthor().getUsername(), review.getContent())
+        );
+
+        return "/restaurant/detail";
+
+
+    }
 
     @GetMapping("/list")
     public String showRestaurantList(@RequestParam(value = "categoryId", required = false) Long categoryId, Model model) {

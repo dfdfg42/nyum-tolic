@@ -46,50 +46,25 @@
     <div class="container">
         <div class="row">
             <div th:each="restaurant : ${restaurants}" class="col-md-3 d-flex align-items-stretch">
-                <div class="card mb-4" th:attr="data-restaurant-id=${restaurant.id}">
-                    <h5 class="card-title" th:text="${restaurant.name}">맛집 이름</h5>
-                    <img th:src="@{'/' + ${restaurant.photo}}" class="card-img-top" alt="맛집 사진">
-                    <div class="rating mt-2">
-                        <span th:each="star, iterStat : ${#numbers.sequence(1,5)}">
-                            <i class="bi" th:classappend="${restaurant.rating >= star} ? 'bi-star-fill' : 'bi-star'"></i>
-                        </span>
-                        <span th:text="${restaurant.rating}"></span>
-                    </div>
-                    <p class="card-text"><strong>주소:</strong> <span th:text="${restaurant.address}">주소</span></p>
-                    <p class="card-text"><strong>전화번호:</strong> <span th:text="${restaurant.phoneNumber}">전화번호</span></p>
-                    <p class="card-text"><strong>소요 시간:</strong> <span th:text="${restaurant.travelTime} + '분'">소요 시간</span></p>
-                    <p class="card-text"><strong>설명:</strong> <span th:text="${restaurant.description}">설명</span></p>
-                    <button type="button" class="btn btn-primary" th:attr="data-bs-target='#reviewModal'+${restaurant.id}" data-bs-toggle="modal">리뷰 작성</button>
-                    <!-- Reviews Section -->
-                    <div th:if="${restaurant.reviews != null}">
-                        <div class="reviews-section">
-                            <h6>리뷰:</h6>
-                            <div th:each="review : ${restaurant.reviews}">
-                                <div class="review" th:text="${review.author.username} + ': ' + ${review.content}"></div>
+                <a th:href="@{/restaurant/detail/{id}(id=${restaurant.id})}" class="text-decoration-none">
+                    <div class="card mb-4" th:attr="data-restaurant-id=${restaurant.id}">
+                        <h5 class="card-title" th:text="${restaurant.name}">맛집 이름</h5>
+                        <img th:src="@{'/' + ${restaurant.photo}}" class="card-img-top" alt="맛집 사진">
+                        <div class="card-body">
+                            <div class="rating mt-2">
+                            <span th:each="star, iterStat : ${#numbers.sequence(1,5)}">
+                                <i class="bi" th:classappend="${restaurant.rating >= star} ? 'bi-star-fill' : 'bi-star'"></i>
+                            </span>
+                                <span th:text="${restaurant.rating}"></span>
                             </div>
+                            <p class="card-text"><strong>주소:</strong> <span th:text="${restaurant.address}">주소</span></p>
+                            <p class="card-text"><strong>전화번호:</strong> <span th:text="${restaurant.phoneNumber}">전화번호</span></p>
+                            <p class="card-text"><strong>소요 시간:</strong> <span th:text="${restaurant.travelTime} + '분'">소요 시간</span></p>
+                            <p class="card-text"><strong>설명:</strong> <span th:text="${restaurant.description}">설명</span></p>
+
                         </div>
                     </div>
-                </div>
-                <!-- 리뷰 작성 모달 -->
-                <div class="modal fade" th:id="'reviewModal' + ${restaurant.id}" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="reviewModalLabel">리뷰 작성</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form th:action="@{/review/create/{restaurantId}(restaurantId=${restaurant.id})}" method="post">
-                                    <div class="mb-3">
-                                        <label for="reviewContent" class="form-label">리뷰 내용</label>
-                                        <textarea class="form-control" name="content" rows="3" required></textarea>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">제출</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                </a>
             </div>
         </div>
     </div>

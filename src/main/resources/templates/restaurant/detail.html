@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>detail</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+</head>
+<body>
+<div th:replace="fragments/navbar :: navbar"></div>
+    <div class="reviews-section mt-2">
+        <h6>리뷰:</h6>
+        <!-- 리뷰들을 카드 형식으로 표시 -->
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <div th:each="review : ${restaurant.reviews}" class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${review.author.username}"></h5>
+                        <p class="card-text" th:text="${review.content}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- 리뷰 작성 섹션 -->
+<div class="review-section mt-4">
+    <h5 class="mb-3">리뷰 작성</h5>
+    <form th:action="@{/review/create/{restaurantId}(restaurantId=${restaurant.id})}" method="post">
+        <div class="mb-3">
+            <label for="reviewContent" class="form-label">리뷰 내용</label>
+            <textarea class="form-control" id="reviewContent" name="content" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">제출</button>
+    </form>
+</div>
+
+<script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -32,11 +32,11 @@ public class ReviewController {
             // 오류 정보와 함께 리다이렉트
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.reviewForm", bindingResult);
             redirectAttributes.addFlashAttribute("reviewForm", reviewForm);
-            return "/restaurant/list";
+            return "redirect:/restaurant/detail/" + restaurantId;
         }
         SiteUser siteUser = userService.getUser(principal.getName());
         reviewService.create(restaurantId, reviewForm.getContent(), siteUser);
-        return "/restaurant/list";
+        return "redirect:/restaurant/detail/" + restaurantId;
     }
 
     // 리뷰 수정
@@ -55,7 +55,7 @@ public class ReviewController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "수정 권한이 없습니다.");
         }
         reviewService.modify(review, reviewForm.getContent());
-        return "/restaurant/list/";
+        return "redirect:/restaurant/detail";
     }
 
     // 리뷰 삭제
@@ -67,6 +67,6 @@ public class ReviewController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "삭제 권한이 없습니다.");
         }
         reviewService.delete(review);
-        return "/restaurant/list/";
+        return "redirect:/restaurant/detail";
     }
 }

@@ -30,7 +30,7 @@ public class Review {
     @ManyToOne
     private SiteUser author;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
