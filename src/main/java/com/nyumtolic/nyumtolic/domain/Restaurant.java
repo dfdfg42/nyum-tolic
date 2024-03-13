@@ -46,6 +46,6 @@ public class Restaurant {
     @Column(name = "travel_time")
     private Integer travelTime;
 
-    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Review> reviews = new ArrayList<>();
 }

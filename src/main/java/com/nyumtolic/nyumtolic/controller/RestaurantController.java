@@ -28,12 +28,8 @@ public class RestaurantController {
     @GetMapping(value = "/detail/{id}")
     public String detail(Model model, @PathVariable("id") Long id) {
         this.restaurantService.getRestaurantsById(id).ifPresent(restaurant -> model.addAttribute("restaurant", restaurant));
-        Restaurant restaurant = restaurantService.getRestaurantsById(id).orElse(null);
-        restaurant.getReviews().forEach(review ->
-                logger.info("Review by {}: {}", review.getAuthor().getUsername(), review.getContent())
-        );
 
-        return "/restaurant/detail";
+        return "restaurant/detail";
 
 
     }
