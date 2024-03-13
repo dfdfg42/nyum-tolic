@@ -109,16 +109,28 @@
 
 <script type='text/javascript'>
     function initMap() {
-        var restaurantLocation = {lat: -34.397, lng: 150.644}; // 음식점의 실제 위도와 경도로 변경
+        // 페이지 로딩 시에 서버에서 전달된 위도와 경도 값을 JavaScript 변수에 저장합니다.
+        // 이 부분은 Thymeleaf를 통해 동적으로 값을 채워야 합니다.
+        var latValue = [[${restaurant.latitude}]]; // 예시로 서울의 위도를 사용
+        var lngValue = [[${restaurant.longitude}]]; // 예시로 서울의 경도를 사용
+
+        var restaurantLocation = {
+            lat: parseFloat(latValue),
+            lng: parseFloat(lngValue)
+        };
+
         var map = new google.maps.Map(document.getElementById('map'), {
             zoom: 16,
             center: restaurantLocation
         });
+
         var marker = new google.maps.Marker({
             position: restaurantLocation,
             map: map
         });
     }
+
+
 </script>
 
 </body>

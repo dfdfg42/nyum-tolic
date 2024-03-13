@@ -40,7 +40,6 @@ public class ExcelDataLoader implements CommandLineRunner {
         // 레스토랑 데이터 로드 및 저장
         loadAndSaveRestaurants(restaurantSheet);
 
-        // 메뉴 데이터 로드 및 저장
 
 
         workbook.close();
@@ -85,6 +84,8 @@ public class ExcelDataLoader implements CommandLineRunner {
             restaurant.setRating(row.getCell(3).getNumericCellValue());
             restaurant.setDescription(row.getCell(5).getStringCellValue());
             restaurant.setTravelTime((int) row.getCell(6).getNumericCellValue());
+            restaurant.setLatitude(row.getCell(8).getNumericCellValue());
+            restaurant.setLongitude(row.getCell(9).getNumericCellValue());
 
 
             // 메뉴 이름을 기반으로 메뉴에 추가
