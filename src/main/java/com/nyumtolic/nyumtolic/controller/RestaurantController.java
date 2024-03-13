@@ -30,9 +30,18 @@ public class RestaurantController {
     @GetMapping(value = "/detail/{id}")
     public String detail(Model model, @PathVariable("id") Long id) {
         this.restaurantService.getRestaurantsById(id).ifPresent(restaurant -> model.addAttribute("restaurant", restaurant));
-
+        Optional<Restaurant> restaurantsById = restaurantService.getRestaurantsById(id);
+        if (restaurantsById.isPresent()){
+            String manuString = String.join(", ", restaurantsById.get().getMenu());
+            model.addAttribute("menuString", manuString);
+            List<String> catagoryNames= new ArrayList<>();
+            for (Category category: restaurantsById.get().getCategories()){
+                catagoryNames.add(category.getName());
+            }
+            String categoryString = String.join(", ", catagoryNames);
+            model.addAttribute("categoryString", categoryString);
+        }
         return "restaurant/detail";
-
 
     }
 
