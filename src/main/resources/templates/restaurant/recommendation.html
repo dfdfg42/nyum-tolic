@@ -79,7 +79,9 @@
                     <p class="card-text"><strong>전화번호:</strong> <span th:text="${recommendedRestaurant.phoneNumber}">전화번호</span></p>
                     <p class="card-text"><strong>소요 시간:</strong> <span th:text="${recommendedRestaurant.travelTime} + '분'">소요 시간</span></p>
                     <p class="card-text"><strong>설명:</strong> <span th:text="${recommendedRestaurant.description}">설명</span></p>
-                    <p class="card-text"><strong>카테고리:</strong> <span th:each="category : ${recommendedRestaurant.categories}" th:text="${category.name} + (iterStat.last ? '' : ', ')">카테고리 이름</span></p>
+                    <p class="card-text"><strong>카테고리:</strong> <span th:text="${categoryString}">메뉴 목록</span></p>
+                    <p class="card-text"><strong>대표 메뉴:</strong> <span th:text="${menuString}">메뉴 목록</span></p>
+
                 </div>
             </div>
         </div>
