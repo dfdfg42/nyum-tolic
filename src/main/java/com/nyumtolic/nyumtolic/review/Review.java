@@ -34,4 +34,7 @@ public class Review {
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
+    @ManyToMany
+    Set<SiteUser> voter;
+
 }

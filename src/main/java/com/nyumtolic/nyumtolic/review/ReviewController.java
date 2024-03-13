@@ -39,6 +39,17 @@ public class ReviewController {
         return "redirect:/restaurant/detail/" + restaurantId;
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/modify/{reviewid}")
+    public String answerModify(ReviewForm reviewForm, @PathVariable Long reviewId, Principal principal) {
+        Review review = reviewService.getReview(reviewId);
+        if (!review.getAuthor().getUsername().equals(principal.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
+        }
+        reviewForm.setContent(review.getContent());
+        return "review_form";
+    }
+
     // 리뷰 수정
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{reviewId}")
@@ -66,7 +77,18 @@ public class ReviewController {
         if (!review.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "삭제 권한이 없습니다.");
         }
+        Long restaurantId = review.getRestaurant().getId();
         reviewService.delete(review);
+        return "redirect:/restaurant/detail/" + restaurantId;
+    }
+
+    //리뷰 추천
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/vote/{reviewid}")
+    public String answerVote(Principal principal, @PathVariable Long reviewId) {
+        Review review = reviewService.getReview(reviewId);
+        SiteUser siteUser = this.userService.getUser(principal.getName());
+        this.reviewService.vote(review, siteUser);
         return "redirect:/restaurant/detail";
     }
 }

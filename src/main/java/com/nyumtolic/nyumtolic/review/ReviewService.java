@@ -19,6 +19,10 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final RestaurantRepository restaurantRepository;
 
+    public void vote(Review review, SiteUser siteUser) {
+        review.getVoter().add(siteUser);
+        this.reviewRepository.save(review);
+    }
 
     public Review create(Long restaurantId, String content, SiteUser author) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
