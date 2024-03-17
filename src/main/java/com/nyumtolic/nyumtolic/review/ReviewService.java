@@ -6,11 +6,16 @@ import com.nyumtolic.nyumtolic.domain.Restaurant;
 import com.nyumtolic.nyumtolic.repository.RestaurantRepository;
 import com.nyumtolic.nyumtolic.user.SiteUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -58,5 +63,18 @@ public class ReviewService {
     public List<Review> findReviewsByRestaurantId(Long restaurantId) {
         return reviewRepository.findByRestaurantId(restaurantId);
     }
+
+    public Page<ReviewWithVotesDTO> findReviewsWithVotesByRestaurantId(Long restaurantId, Pageable pageable) {
+        Page<Object[]> results = reviewRepository.findReviewsAndVoteCountByRestaurantId(restaurantId, pageable);
+        List<ReviewWithVotesDTO> reviewWithVotesDTOs = results.getContent().stream()
+                .map(result -> new ReviewWithVotesDTO((Review) result[0], (Long) result[1]))
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(reviewWithVotesDTOs, pageable, results.getTotalElements());
+    }
+
+
+
+
 
 }

@@ -3,16 +3,18 @@ package com.nyumtolic.nyumtolic.controller;
 
 import com.nyumtolic.nyumtolic.domain.Category;
 import com.nyumtolic.nyumtolic.domain.Restaurant;
-import com.nyumtolic.nyumtolic.repository.RestaurantRepository;
+import com.nyumtolic.nyumtolic.review.ReviewService;
+import com.nyumtolic.nyumtolic.review.ReviewWithVotesDTO;
 import com.nyumtolic.nyumtolic.service.RestaurantService;
-import groovy.util.logging.Log4j;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +26,13 @@ import java.util.Optional;
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
+    private final ReviewService reviewService;
     private static final Logger logger = LoggerFactory.getLogger(RestaurantController.class);
 
 
     @GetMapping(value = "/detail/{id}")
-    public String detail(Model model, @PathVariable("id") Long id) {
+    public String detail(Model model, @PathVariable("id") Long id,
+                         @PageableDefault(size = 6) Pageable pageable) {
         this.restaurantService.getRestaurantsById(id).ifPresent(restaurant -> model.addAttribute("restaurant", restaurant));
         Restaurant restaurant = restaurantService.getRestaurantsById(id).orElse(null);
         restaurant.getReviews().forEach(review ->
@@ -37,6 +41,8 @@ public class RestaurantController {
 
         Optional<Restaurant> restaurantsById = restaurantService.getRestaurantsById(id);
         if (restaurantsById.isPresent()){
+
+            //랜더링 수정
             String manuString = String.join(", ", restaurantsById.get().getMenu());
             model.addAttribute("menuString", manuString);
             List<String> catagoryNames= new ArrayList<>();
@@ -45,6 +51,10 @@ public class RestaurantController {
             }
             String categoryString = String.join(", ", catagoryNames);
             model.addAttribute("categoryString", categoryString);
+
+            Page<ReviewWithVotesDTO> reviewWithVotesPage = reviewService.findReviewsWithVotesByRestaurantId(id, pageable);
+            model.addAttribute("reviewsPage", reviewWithVotesPage);
+
         }
 
 
