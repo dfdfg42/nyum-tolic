@@ -33,7 +33,7 @@ public class RestaurantController {
                 logger.info("Review by {}: {}", review.getAuthor().getUsername(), review.getContent())
         );
 
-        return "/restaurant/detail";
+        return "restaurant/detail";
 
 
     }

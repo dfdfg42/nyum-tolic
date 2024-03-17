@@ -40,7 +40,7 @@ public class ReviewController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/modify/{reviewid}")
+    @GetMapping("/modify/{reviewId}")
     public String answerModify(ReviewForm reviewForm, @PathVariable Long reviewId, Principal principal) {
         Review review = reviewService.getReview(reviewId);
         if (!review.getAuthor().getUsername().equals(principal.getName())) {
@@ -66,7 +66,7 @@ public class ReviewController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "수정 권한이 없습니다.");
         }
         reviewService.modify(review, reviewForm.getContent());
-        return "redirect:/restaurant/detail";
+        return "redirect:/restaurant/detail/" + review.getRestaurant().getId();
     }
 
     // 리뷰 삭제
