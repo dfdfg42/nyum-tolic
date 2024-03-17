@@ -1,6 +1,7 @@
 package com.nyumtolic.nyumtolic.controller;
 
 
+import com.nyumtolic.nyumtolic.domain.Category;
 import com.nyumtolic.nyumtolic.domain.Restaurant;
 import com.nyumtolic.nyumtolic.repository.RestaurantRepository;
 import com.nyumtolic.nyumtolic.service.RestaurantService;
@@ -13,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +34,19 @@ public class RestaurantController {
         restaurant.getReviews().forEach(review ->
                 logger.info("Review by {}: {}", review.getAuthor().getUsername(), review.getContent())
         );
+
+        Optional<Restaurant> restaurantsById = restaurantService.getRestaurantsById(id);
+        if (restaurantsById.isPresent()){
+            String manuString = String.join(", ", restaurantsById.get().getMenu());
+            model.addAttribute("menuString", manuString);
+            List<String> catagoryNames= new ArrayList<>();
+            for (Category category: restaurantsById.get().getCategories()){
+                catagoryNames.add(category.getName());
+            }
+            String categoryString = String.join(", ", catagoryNames);
+            model.addAttribute("categoryString", categoryString);
+        }
+
 
         return "restaurant/detail";
 
