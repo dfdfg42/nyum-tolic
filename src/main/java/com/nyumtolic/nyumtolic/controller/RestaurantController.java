@@ -1,7 +1,6 @@
 package com.nyumtolic.nyumtolic.controller;
 
 
-import com.nyumtolic.nyumtolic.domain.Category;
 import com.nyumtolic.nyumtolic.domain.Restaurant;
 import com.nyumtolic.nyumtolic.repository.RestaurantRepository;
 import com.nyumtolic.nyumtolic.service.RestaurantService;
@@ -14,7 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,18 +28,13 @@ public class RestaurantController {
     @GetMapping(value = "/detail/{id}")
     public String detail(Model model, @PathVariable("id") Long id) {
         this.restaurantService.getRestaurantsById(id).ifPresent(restaurant -> model.addAttribute("restaurant", restaurant));
-        Optional<Restaurant> restaurantsById = restaurantService.getRestaurantsById(id);
-        if (restaurantsById.isPresent()){
-            String manuString = String.join(", ", restaurantsById.get().getMenu());
-            model.addAttribute("menuString", manuString);
-            List<String> catagoryNames= new ArrayList<>();
-            for (Category category: restaurantsById.get().getCategories()){
-                catagoryNames.add(category.getName());
-            }
-            String categoryString = String.join(", ", catagoryNames);
-            model.addAttribute("categoryString", categoryString);
-        }
-        return "restaurant/detail";
+        Restaurant restaurant = restaurantService.getRestaurantsById(id).orElse(null);
+        restaurant.getReviews().forEach(review ->
+                logger.info("Review by {}: {}", review.getAuthor().getUsername(), review.getContent())
+        );
+
+        return "/restaurant/detail";
+
 
     }
 
@@ -70,18 +63,6 @@ public class RestaurantController {
         // 사용자 입력을 쉼표로 분리하여 배열로 변환
         String[] categoriesArray = excludedCategories.split("\\s*,\\s*");
         Optional<Restaurant> recommendedRestaurant = restaurantService.recommendRandomRestaurantExcludingCategories(categoriesArray);
-
-        if (recommendedRestaurant.isPresent()){
-            String manuString = String.join(", ", recommendedRestaurant.get().getMenu());
-            model.addAttribute("menuString", manuString);
-            List<String> catagoryNames= new ArrayList<>();
-            for (Category category: recommendedRestaurant.get().getCategories()){
-                catagoryNames.add(category.getName());
-            }
-            String categoryString = String.join(", ", catagoryNames);
-            model.addAttribute("categoryString", categoryString);
-        }
-
         model.addAttribute("recommendedRestaurant", recommendedRestaurant.orElse(null));
         // 사용자가 선택한 카테고리를 모델에 추가
         model.addAttribute("excludedCategories", excludedCategories);

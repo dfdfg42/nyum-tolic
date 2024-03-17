@@ -84,11 +84,11 @@ public class ReviewController {
 
     //리뷰 추천
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/vote/{reviewid}")
+    @GetMapping("/vote/{reviewId}")
     public String answerVote(Principal principal, @PathVariable Long reviewId) {
         Review review = reviewService.getReview(reviewId);
         SiteUser siteUser = this.userService.getUser(principal.getName());
         this.reviewService.vote(review, siteUser);
-        return "redirect:/restaurant/detail";
+        return "redirect:/restaurant/detail/" + review.getRestaurant().getId();
     }
 }
