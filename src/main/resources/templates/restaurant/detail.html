@@ -89,7 +89,7 @@
 </div>
 
 <!-- 페이지네이션 컨트롤 -->
-<div class="pagination-container">
+<div th:if="${reviewsPage.totalPages >= 1}" class="pagination-container">
     <nav aria-label="Page navigation example">
         <ul class="pagination">
             <li th:each="pageNum : ${#numbers.sequence(1, reviewsPage.totalPages)}" class="page-item">
@@ -98,6 +98,7 @@
         </ul>
     </nav>
 </div>
+
 
 
 <!-- 리뷰 작성 섹션 -->
