@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>맛집 랜덤 추천</title>
+    <!-- Bootstrap CSS 파일 포함 -->
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/my-fonts.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+        .category-buttons {
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .category-row {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        .form-control {
+            width: 100%;
+        }
+        .rating .bi-star-fill {
+            color: #ffc107; /* 별 색상 */
+        }
+        .rating .bi-star {
+            color: #e4e5e9; /* 빈 별 색상 */
+        }
+        .title-space {
+            margin-top: 30px; /* Navbar와의 간격 */
+        }
+        .info-placeholder {
+            min-height: 230px; /* 정보 칸의 최소 높이 */
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .content-wrap {
+            flex: 1;
+        }
+
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+<!-- Navbar Section -->
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<div class="container mt-3 ps-0">
+    <p class="text-left text-muted small">냠톨릭-가톨릭대 주변 맛집 사이트</p>
+</div>
+
+<h1 class="text-center title-space"><strong>맛집 랜덤 추천</strong></h1>
+
+<div th:if="${recommendedRestaurant}" class="container mt-4">
+    <div class="card mb-3">
+        <div class="row g-0">
+            <div class="col-md-4 d-flex align-items-center justify-content-center p-3">
+                <img th:src="@{'/' + ${recommendedRestaurant.photo}}" class="img-fluid rounded-start" alt="음식점 사진" style="max-width: 70%; height: auto; margin-right: -1rem;">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${recommendedRestaurant.name}">음식점 이름</h5>
+                    <div class="rating">
+                            <span th:each="star : ${#numbers.sequence(1,5)}">
+                                <i class="bi" th:classappend="${recommendedRestaurant.rating >= star} ? 'bi-star-fill' : 'bi-star'"></i>
+                            </span>
+                        <span th:text="${recommendedRestaurant.rating}"></span>
+                    </div>
+                    <p class="card-text"><strong>주소:</strong> <span th:text="${recommendedRestaurant.address}">주소</span></p>
+                    <p class="card-text"><strong>전화번호:</strong> <span th:text="${recommendedRestaurant.phoneNumber}">전화번호</span></p>
+                    <p class="card-text"><strong>소요 시간:</strong> <span th:text="${recommendedRestaurant.travelTime} + '분'">소요 시간</span></p>
+                    <p class="card-text"><strong>설명:</strong> <span th:text="${recommendedRestaurant.description}">설명</span></p>
+                    <p class="card-text"><strong>카테고리:</strong> <span th:text="${categoryString}">카테고리 목록</span></p>
+                    <p class="card-text"><strong>대표 메뉴:</strong> <span th:text="${menuString}">메뉴 목록</span></p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:unless="${recommendedRestaurant}" class="container mt-4 info-placeholder">
+    <!-- 음식점 정보가 없을 경우 보여질 공간 -->
+</div>
+
+<!-- Recommendation Form -->
+<div class="d-flex justify-content-center">
+    <form th:action="@{/restaurant/recommend}" method="post" class="w-50">
+        <div class="row g-2 align-items-center">
+            <div class="col">
+                <input type="text" class="form-control" id="excludedCategories" name="excludedCategories"
+                       th:value="${excludedCategories}" placeholder="제외할 카테고리">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-success">확인</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="category-buttons">
+    <div class="category-row">
+        <div th:each="category : ${mainCategories}">
+            <button type="button" class="btn btn-primary m-1"
+                    th:data-category-name="${category.name}" onclick="toggleCategory(this)">
+                <span th:text="${category.name}"></span>
+            </button>
+        </div>
+    </div>
+    <div class="category-row">
+        <div th:each="category : ${otherCategories}">
+            <button type="button" class="btn btn-secondary m-1"
+                    th:data-category-name="${category.name}" onclick="toggleCategory(this)">
+                <span th:text="${category.name}"></span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Footer Section -->
+<div th:replace="fragments/footer.html :: custom-footer"></div>
+<!-- Bootstrap JS -->
+<script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+
+<!-- Bootstrap JS 추가 -->
+
+<!--<script src="/js/bootstrap.js"></script>-->
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script>
+    function toggleCategory(element) {
+        // 'active' 클래스 토글
+        element.classList.toggle('active');
+
+        // 'active' 클래스가 있는 경우 카테고리 이름을 입력 필드에 추가
+        var categoryName = element.getAttribute('data-category-name');
+        const input = document.getElementById('excludedCategories');
+        const categories = input.value ? input.value.split(', ') : [];
+
+        if (element.classList.contains('active')) {
+            if (!categories.includes(categoryName)) {
+                categories.push(categoryName);
+            }
+        } else {
+            const index = categories.indexOf(categoryName);
+            if (index > -1) {
+                categories.splice(index, 1); // 해당 카테고리 제거
+            }
+        }
+
+        // 변경된 카테고리 목록을 입력 필드에 업데이트
+        input.value = categories.join(', ');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // 페이지 로딩 완료 시 실행
+        const input = document.getElementById('excludedCategories');
+        const categories = input.value ? input.value.split(', ') : [];
+        const buttons = document.querySelectorAll('[data-category-name]');
+
+        buttons.forEach(button => {
+            if (categories.includes(button.getAttribute('data-category-name'))) {
+                button.classList.add('active');
+            }
+        });
+    });
+</script>
+</body>
+</html>

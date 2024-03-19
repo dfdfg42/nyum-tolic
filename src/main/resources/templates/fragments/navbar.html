@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Navbar Fragment</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+</head>
+<body>
+<div th:fragment="navbar">
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #fa9069;">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/}">
+                <img src="/images/logo.png" alt="Logo" style="height: 30px;"> <strong>냠톨릭</strong>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/restaurant/recommendation}"><strong>맛집 랜덤 추천</strong></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/restaurant/list}"><strong>맛집 리스트</strong></a>
+                    </li>
+                    <!-- 메인 카테고리와 기타 카테고리 사이의 세로선 추가 -->
+                    <div class="navbar-text vertical-divider"></div>
+                    <!-- 메인 카테고리 -->
+                    <li class="nav-item" th:each="category : ${mainCategories}">
+                        <a class="nav-link" th:href="@{/restaurant/list(categoryId=${category.id})}" th:text="${category.name}">메인 카테고리 이름</a>
+                    </li>
+                    <!-- 더보기 드롭다운 -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            더보기
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li th:each="category : ${otherCategories}">
+                                <a class="dropdown-item" th:href="@{/restaurant/list(categoryId=${category.id})}" th:text="${category.name}">기타 카테고리 이름</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <!-- Move login and signup links here, right-aligned -->
+            <div class="d-flex">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/user/login}">로그인</a>
+                        <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/user/logout}">로그아웃</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/user/signup}">회원가입</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+<script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>detail</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <style>
+        /* 페이지네이션 컨테이너에 대한 CSS */
+        .pagination-container {
+            text-align: center; /* 페이지네이션을 중앙으로 정렬 */
+            margin-top: 20px; /* 위의 컨텐츠와의 간격 */
+        }
+
+
+        /* 또는 flex를 사용한 중앙 정렬 */
+        .pagination-container {
+            display: flex;
+            justify-content: center; /* 가로 축에서 중앙 정렬 */
+        }
+
+    </style>
+</head>
+<body>
+<div th:replace="fragments/navbar :: navbar"></div>
+<div class="container mt-4">
+    <div class="row">
+        <!-- 상세 정보 컨테이너 -->
+        <div class="col-md-6">
+            <div th:if="${restaurant}" class="card mb-3">
+                <div class="row g-0">
+                    <div class="col-md-4 d-flex align-items-center justify-content-center p-3">
+                        <img th:src="@{'/' + ${restaurant.photo}}" class="img-fluid rounded-start" alt="음식점 사진" style="max-width: 100%; height: auto;">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${restaurant.name}">음식점 이름</h5>
+                            <div class="rating mt-2">
+                                <span th:each="star : ${#numbers.sequence(1,5)}">
+                                    <i class="bi" th:classappend="${restaurant.rating >= star} ? 'bi-star-fill' : 'bi-star'"></i>
+                                </span>
+                                <span th:text="${restaurant.rating}"></span>
+                            </div>
+                            <p class="card-text"><strong>주소:</strong> <span th:text="${restaurant.address}">주소</span></p>
+                            <p class="card-text"><strong>전화번호:</strong> <span th:text="${restaurant.phoneNumber}">전화번호</span></p>
+                            <p class="card-text"><strong>소요 시간:</strong> <span th:text="${restaurant.travelTime} + '분'">소요 시간</span></p>
+                            <p class="card-text"><strong>설명:</strong> <span th:text="${restaurant.description}">설명</span></p>
+                            <p class="card-text"><strong>카테고리:</strong> <span th:text="${categoryString}">카테고리 목록</span></p>
+                            <p class="card-text"><strong>대표 메뉴:</strong> <span th:text="${menuString}">메뉴 목록</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 지도 컨테이너 -->
+        <div class="col-md-6" id="map" style="height: 312px;"></div>
+    </div>
+</div>
+
+<div class="reviews-section mt-2">
+    <h6>리뷰:</h6>
+    <!-- 리뷰들을 카드 형식으로 표시, 페이징 처리된 리뷰 목록 사용 -->
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div th:each="reviewDto : ${reviewsPage.content}" class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${reviewDto.review.author.username}"></h5>
+                    <p class="card-text" th:text="${reviewDto.review.content}"></p>
+                </div>
+                <div class="my-3">
+                    <a href="javascript:void(0);" class="recommend btn btn-sm btn-outline-secondary"
+                       th:data-uri="@{|/review/vote/${reviewDto.review.id}|}">
+                        추천
+                        <span class="badge rounded-pill bg-success" th:text="${reviewDto.votesCount}"></span>
+                    </a>
+                    <a th:href="@{|/review/modify/${reviewDto.review.id}|}" class="btn btn-sm btn-outline-secondary"
+                       sec:authorize="isAuthenticated()"
+                       th:if="${reviewDto.review.author != null and #authentication.getPrincipal().getUsername() == reviewDto.review.author.username}"
+                       th:text="수정"></a>
+                    <a href="javascript:void(0);" th:data-uri="@{|/review/delete/${reviewDto.review.id}|}"
+                       class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
+                       th:if="${reviewDto.review.author != null and #authentication.getPrincipal().getUsername() == reviewDto.review.author.username}"
+                       th:text="삭제"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 페이지네이션 컨트롤 -->
+<div th:if="${reviewsPage.totalPages >= 1}" class="pagination-container">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li th:each="pageNum : ${#numbers.sequence(1, reviewsPage.totalPages)}" class="page-item">
+                <a th:href="@{/restaurant/detail/{id}(id=${restaurant.id}, page=${pageNum - 1})}" class="page-link" th:text="${pageNum}"></a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+
+
+<!-- 리뷰 작성 섹션 -->
+<div class="review-section mt-4">
+    <h5 class="mb-3">리뷰 작성</h5>
+    <form th:action="@{/review/create/{restaurantId}(restaurantId=${restaurant.id})}" method="post">
+        <div class="mb-3">
+            <label for="reviewContent" class="form-label">리뷰 내용</label>
+            <textarea class="form-control" id="reviewContent" name="content" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">제출</button>
+    </form>
+</div>
+
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCK4Mx_MwZDuVOmzuLesNYjJXbn-2gINBc&callback=initMap"></script>
+<script layout:fragment="script" type='text/javascript'>
+    const delete_elements = document.getElementsByClassName("delete");
+    Array.from(delete_elements).forEach(function(element) {
+        element.addEventListener('click', function() {
+            if(confirm("정말로 삭제하시겠습니까?")) {
+                location.href = this.dataset.uri;
+            };
+        });
+    });
+    const recommend_elements = document.getElementsByClassName("recommend");
+    Array.from(recommend_elements).forEach(function(element) {
+        element.addEventListener('click', function() {
+            if(confirm("정말로 추천하시겠습니까?")) {
+                location.href = this.dataset.uri;
+            };
+        });
+    });
+</script>
+
+<script type='text/javascript'>
+    function initMap() {
+        // 페이지 로딩 시에 서버에서 전달된 위도와 경도 값을 JavaScript 변수에 저장합니다.
+        // 이 부분은 Thymeleaf를 통해 동적으로 값을 채워야 합니다.
+        var latValue = [[${restaurant.latitude}]]; // 예시로 서울의 위도를 사용
+        var lngValue = [[${restaurant.longitude}]]; // 예시로 서울의 경도를 사용
+
+        var restaurantLocation = {
+            lat: parseFloat(latValue),
+            lng: parseFloat(lngValue)
+        };
+
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 16,
+            center: restaurantLocation
+        });
+
+        var marker = new google.maps.Marker({
+            position: restaurantLocation,
+            map: map
+        });
+    }
+
+
+</script>
+
+</body>
+</html>
