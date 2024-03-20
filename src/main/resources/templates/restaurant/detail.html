@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>detail</title>
@@ -9,6 +9,15 @@
         .pagination-container {
             text-align: center;
             margin-top: 20px;
+        }
+        .rating .bi-star-fill {
+            color: #ffc107;
+        }
+        .rating .bi-star-half {
+            color: #ffc107;
+        }
+        .rating .bi-star {
+            color: #e4e5e9;
         }
     </style>
 </head>
@@ -27,9 +36,11 @@
                         <div class="card-body">
                             <h5 class="card-title" th:text="${restaurant.name}"></h5>
                             <div class="rating mt-2">
-                                <span th:each="star : ${#numbers.sequence(1,5)}">
-                                    <i class="bi" th:classappend="${restaurant.rating >= star} ? 'bi-star-fill' : 'bi-star'"></i>
-                                </span>
+                            <span th:each="star : ${#numbers.sequence(1, 5)}">
+                                <i class="bi"
+                                   th:classappend="${restaurant.rating >= star} ? 'bi-star-fill' :
+                                                    (${restaurant.rating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
+                            </span>
                                 <span th:text="${restaurant.rating}"></span>
                             </div>
                             <p class="card-text"><strong>주소:</strong> <span th:text="${restaurant.address}"></span></p>
