@@ -86,7 +86,7 @@ public class ExcelDataLoader implements CommandLineRunner {
             restaurant.setTravelTime((int) row.getCell(6).getNumericCellValue());
             restaurant.setLatitude(row.getCell(8).getNumericCellValue());
             restaurant.setLongitude(row.getCell(9).getNumericCellValue());
-
+            restaurant.setPhoto(row.getCell(10).getStringCellValue());
 
             // 메뉴 이름을 기반으로 메뉴에 추가
 

@@ -6,89 +6,80 @@
     <link rel="stylesheet" href="/css/bootstrap.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/my-fonts.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-        }
-        body {
-            display: flex;
-            flex-direction: column;
-        }
-        .content-wrap {
-            flex: 1 0 auto;
-        }
-        footer {
-            flex-shrink: 0;
-            background-color: #fa9069;
-            color: black;
-        }
         .rating .bi-star-fill {
+            color: #ffc107;
+        }
+        .rating .bi-star-half {
             color: #ffc107;
         }
         .rating .bi-star {
             color: #e4e5e9;
         }
-        .footer-logo {
-            margin-right: 20px;
-        }
         .card {
-            width: 250px;
-            height: 400px;
+            width: 200px;
+            height: 300px;
             display: flex;
             flex-direction: column;
+            transition: transform 0.2s;
+            cursor: pointer;
         }
-
         .card-body {
             flex-grow: 1;
             overflow: hidden;
         }
-
-        .card-img-top {
-            width: 100%;
-            height: auto;
-        }.card {
-             transition: transform 0.2s; /* 애니메이션 효과의 지속 시간 설정 */
-             cursor: pointer; /* 마우스를 올렸을 때 커서 모양을 포인터로 변경 */
-         }
-
         .card:hover {
-            transform: scale(1.05); /* 마우스를 올렸을 때 카드의 크기를 5% 증가 */
+            transform: scale(1.05);
         }
-
+        .card-column {
+            margin: 0 20px;
+        }
+        .star-icon {
+            font-size: 75%;
+        }
+        .restaurant-name {
+            width: 120px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: clip;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        .restaurant-name.long {
+            font-size: 0.8rem;
+        }
     </style>
 </head>
 <body>
 
 <div th:replace="fragments/navbar :: navbar"></div>
 
-<div class="content-wrap container mt-3 ps-0">
-    <p class="text-left text-muted small">냠톨릭-가톨릭대 주변 맛집 사이트</p>
-    <h1 class="text-center my-4"><strong>맛집 리스트</strong></h1>
-    <div class="container">
-        <div class="row">
-            <div th:each="restaurant : ${restaurants}" class="col-md-3 d-flex align-items-stretch">
-                <a th:href="@{/restaurant/detail/{id}(id=${restaurant.id})}" class="text-decoration-none">
-                    <div class="card mb-4" th:attr="data-restaurant-id=${restaurant.id}">
-                        <h5 class="card-title" th:text="${restaurant.name}">맛집 이름</h5>
-                        <img th:src="@{'/' + ${restaurant.photo}}" class="card-img-top" alt="맛집 사진">
-                        <div class="card-body">
-                            <div class="rating mt-2">
-                            <span th:each="star, iterStat : ${#numbers.sequence(1,5)}">
-                                <i class="bi" th:classappend="${restaurant.rating >= star} ? 'bi-star-fill' : 'bi-star'"></i>
+<div class="container mt-3">
+    <div class="text-center">
+        <h1 class="my-4"><strong>nYUMtolic</strong></h1>
+        <p class="subtitle">-맛집 리스트-</p>
+    </div>
+    <div class="row">
+        <div th:each="restaurant : ${restaurants}" class="col-md-2 d-flex align-items-stretch card-column">
+            <a th:href="@{/restaurant/detail/{id}(id=${restaurant.id})}" class="text-decoration-none">
+                <div class="card mb-4" th:attr="data-restaurant-id=${restaurant.id}">
+                    <img th:src="@{'/' + ${restaurant.photo}}" class="card-img-top" alt="맛집 사진">
+                    <div class="card-body">
+                        <h5 class="card-title restaurant-name" th:classappend="${#strings.length(restaurant.name) > 10} ? 'long'" th:text="${restaurant.name}">맛집 이름</h5>
+                        <div class="d-flex justify-content-end">
+                            <div class="rating">
+                            <span th:each="star : ${#numbers.sequence(1, 5)}">
+                                <i class="bi star-icon"
+                                   th:classappend="${restaurant.rating >= star} ? 'bi-star-fill' :
+                                                    (${restaurant.rating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
                             </span>
-                                <span th:text="${restaurant.rating}"></span>
                             </div>
-                            <p class="card-text"><strong>주소:</strong> <span th:text="${restaurant.address}">주소</span></p>
-                            <p class="card-text"><strong>전화번호:</strong> <span th:text="${restaurant.phoneNumber}">전화번호</span></p>
-                            <p class="card-text"><strong>소요 시간:</strong> <span th:text="${restaurant.travelTime} + '분'">소요 시간</span></p>
-                            <p class="card-text"><strong>설명:</strong> <span th:text="${restaurant.description}">설명</span></p>
                         </div>
+<!--                        <p class="card-text mt-2" th:text="${restaurant.category}">음식 종류</p>-->
+<!--                        <p class="card-text" th:text="${restaurant.representativeMenu}">대표 메뉴</p>-->
                     </div>
-                </a>
-            </div>
+                </div>
+            </a>
         </div>
     </div>
 </div>
