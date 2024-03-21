@@ -121,15 +121,17 @@
             lng: parseFloat([[${restaurant.longitude}]])
         };
 
-        new google.maps.Map(document.getElementById('map'), {
+        var map = new google.maps.Map(document.getElementById('map'), {
             zoom: 16,
             center: restaurantLocation
-        }).setOptions({
+        });
+
+        map.setOptions({
             streetViewControl: true,
             mapTypeControl: true
         });
 
-        new google.maps.Marker({
+        var marker = new google.maps.Marker({
             position: restaurantLocation,
             map: map
         });
