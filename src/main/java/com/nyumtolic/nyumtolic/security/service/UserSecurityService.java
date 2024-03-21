@@ -1,6 +1,9 @@
-package com.nyumtolic.nyumtolic.user;
+package com.nyumtolic.nyumtolic.security.service;
 
 
+import com.nyumtolic.nyumtolic.security.domain.SiteUser;
+import com.nyumtolic.nyumtolic.security.domain.UserRole;
+import com.nyumtolic.nyumtolic.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

@@ -1,7 +1,9 @@
-package com.nyumtolic.nyumtolic.user;
+package com.nyumtolic.nyumtolic.security.service;
 
 
 import com.nyumtolic.nyumtolic.DataNotFoundException;
+import com.nyumtolic.nyumtolic.security.domain.SiteUser;
+import com.nyumtolic.nyumtolic.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

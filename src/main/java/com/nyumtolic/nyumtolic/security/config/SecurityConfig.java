@@ -1,4 +1,4 @@
-package com.nyumtolic.nyumtolic;
+package com.nyumtolic.nyumtolic.security.config;
 
 
 import org.springframework.context.annotation.Bean;

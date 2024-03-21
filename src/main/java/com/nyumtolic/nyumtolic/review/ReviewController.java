@@ -1,13 +1,12 @@
 package com.nyumtolic.nyumtolic.review;
 
-import com.nyumtolic.nyumtolic.user.SiteUser;
-import com.nyumtolic.nyumtolic.user.UserService;
+import com.nyumtolic.nyumtolic.security.domain.SiteUser;
+import com.nyumtolic.nyumtolic.security.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;

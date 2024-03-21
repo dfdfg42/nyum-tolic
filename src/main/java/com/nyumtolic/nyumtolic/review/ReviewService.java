@@ -4,7 +4,7 @@ package com.nyumtolic.nyumtolic.review;
 import com.nyumtolic.nyumtolic.DataNotFoundException;
 import com.nyumtolic.nyumtolic.domain.Restaurant;
 import com.nyumtolic.nyumtolic.repository.RestaurantRepository;
-import com.nyumtolic.nyumtolic.user.SiteUser;
+import com.nyumtolic.nyumtolic.security.domain.SiteUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -12,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

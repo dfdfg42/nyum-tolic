@@ -1,4 +1,4 @@
-package com.nyumtolic.nyumtolic.user;
+package com.nyumtolic.nyumtolic.security.domain;
 
 
 import jakarta.persistence.*;
