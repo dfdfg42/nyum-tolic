@@ -3,6 +3,7 @@ package com.nyumtolic.nyumtolic.security.service;
 
 import com.nyumtolic.nyumtolic.DataNotFoundException;
 import com.nyumtolic.nyumtolic.security.domain.SiteUser;
+import com.nyumtolic.nyumtolic.security.domain.UserRole;
 import com.nyumtolic.nyumtolic.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,17 +18,19 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public SiteUser create(String username, String email, String password){
-        SiteUser user = new SiteUser();
-        user.setUsername(username);
-        user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(password));
+    public SiteUser create(String loginId, String email, String password){
+        SiteUser user = SiteUser.builder()
+                .loginId(loginId)
+                .email(email)
+                .password(passwordEncoder.encode(password))
+                .role(UserRole.USER)
+                .build();
         this.userRepository.save(user);
         return user;
     }
 
-    public SiteUser getUser(String username) {
-        Optional<SiteUser> siteUser = this.userRepository.findByusername(username);
+    public SiteUser getUser(String loginId) {
+        Optional<SiteUser> siteUser = this.userRepository.findByLoginId(loginId);
         if (siteUser.isPresent()) {
             return siteUser.get();
         } else {

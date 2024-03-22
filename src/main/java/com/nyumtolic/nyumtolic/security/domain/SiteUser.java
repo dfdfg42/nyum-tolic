@@ -2,12 +2,14 @@ package com.nyumtolic.nyumtolic.security.domain;
 
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class SiteUser {
 
     @Id
@@ -15,10 +17,18 @@ public class SiteUser {
     private Long id;
 
     @Column(unique = true)
-    private String username;
+    private String loginId;
+
+    private String nickname;
 
     private String password;
 
     @Column(unique = true)
     private String email;
+
+    private String provider;
+
+    private String providerId;
+
+    private  UserRole role;
 }

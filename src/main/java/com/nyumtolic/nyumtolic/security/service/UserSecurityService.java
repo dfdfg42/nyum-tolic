@@ -3,6 +3,7 @@ package com.nyumtolic.nyumtolic.security.service;
 
 import com.nyumtolic.nyumtolic.security.domain.SiteUser;
 import com.nyumtolic.nyumtolic.security.domain.UserRole;
+import com.nyumtolic.nyumtolic.security.oauth.PrincipalDetails;
 import com.nyumtolic.nyumtolic.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,19 +25,13 @@ public class UserSecurityService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<SiteUser> _siteUser = this.userRepository.findByusername(username);
+    public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
+        Optional<SiteUser> _siteUser = this.userRepository.findByLoginId(loginId);
         if (_siteUser.isEmpty()) {
             throw new UsernameNotFoundException("사용자를 찾을수 없습니다.");
         }
         SiteUser siteUser = _siteUser.get();
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        if ("admin".equals(username)) {
-            authorities.add(new SimpleGrantedAuthority(UserRole.ADMIN.getValue()));
-        } else {
-            authorities.add(new SimpleGrantedAuthority(UserRole.USER.getValue()));
-        }
-        return new User(siteUser.getUsername(), siteUser.getPassword(), authorities);
+        return new PrincipalDetails(siteUser);
     }
 
 }
