@@ -26,6 +26,13 @@
             transition: transform 0.2s;
             cursor: pointer;
         }
+        .card-img-top {
+            width: 100%;  /*컨테이너의 너비에 맞춤 */
+            height: auto;  /*높이를 자동으로 설정하여 비율을 유지 */
+            aspect-ratio: 4 / 3; /* 4:3 비율을 유지 */
+            object-fit: cover; /* 이미지가 비율을 유지하면서 컨테이너를 채우도록 함 */
+            object-position: center; /* 이미지가 컨테이너 중앙에 위치하도록 함 */
+        }
         .card-body {
             flex-grow: 1;
             overflow: hidden;
