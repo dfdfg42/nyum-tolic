@@ -59,12 +59,29 @@
            margin-left: 20px;
             color: gray;
         }
+        .category-item, .representative-menu {
+            display: inline-block;
+            background-color: #f5f5f5; /* 배경색 */
+            border-radius: 10px; /* 모서리 둥글게 */
+            padding: 5px 10px; /* 내부 여백 */
+            margin-right: 5px; /* 오른쪽 여백 */
+            margin-bottom: 5px; /* 아래 여백 */
+        }
+
+        .category-item:last-child {
+            margin-right: 0; /* 마지막 아이템 오른쪽 여백 제거 */
+        }
 
     </style>
 </head>
 <body>
 
 <div th:replace="fragments/navbar :: navbar"></div>
+
+
+<div class="container mt-3 ps-0">
+    <p class="text-left text-muted small">냠톨릭-가톨릭대 주변 맛집 사이트</p>
+</div>
 
 <div class="container mt-3">
     <div class="text-center">
@@ -80,6 +97,7 @@
                         <h5 class="card-title restaurant-name" th:classappend="${#strings.length(restaurant.name) > 10} ? 'long'" th:text="${restaurant.name}">맛집 이름</h5>
                         <div class="d-flex justify-content-end">
                             <div class="rating">
+                                <span class="rating-number" th:text="${restaurant.rating}"></span>
                             <span th:each="star : ${#numbers.sequence(1, 5)}">
                                 <i class="bi star-icon"
                                    th:classappend="${restaurant.rating >= star} ? 'bi-star-fill' :
