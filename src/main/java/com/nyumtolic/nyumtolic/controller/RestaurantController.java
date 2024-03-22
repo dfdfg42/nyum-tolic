@@ -83,7 +83,7 @@ public class RestaurantController {
         return "restaurant/recommendation";
     }
 
-    @PostMapping("/recommend")
+    @PostMapping("/recommendation")
     public String recommendRestaurant(@RequestParam("excludedCategories") String excludedCategories, Model model) {
         // 사용자 입력을 쉼표로 분리하여 배열로 변환
         String[] categoriesArray = excludedCategories.split("\\s*,\\s*");

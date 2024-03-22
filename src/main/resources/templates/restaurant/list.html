@@ -102,7 +102,7 @@
         <div th:each="restaurant : ${restaurants}" class="col-md-2 d-flex align-items-stretch card-column">
             <a th:href="@{/restaurant/detail/{id}(id=${restaurant.id})}" class="text-decoration-none">
                 <div class="card mb-4" th:attr="data-restaurant-id=${restaurant.id}">
-                    <img th:src="@{'/' + ${restaurant.photo}}" class="card-img-top" alt="맛집 사진">
+                    <img th:attr="data-src=@{'/' + ${restaurant.photo}}" class="card-img-top lazy-image" alt="맛집 사진" src="">
                     <div class="card-body">
                         <h5 class="card-title restaurant-name" th:classappend="${#strings.length(restaurant.name) > 10} ? 'long'" th:text="${restaurant.name}">맛집 이름</h5>
                         <div class="d-flex justify-content-end">
@@ -130,6 +130,7 @@
 
 <div th:replace="fragments/footer.html :: custom-footer"></div>
 <script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/lazyload.js"></script>
 
 </body>
 </html>
