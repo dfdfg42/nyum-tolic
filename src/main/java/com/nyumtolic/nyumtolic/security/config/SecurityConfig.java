@@ -44,16 +44,11 @@ public class SecurityConfig {
                 .oauth2Login((oauthLogin) -> oauthLogin
                         .loginPage("/user/login")
                         .defaultSuccessUrl("/")
-                        .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
+                        .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint
                                 .userService(principalOauth2UserService)))
                 ;
         return http.build();
 
-    }
-
-    @Bean
-    PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
     }
 
     @Bean

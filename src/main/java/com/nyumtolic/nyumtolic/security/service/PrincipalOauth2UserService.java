@@ -1,5 +1,6 @@
 package com.nyumtolic.nyumtolic.security.service;
 
+import com.nyumtolic.nyumtolic.controller.RestaurantController;
 import com.nyumtolic.nyumtolic.security.domain.SiteUser;
 import com.nyumtolic.nyumtolic.security.domain.UserRole;
 import com.nyumtolic.nyumtolic.security.dto.KakaoUserInfo;
@@ -8,6 +9,10 @@ import com.nyumtolic.nyumtolic.security.oauth.PrincipalDetails;
 import com.nyumtolic.nyumtolic.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -19,21 +24,21 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
+    private static final Logger logger = LoggerFactory.getLogger(RestaurantController.class);
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        log.info("getAttribute : {}", oAuth2User.getAttributes());
+        logger.info("getAttribute : {}", oAuth2User.getAttributes());
 
         OAuth2UserInfo oAuth2UserInfo = null;
 
         String provider = userRequest.getClientRegistration().getRegistrationId();
 
         if(provider.equals("kakao")) {
-            log.info("login in kakao");
+            logger.info("login in kakao");
             oAuth2UserInfo = new KakaoUserInfo( oAuth2User.getAttributes() );
         }
 
@@ -52,6 +57,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                     .providerId(providerId)
                     .role(UserRole.USER)
                     .build();
+            userRepository.save(user);
         } else {
             user = optionalUser.get();
         }
