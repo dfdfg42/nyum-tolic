@@ -17,16 +17,26 @@
             color: #e4e5e9;
         }
         .card {
-            width: 200px;
-            height: 300px;
+            /* 기존의 고정 너비와 높이 제거 */
+            max-width: 200px; /* 최대 너비 설정 */
+            /* height: 300px; 높이를 고정에서 제거하거나, min-height로 변경 */
+            min-height: 300px; /* 최소 높이 설정 */
             display: flex;
             flex-direction: column;
             transition: transform 0.2s;
             cursor: pointer;
         }
+        .card-img-top {
+            width: 100%;  /*컨테이너의 너비에 맞춤 */
+            height: auto;  /*높이를 자동으로 설정하여 비율을 유지 */
+            aspect-ratio: 4 / 3; /* 4:3 비율을 유지 */
+            object-fit: cover; /* 이미지가 비율을 유지하면서 컨테이너를 채우도록 함 */
+            object-position: center; /* 이미지가 컨테이너 중앙에 위치하도록 함 */
+        }
         .card-body {
             flex-grow: 1;
             overflow: hidden;
+
         }
         .card:hover {
             transform: scale(1.05);
@@ -48,16 +58,45 @@
         .restaurant-name.long {
             font-size: 0.8rem;
         }
+
+        .category-item{
+            margin-top: 10px;
+            color: gray;
+        }
+
+        .representative-menu {
+            margin-top: 5px;
+           margin-left: 20px;
+            color: gray;
+        }
+        .category-item, .representative-menu {
+            font-size: 0.8rem; /* 텍스트 크기를 줄임 */
+            padding: 3px 8px; /* 내부 여백을 줄임 */
+            display: inline-block;
+            background-color: #f5f5f5; /* 배경색 */
+            border-radius: 10px; /* 모서리 둥글게 */
+            margin-right: 5px; /* 오른쪽 여백 */
+            margin-bottom: 5px; /* 아래 여백 */
+        }
+
+        .category-item:last-child {
+            margin-right: 0; /* 마지막 아이템 오른쪽 여백 제거 */
+        }
+
     </style>
 </head>
 <body>
 
 <div th:replace="fragments/navbar :: navbar"></div>
 
+
+<div class="container mt-3 ps-0">
+    <p class="text-left text-muted small">냠톨릭-가톨릭대 주변 맛집 사이트</p>
+</div>
+
 <div class="container mt-3">
     <div class="text-center">
-        <h1 class="my-4"><strong>nYUMtolic</strong></h1>
-        <p class="subtitle">-맛집 리스트-</p>
+        <h1 class="my-4"><strong>-맛집 리스트-</strong></h1>
     </div>
     <div class="row">
         <div th:each="restaurant : ${restaurants}" class="col-md-2 d-flex align-items-stretch card-column">
@@ -68,6 +107,7 @@
                         <h5 class="card-title restaurant-name" th:classappend="${#strings.length(restaurant.name) > 10} ? 'long'" th:text="${restaurant.name}">맛집 이름</h5>
                         <div class="d-flex justify-content-end">
                             <div class="rating">
+                                <span class="rating-number" th:text="${restaurant.rating}"></span>
                             <span th:each="star : ${#numbers.sequence(1, 5)}">
                                 <i class="bi star-icon"
                                    th:classappend="${restaurant.rating >= star} ? 'bi-star-fill' :
@@ -75,8 +115,12 @@
                             </span>
                             </div>
                         </div>
-<!--                        <p class="card-text mt-2" th:text="${restaurant.category}">음식 종류</p>-->
-<!--                        <p class="card-text" th:text="${restaurant.representativeMenu}">대표 메뉴</p>-->
+                        <p class="card-text">
+                            <span th:each="category, iterStat : ${restaurant.getCategories()}"
+                                class="category-item"
+                                  th:text="${category.name} + (${iterStat.last} ? '' : ', ')"></span>
+                            <span class="representative-menu" th:text="${restaurant.getMenu().get(0)}"></span>
+                        </p>
                     </div>
                 </div>
             </a>
