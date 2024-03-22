@@ -94,6 +94,4 @@ public class RestaurantController {
         return "restaurant/recommendation";
     }
 
-        
-
 }

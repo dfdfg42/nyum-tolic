@@ -48,6 +48,18 @@
         .restaurant-name.long {
             font-size: 0.8rem;
         }
+
+        .category-item{
+            margin-top: 10px;
+            color: gray;
+        }
+
+        .representative-menu {
+            margin-top: 5px;
+           margin-left: 20px;
+            color: gray;
+        }
+
     </style>
 </head>
 <body>
@@ -75,8 +87,12 @@
                             </span>
                             </div>
                         </div>
-<!--                        <p class="card-text mt-2" th:text="${restaurant.category}">음식 종류</p>-->
-<!--                        <p class="card-text" th:text="${restaurant.representativeMenu}">대표 메뉴</p>-->
+                        <p class="card-text">
+                            <span th:each="category, iterStat : ${restaurant.getCategories()}"
+                                class="category-item"
+                                  th:text="${category.name} + (${iterStat.last} ? '' : ', ')"></span>
+                            <span class="representative-menu" th:text="${restaurant.getMenu().get(0)}"></span>
+                        </p>
                     </div>
                 </div>
             </a>
