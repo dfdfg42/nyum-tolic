@@ -28,9 +28,55 @@
         .info-placeholder {
             min-height: 230px;
         }
+        .image-container {
+            width: 100%;
+            height: 0;
+            padding-bottom: 75%; /* Adjust this value to set the desired aspect ratio (e.g., 75% for 4:3) */
+            position: relative;
+            overflow: hidden;
+        }
+        .image-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .recommend-button {
+            padding: 15px 30px;
+            font-size: 24px;
+            border-radius: 50px;
+            background: linear-gradient(45deg, #007bff, #00a8ff);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .recommend-button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3));
+            pointer-events: none;
+        }
+
+        .recommend-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 13px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .recommend-button:not(:hover) {
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
     </style>
 </head>
-
 
 <body class="d-flex flex-column min-vh-100">
 <!-- Navbar Section -->
@@ -40,13 +86,19 @@
     <p class="text-left text-muted small">냠톨릭-가톨릭대 주변 맛집 사이트</p>
 </div>
 
-<h1 class="text-center title-space"><strong>맛집 랜덤 추천</strong></h1>
+<div class="text-center title-space">
+    <button id="recommendButton" class="btn btn-lg btn-primary recommend-button">
+        <strong>맛집 랜덤 추천</strong>
+    </button>
+</div>
 
 <div th:if="${recommendedRestaurant}" class="container mt-4">
     <div class="card mb-3">
         <div class="row g-0">
             <div class="col-md-4 d-flex align-items-center justify-content-center p-3">
-                <img th:src="@{'/' + ${recommendedRestaurant.photo}}" class="img-fluid rounded-start" alt="음식점 사진">
+                <div class="image-container">
+                    <img th:src="@{'/' + ${recommendedRestaurant.photo}}" class="img-fluid rounded-start" alt="음식점 사진">
+                </div>
             </div>
             <div class="col-md-8">
                 <div class="card-body">
@@ -54,7 +106,7 @@
                     <div class="rating mt-2">
                     <span th:each="star : ${#numbers.sequence(1, 5)}">
                         <i class="bi"
-                          th:classappend="${recommendedRestaurant.rating >= star} ? 'bi-star-fill' :
+                           th:classappend="${recommendedRestaurant.rating >= star} ? 'bi-star-fill' :
                                           (${recommendedRestaurant.rating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
                     </span>
                         <span th:text="${recommendedRestaurant.rating}"></span>
@@ -63,8 +115,8 @@
                     <p class="card-text"><strong>전화번호:</strong> <span th:text="${recommendedRestaurant.phoneNumber}">전화번호</span></p>
                     <p class="card-text"><strong>소요 시간:</strong> <span th:text="${recommendedRestaurant.travelTime} + '분'">소요 시간</span></p>
                     <p class="card-text"><strong>설명:</strong> <span th:text="${recommendedRestaurant.description}">설명</span></p>
-                    <p class="card-text"><strong>카테고리:</strong> <span th:text="${categoryString}">카테고리 목록</span></p>
-                    <p class="card-text"><strong>대표 메뉴:</strong> <span th:text="${menuString}">메뉴 목록</span></p>
+                    <p class="card-text"><strong>카테고리:</strong><span th:each="category, iterStat : ${recommendedRestaurant.categories}" th:text="${category.name} + (${iterStat.last} ? '' : ', ')">카테고리</span></p>
+                    <p class="card-text"><strong>대표 메뉴:</strong><span th:each="menu, iterStat : ${recommendedRestaurant.menu}" th:text="${menu} + (${iterStat.last} ? '' : ', ')">메뉴</span></p>
                 </div>
             </div>
         </div>
@@ -74,19 +126,26 @@
 <div th:unless="${recommendedRestaurant}" class="container mt-4 info-placeholder">
     <!-- 음식점 정보가 없을 경우 보여질 공간 -->
 </div>
+<!--<div th:if="${recommendedRestaurant == null}" class="container mt-4 info-placeholder">-->
+<!--    <div class="card">-->
+<!--        <div class="card-body text-center">-->
+<!--            <h3 class="card-title mb-4">죄송합니다! 선택한 카테고리에 맞는 맛집을 찾을 수 없습니다.</h3>-->
+<!--            <p class="card-text mb-4">선택한 카테고리를 조정하거나 새로운 카테고리를 선택해 보세요.</p>-->
+<!--            <div class="icon-container mb-4">-->
+<!--                <i class="fas fa-utensils fa-5x text-muted"></i>-->
+<!--            </div>-->
+<!--            <button class="btn btn-primary btn-lg recommend-button" onclick="resetCategories()">카테고리 초기화</button>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
 </body>
 
-
-
 <div class="d-flex justify-content-center">
-    <form th:action="@{/restaurant/recommend}" method="post" class="w-50">
+    <form th:action="@{/restaurant/recommendation}" method="post" class="w-50">
         <div class="row g-2 align-items-center">
             <div class="col">
                 <input type="text" class="form-control" id="excludedCategories" name="excludedCategories"
-                       th:value="${excludedCategories}" placeholder="제외할 카테고리">
-            </div>
-            <div class="col-auto">
-                <button type="submit" class="btn btn-success">확인</button>
+                       th:value="${excludedCategories}" placeholder="제외할 카테고리를 아래에서 골라주세요!">
             </div>
         </div>
     </form>
@@ -109,7 +168,6 @@
 
 <div th:replace="fragments/footer.html :: custom-footer"></div>
 <script src="/js/bootstrap.bundle.min.js"></script>
-
 
 <script>
     function toggleCategory(element) {
@@ -142,6 +200,22 @@
                 button.classList.add('active');
             }
         });
+
+        const recommendButton = document.getElementById('recommendButton');
+        recommendButton.addEventListener('click', function() {
+            const form = document.querySelector('form');
+            form.submit();
+        });
     });
+
+    // function resetCategories() {
+    //     const input = document.getElementById('excludedCategories');
+    //     input.value = '';
+    //
+    //     const buttons = document.querySelectorAll('[data-category-name]');
+    //     buttons.forEach(button => {
+    //         button.classList.remove('active');
+    //     });
+    // }
 </script>
 </html>
