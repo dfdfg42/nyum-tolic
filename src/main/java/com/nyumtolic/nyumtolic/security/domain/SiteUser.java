@@ -30,5 +30,6 @@ public class SiteUser {
 
     private String providerId;
 
-    private  UserRole role;
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 }
