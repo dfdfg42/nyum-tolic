@@ -10,6 +10,7 @@ import com.nyumtolic.nyumtolic.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -51,11 +52,16 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                     .nickname(nickname)
                     .provider(provider)
                     .providerId(providerId)
+                    .enabled(true)
                     .role(UserRole.USER)
                     .build();
             userRepository.save(user);
         } else {
             user = optionalUser.get();
+        }
+
+        if (!user.getEnabled()) { // 소셜로그인은 enable 검사가 없기에 직접 검사
+            throw new DisabledException("User is disabled");
         }
 
         return new PrincipalDetails(user, oAuth2User.getAttributes());
