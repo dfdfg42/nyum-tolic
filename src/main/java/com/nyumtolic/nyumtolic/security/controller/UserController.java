@@ -1,6 +1,8 @@
-package com.nyumtolic.nyumtolic.user;
+package com.nyumtolic.nyumtolic.security.controller;
 
 
+import com.nyumtolic.nyumtolic.security.dto.UserCreateForm;
+import com.nyumtolic.nyumtolic.security.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -39,8 +41,7 @@ public class UserController {
         }
 
         try {
-            userService.create(userCreateForm.getUsername(),
-                    userCreateForm.getEmail(), userCreateForm.getPassword1());
+            userService.create(userCreateForm);
         }catch(DataIntegrityViolationException e) {
             e.printStackTrace();
             bindingResult.reject("signupFailed", "이미 등록된 사용자입니다.");

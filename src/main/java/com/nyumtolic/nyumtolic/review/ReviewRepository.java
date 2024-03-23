@@ -1,6 +1,6 @@
 package com.nyumtolic.nyumtolic.review;
 
-import com.nyumtolic.nyumtolic.user.SiteUser;
+import com.nyumtolic.nyumtolic.security.domain.SiteUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

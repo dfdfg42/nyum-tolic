@@ -1,13 +1,12 @@
 package com.nyumtolic.nyumtolic.review;
 
-import com.nyumtolic.nyumtolic.user.SiteUser;
-import com.nyumtolic.nyumtolic.user.UserService;
+import com.nyumtolic.nyumtolic.security.domain.SiteUser;
+import com.nyumtolic.nyumtolic.security.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -43,7 +42,7 @@ public class ReviewController {
     @GetMapping("/modify/{reviewId}")
     public String answerModify(ReviewForm reviewForm, @PathVariable Long reviewId, Principal principal) {
         Review review = reviewService.getReview(reviewId);
-        if (!review.getAuthor().getUsername().equals(principal.getName())) {
+        if (!review.getAuthor().getNickname().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
         reviewForm.setContent(review.getContent());
@@ -62,7 +61,7 @@ public class ReviewController {
             return "/";
         }
         Review review = reviewService.getReview(reviewId);
-        if (!review.getAuthor().getUsername().equals(principal.getName())) {
+        if (!review.getAuthor().getNickname().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "수정 권한이 없습니다.");
         }
         reviewService.modify(review, reviewForm.getContent());
@@ -74,7 +73,7 @@ public class ReviewController {
     @GetMapping("/delete/{reviewId}")
     public String deleteReview(@PathVariable Long reviewId, Principal principal) {
         Review review = reviewService.getReview(reviewId);
-        if (!review.getAuthor().getUsername().equals(principal.getName())) {
+        if (!review.getAuthor().getNickname().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "삭제 권한이 없습니다.");
         }
         Long restaurantId = review.getRestaurant().getId();

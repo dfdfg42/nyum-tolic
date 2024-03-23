@@ -3,7 +3,7 @@ package com.nyumtolic.nyumtolic.review;
 
 
 import com.nyumtolic.nyumtolic.domain.Restaurant;
-import com.nyumtolic.nyumtolic.user.SiteUser;
+import com.nyumtolic.nyumtolic.security.domain.SiteUser;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

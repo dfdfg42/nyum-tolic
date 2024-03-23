@@ -36,7 +36,7 @@ public class RestaurantController {
         this.restaurantService.getRestaurantsById(id).ifPresent(restaurant -> model.addAttribute("restaurant", restaurant));
         Restaurant restaurant = restaurantService.getRestaurantsById(id).orElse(null);
         restaurant.getReviews().forEach(review ->
-                logger.info("Review by {}: {}", review.getAuthor().getUsername(), review.getContent())
+                logger.info("Review by {}: {}", review.getAuthor().getNickname(), review.getContent())
         );
 
         Optional<Restaurant> restaurantsById = restaurantService.getRestaurantsById(id);

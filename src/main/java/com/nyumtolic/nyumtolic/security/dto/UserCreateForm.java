@@ -1,4 +1,4 @@
-package com.nyumtolic.nyumtolic.user;
+package com.nyumtolic.nyumtolic.security.dto;
 
 
 import jakarta.validation.constraints.Email;
@@ -12,7 +12,11 @@ import lombok.Setter;
 public class UserCreateForm {
     @Size(min = 3, max = 25)
     @NotEmpty(message = "사용자ID는 필수항목입니다")
-    private String username;
+    private String loginId;
+
+    @Size(min = 1, max = 20)
+    @NotEmpty(message = "별명은 필수항목입니다")
+    private String nickname;
 
     @NotEmpty(message = "비밀번호는 필수항목입니다")
     private String password1;
