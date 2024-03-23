@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>detail</title>
@@ -106,9 +106,13 @@
     <h5 class="mb-3">리뷰 작성</h5>
     <form th:action="@{/review/create/{restaurantId}(restaurantId=${restaurant.id})}" method="post">
         <div class="mb-3">
-            <textarea class="form-control" name="content" rows="3" required placeholder="리뷰 내용"></textarea>
+            <textarea class="form-control" name="content" rows="3"
+                      th:placeholder="${#authorization.expression('isAuthenticated()') ? '리뷰 내용' : '로그인을 해야 리뷰작성이 가능합니다'}"
+                      th:disabled="${#authorization.expression('!isAuthenticated()')}"
+                      th:readonly="${#authorization.expression('!isAuthenticated()')}"
+                      th:required="${#authorization.expression('isAuthenticated()')}"></textarea>
         </div>
-        <button type="submit" class="btn btn-primary">제출</button>
+        <button type="submit" class="btn btn-primary" th:disabled="${#authorization.expression('!isAuthenticated()')}">제출</button>
     </form>
 </div>
 
