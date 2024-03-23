@@ -1,4 +1,4 @@
-package com.nyumtolic.nyumtolic.security.dto;
+package com.nyumtolic.nyumtolic.security.oauth;
 
 public interface OAuth2UserInfo {
     String getProviderId();

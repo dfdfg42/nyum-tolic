@@ -3,23 +3,19 @@ package com.nyumtolic.nyumtolic.security.service;
 import com.nyumtolic.nyumtolic.controller.RestaurantController;
 import com.nyumtolic.nyumtolic.security.domain.SiteUser;
 import com.nyumtolic.nyumtolic.security.domain.UserRole;
-import com.nyumtolic.nyumtolic.security.dto.KakaoUserInfo;
-import com.nyumtolic.nyumtolic.security.dto.OAuth2UserInfo;
+import com.nyumtolic.nyumtolic.security.oauth.KakaoUserInfo;
+import com.nyumtolic.nyumtolic.security.oauth.OAuth2UserInfo;
 import com.nyumtolic.nyumtolic.security.oauth.PrincipalDetails;
 import com.nyumtolic.nyumtolic.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 import java.util.Optional;
 
 @Service

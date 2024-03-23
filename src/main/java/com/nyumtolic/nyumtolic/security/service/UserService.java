@@ -4,6 +4,7 @@ package com.nyumtolic.nyumtolic.security.service;
 import com.nyumtolic.nyumtolic.DataNotFoundException;
 import com.nyumtolic.nyumtolic.security.domain.SiteUser;
 import com.nyumtolic.nyumtolic.security.domain.UserRole;
+import com.nyumtolic.nyumtolic.security.dto.UserCreateForm;
 import com.nyumtolic.nyumtolic.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,11 +20,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public SiteUser create(String loginId, String email, String password){
+    public SiteUser create(UserCreateForm userCreateForm){
         SiteUser user = SiteUser.builder()
-                .loginId(loginId)
-                .email(email)
-                .password(passwordEncoder.encode(password))
+                .loginId(userCreateForm.getLoginId())
+                .nickname(userCreateForm.getNickname())
+                .email(userCreateForm.getEmail())
+                .password(passwordEncoder.encode(userCreateForm.getPassword1()))
                 .role(UserRole.USER)
                 .build();
         this.userRepository.save(user);

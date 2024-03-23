@@ -1,5 +1,6 @@
-package com.nyumtolic.nyumtolic.security.dto;
+package com.nyumtolic.nyumtolic.security.oauth;
 
+import com.nyumtolic.nyumtolic.security.oauth.OAuth2UserInfo;
 import lombok.AllArgsConstructor;
 
 import java.util.Map;
