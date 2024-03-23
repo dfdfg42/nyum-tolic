@@ -26,6 +26,7 @@ public class UserService {
                 .nickname(userCreateForm.getNickname())
                 .email(userCreateForm.getEmail())
                 .password(passwordEncoder.encode(userCreateForm.getPassword1()))
+                .enabled(true)
                 .role(UserRole.USER)
                 .build();
         this.userRepository.save(user);

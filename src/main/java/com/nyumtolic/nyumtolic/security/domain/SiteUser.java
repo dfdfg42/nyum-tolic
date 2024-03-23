@@ -26,6 +26,8 @@ public class SiteUser {
     @Column(unique = true)
     private String email;
 
+    private Boolean enabled;
+
     private String provider;
 
     private String providerId;

@@ -17,6 +17,7 @@ import java.security.Principal;
 @RequiredArgsConstructor
 @Controller
 public class ReviewController {
+    // todo 리뷰 회원 계정에 맞게 수정(현재 작동 안함)
 
     private final ReviewService reviewService;
     private final UserService userService;
