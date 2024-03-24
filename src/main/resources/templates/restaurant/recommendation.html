@@ -155,6 +155,7 @@
     <form th:action="@{/restaurant/recommendation}" method="post" class="w-50">
         <div class="row g-2 align-items-center">
             <div class="col">
+                <label for="excludedCategories" class="form-label"><strong>제외할 카테고리를 골라주세요:</strong></label>
                 <input type="text" class="form-control" id="excludedCategories" name="excludedCategories"
                        th:value="${excludedCategories}" placeholder="제외할 카테고리를 아래에서 골라주세요!">
             </div>
