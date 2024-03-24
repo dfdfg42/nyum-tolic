@@ -17,7 +17,6 @@ import java.security.Principal;
 @RequiredArgsConstructor
 @Controller
 public class ReviewController {
-    // todo 리뷰 회원 계정에 맞게 수정(현재 작동 안함)
 
     private final ReviewService reviewService;
     private final UserService userService;
@@ -43,7 +42,7 @@ public class ReviewController {
     @GetMapping("/modify/{reviewId}")
     public String answerModify(ReviewForm reviewForm, @PathVariable Long reviewId, Principal principal) {
         Review review = reviewService.getReview(reviewId);
-        if (!review.getAuthor().getNickname().equals(principal.getName())) {
+        if (!review.getAuthor().getLoginId().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
         reviewForm.setContent(review.getContent());
@@ -62,7 +61,7 @@ public class ReviewController {
             return "/";
         }
         Review review = reviewService.getReview(reviewId);
-        if (!review.getAuthor().getNickname().equals(principal.getName())) {
+        if (!review.getAuthor().getLoginId().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "수정 권한이 없습니다.");
         }
         reviewService.modify(review, reviewForm.getContent());
@@ -74,7 +73,7 @@ public class ReviewController {
     @GetMapping("/delete/{reviewId}")
     public String deleteReview(@PathVariable Long reviewId, Principal principal) {
         Review review = reviewService.getReview(reviewId);
-        if (!review.getAuthor().getNickname().equals(principal.getName())) {
+        if (!review.getAuthor().getLoginId().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "삭제 권한이 없습니다.");
         }
         Long restaurantId = review.getRestaurant().getId();
