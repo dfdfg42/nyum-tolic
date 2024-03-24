@@ -45,12 +45,15 @@
                 <input type="checkbox" class="form-check-input" id="rememberMe" name="remember-me">
                 <label class="form-check-label" for="rememberMe">로그인 유지</label>
             </div>
-            <button type="submit" class="btn btn-primary btn-block">로그인</button>
+            <button type="submit" class="btn btn-primary btn-block" style="margin-bottom: 10px;">로그인</button>
+            <a href="/oauth2/authorization/kakao" class="kakao-login-btn">
+                <img src="/images/kakao_login.png" alt="Kakao Login">
+            </a>
         </form>
         <div class="text-center mt-3">
             <a th:href="@{/user/signup}">회원가입</a>
         </div>
-        <a href="/oauth2/authorization/kakao">카카오 로그인</a>
+
     </div>
 </div>
 <!-- Optional JavaScript; choose one of the two! -->
