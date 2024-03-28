@@ -1,13 +1,11 @@
 package com.nyumtolic.nyumtolic.security.controller;
 
 
-import ch.qos.logback.core.model.Model;
-import com.nyumtolic.nyumtolic.review.Review;
+
 import com.nyumtolic.nyumtolic.security.dto.UserCreateForm;
 import com.nyumtolic.nyumtolic.security.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.security.Principal;
 
 @RequiredArgsConstructor
 @Controller
