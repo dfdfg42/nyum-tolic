@@ -1,6 +1,5 @@
 package com.nyumtolic.nyumtolic.security.controller;
 
-
 import com.nyumtolic.nyumtolic.security.dto.UserCreateForm;
 import com.nyumtolic.nyumtolic.security.service.UserService;
 import jakarta.validation.Valid;
@@ -11,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 
 @RequiredArgsConstructor
 @Controller
@@ -54,4 +54,10 @@ public class UserController {
         return "redirect:/user/login";
 
     }
+
+    @GetMapping("/suggestions")
+    public String suggestions() {
+        return "suggestions";
+    }
+
 }

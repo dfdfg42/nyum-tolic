@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>건의사항</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .suggestion-form {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .suggestion-form h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .suggestion-form .form-group {
+            margin-bottom: 20px;
+        }
+        .suggestion-form label {
+            font-weight: bold;
+        }
+        .suggestion-form textarea {
+            resize: vertical;
+        }
+        .suggestion-form button {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="suggestion-form">
+                <h2><i class="fas fa-lightbulb"></i> Suggestions</h2>
+                <form id="suggestionForm">
+                    <div class="form-group">
+                        <label for="name">Your Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Your Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="suggestionText">Suggestion</label>
+                        <textarea class="form-control" id="suggestionText" name="suggestionText" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer.html :: custom-footer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.getElementById("suggestionForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const suggestionText = document.getElementById("suggestionText").value;
+
+        // Perform form submission or further processing here
+        console.log("Name:", name);
+        console.log("Email:", email);
+        console.log("Suggestion:", suggestionText);
+
+        // Reset the form after submission
+        document.getElementById("suggestionForm").reset();
+
+        // Show a success message or redirect to a thank you page
+        alert("Thank you for your suggestion!");
+    });
+</script>
+</body>
+</html>
