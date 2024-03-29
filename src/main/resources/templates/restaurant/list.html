@@ -16,6 +16,9 @@
         .rating .bi-star {
             color: #e4e5e9;
         }
+        .user-rating .bi {
+            color: #2FCC71;
+        }
         .card {
             /* 기존의 고정 너비와 높이 제거 */
             max-width: 200px; /* 최대 너비 설정 */
@@ -105,16 +108,27 @@
                     <img th:attr="data-src=@{'/' + ${restaurant.photo}}" class="card-img-top lazy-image" alt="맛집 사진" src="">
                     <div class="card-body">
                         <h5 class="card-title restaurant-name" th:classappend="${#strings.length(restaurant.name) > 10} ? 'long'" th:text="${restaurant.name}">맛집 이름</h5>
-                        <div class="d-flex justify-content-end">
-                            <div class="rating">
+                        <div class="d-flex justify-content-end flex-column">
+                            <!-- 개발자 평점 -->
+                            <div class="rating mb-2"> <!-- 여기에 mb-2 (margin-bottom) 클래스 추가 -->
                                 <span class="rating-number" th:text="${restaurant.rating}"></span>
-                            <span th:each="star : ${#numbers.sequence(1, 5)}">
+                                <span th:each="star : ${#numbers.sequence(1, 5)}">
                                 <i class="bi star-icon"
-                                   th:classappend="${restaurant.rating >= star} ? 'bi-star-fill' :
-                                                    (${restaurant.rating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
+                                    th:classappend="${restaurant.rating >= star} ? 'bi-star-fill' :
+                                            (${restaurant.rating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
+                             </span>
+                            </div>
+                            <!-- 유저 평균 평점 -->
+                            <div class="user-rating">
+                                <span class="rating-number" th:text="${restaurant.userRating != null ? restaurant.userRating : 0.0}"></span>
+                                <span th:each="star : ${#numbers.sequence(1, 5)}">
+                                    <i class="bi star-icon"
+                                             th:classappend="${(restaurant.userRating != null ? restaurant.userRating : 0.0) >= star} ? 'bi-star-fill' :
+                                            (${(restaurant.userRating != null ? restaurant.userRating : 0.0) >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
                             </span>
                             </div>
                         </div>
+
                         <p class="card-text">
                             <span th:each="category, iterStat : ${restaurant.getCategories()}"
                                 class="category-item"

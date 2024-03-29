@@ -37,4 +37,7 @@ public class Review {
     @ManyToMany
     Set<SiteUser> voter;
 
+    private Double rating;
+
+
 }

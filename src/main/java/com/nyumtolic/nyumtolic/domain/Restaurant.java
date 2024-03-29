@@ -34,7 +34,7 @@ public class Restaurant {
     private List<Category> categories;
 
     @Column(name = "rating")
-    private Double rating;
+    private Double rating; // 개발자 평점임
 
     @ElementCollection
     @Column(name = "menu")
@@ -54,5 +54,8 @@ public class Restaurant {
 
     @Column(name = "longitude")
     private Double longitude; // 경도
+
+    @Column(name = "userRating")
+    private Double userRating;
 
 }

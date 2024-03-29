@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,15 +29,17 @@ public class ReviewService {
         this.reviewRepository.save(review);
     }
 
-    public Review create(Long restaurantId, String content, SiteUser author) {
+    public Review create(Long restaurantId, String content, Double rating,SiteUser author) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new DataNotFoundException("Restaurant not found"));
         Review review = new Review();
         review.setContent(content);
         review.setCreateDate(LocalDateTime.now());
+        review.setRating(rating);
         review.setRestaurant(restaurant);
         review.setAuthor(author);
         reviewRepository.save(review);
+        updateRestaurantUserRating(restaurantId);
         return review;
     }
 
@@ -49,14 +52,18 @@ public class ReviewService {
         }
     }
 
-    public void modify(Review review, String content) {
+    public void modify(Review review, String content, Double rating) {
         review.setContent(content);
         review.setModifyDate(LocalDateTime.now());
+        review.setRating(rating);
         this.reviewRepository.save(review);
+        updateRestaurantUserRating(review.getRestaurant().getId());
     }
 
     public void delete(Review answer) {
         this.reviewRepository.delete(answer);
+        Long restaurantId = answer.getRestaurant().getId();
+        updateRestaurantUserRating(restaurantId);
     }
 
     public List<Review> findReviewsByRestaurantId(Long restaurantId) {
@@ -72,5 +79,24 @@ public class ReviewService {
         return new PageImpl<>(reviewWithVotesDTOs, pageable, results.getTotalElements());
     }
 
+    public List<Restaurant> getRestaurantsSortedByRating(){
+        return restaurantRepository.findAllByOrderByRatingDesc();
+    }
+
+    @Transactional
+    public void updateRestaurantUserRating(Long restaurantId) {
+        List<Review> reviews = reviewRepository.findByRestaurantId(restaurantId);
+        double averageRating = reviews.stream()
+                .mapToDouble(Review::getRating)
+                .average()
+                .orElse(0.0); // 리뷰가 없는 경우 기본값으로 0임.
+
+        averageRating = Math.round(averageRating*10)/10.0;
+
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new RuntimeException("Restaurant not found"));
+        restaurant.setUserRating(averageRating);
+        restaurantRepository.save(restaurant);
+    }
 
 }

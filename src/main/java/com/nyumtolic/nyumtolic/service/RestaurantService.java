@@ -4,6 +4,8 @@ package com.nyumtolic.nyumtolic.service;
 import com.nyumtolic.nyumtolic.domain.Category;
 import com.nyumtolic.nyumtolic.domain.Restaurant;
 import com.nyumtolic.nyumtolic.repository.RestaurantRepository;
+import com.nyumtolic.nyumtolic.review.Review;
+import com.nyumtolic.nyumtolic.review.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
+    private final ReviewRepository reviewRepository;
 
 
     // 저장
@@ -78,6 +81,9 @@ public class RestaurantService {
         }
         return false;
     }
+
+
+
 
 
 }

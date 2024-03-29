@@ -34,7 +34,7 @@ public class ReviewController {
             return "redirect:/restaurant/detail/" + restaurantId;
         }
         SiteUser siteUser = userService.getUser(principal.getName());
-        reviewService.create(restaurantId, reviewForm.getContent(), siteUser);
+        reviewService.create(restaurantId, reviewForm.getContent(),reviewForm.getRating(), siteUser);
         return "redirect:/restaurant/detail/" + restaurantId;
     }
 
@@ -64,7 +64,7 @@ public class ReviewController {
         if (!review.getAuthor().getLoginId().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "수정 권한이 없습니다.");
         }
-        reviewService.modify(review, reviewForm.getContent());
+        reviewService.modify(review, reviewForm.getContent(), reviewForm.getRating());
         return "redirect:/restaurant/detail/" + review.getRestaurant().getId();
     }
 

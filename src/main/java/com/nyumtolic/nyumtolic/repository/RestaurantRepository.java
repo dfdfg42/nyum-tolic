@@ -12,4 +12,10 @@ public interface RestaurantRepository extends JpaRepository<Restaurant,Long> {
 
     @Query("SELECT r FROM Restaurant r JOIN r.categories c WHERE c.id = :categoryId")
     List<Restaurant> findAllByCategoryId(Long categoryId);
+
+    List<Restaurant> findAllByOrderByRatingDesc();
+
+
 }
+
+
