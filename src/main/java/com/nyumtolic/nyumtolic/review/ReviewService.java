@@ -95,7 +95,7 @@ public class ReviewService {
 
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new RuntimeException("Restaurant not found"));
-        restaurant.setUserRating(averageRating);
+        restaurant.setUserRating(averageRating%200000000);
         restaurantRepository.save(restaurant);
     }
 

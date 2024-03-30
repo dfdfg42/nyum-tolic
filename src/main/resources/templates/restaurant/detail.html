@@ -120,34 +120,27 @@
 
 <div class="review-section mt-4">
 
-    <h5 class="mb-3">리뷰 및 별점 작성</h5>
-    <form th:action="@{/review/create/{restaurantId}(restaurantId=${restaurant.id})}" method="post">
-        <!-- 별점 입력 필드 -->
-        <div class="mb-3">
-            <label for="rating" class="form-label">별점</label>
-            <select class="form-select" name="rating" required>
-                <option value="5">5</option>
-                <option value="4.5">4.5</option>
-                <option value="4">4</option>
-                <option value="3.5">3.5</option>
-                <option value="3">3</option>
-                <option value="2.5">2.5</option>
-                <option value="2">2</option>
-                <option value="1.5">1.5</option>
-                <option value="1">1</option>
-                <option value="0.5">0.5</option>
-                <option value="0">0</option>
-            </select>
-        </div>
 
     <h5 class="mb-3">리뷰 작성</h5>
     <form th:action="@{/review/create/{restaurantId}(restaurantId=${restaurant.id})}" method="post" enctype="multipart/form-data">
         <div class="mb-3">
             <label for="rating" class="form-label">별점</label>
-            <select class="form-select" id="rating" name="rating" th:required="${#authorization.expression('isAuthenticated()')}">
-                <option value="">별점을 선택하세요</option>
-                <option th:each="i : ${#numbers.sequence(1, 5)}" th:value="${i}" th:text="${i}"></option>
-            </select>
+            <div class="mb-3">
+                <select class="form-select" name="rating" required>
+                    <option value="">별점을 선택하세요</option>
+                    <option value="5">5</option>
+                    <option value="4.5">4.5</option>
+                    <option value="4">4</option>
+                    <option value="3.5">3.5</option>
+                    <option value="3">3</option>
+                    <option value="2.5">2.5</option>
+                    <option value="2">2</option>
+                    <option value="1.5">1.5</option>
+                    <option value="1">1</option>
+                    <option value="0.5">0.5</option>
+                    <option value="0">0</option>
+                </select>
+            </div>
         </div>
         <div class="mb-3">
             <label for="content" class="form-label">리뷰 내용</label>
