@@ -89,6 +89,7 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title" th:text="${reviewDto.review.author.nickname}"></h5>
+                    <a href="#" class="delete btn btn-sm btn-outline-secondary" sec:authorize="hasRole('ROLE_ADMIN')" th:data-uri="@{|/user/admin/${reviewDto.review.author.loginId}/ban|}">벤(관리자)</a>
                     <p class="card-text" th:text="${reviewDto.review.content}"></p>
                     <div class="rating mt-2">
                         <span th:text="'별점: ' + ${reviewDto.review.rating}"></span>
@@ -99,6 +100,7 @@
                         </a>
                         <a th:href="@{|/review/modify/${reviewDto.review.id}|}" class="btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()" th:if="${reviewDto.review.author != null and #authentication.getPrincipal().getUsername() == reviewDto.review.author.loginId}">수정</a>
                         <a href="#" class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()" th:data-uri="@{|/review/delete/${reviewDto.review.id}|}" th:if="${reviewDto.review.author != null and #authentication.getPrincipal().getUsername() == reviewDto.review.author.loginId}">삭제</a>
+                        <a href="#" class="delete btn btn-sm btn-outline-secondary" sec:authorize="hasRole('ROLE_ADMIN')" th:data-uri="@{|/review/admin/delete/${reviewDto.review.id}|}">삭제(관리자)</a>
                     </div>
                 </div>
             </div>

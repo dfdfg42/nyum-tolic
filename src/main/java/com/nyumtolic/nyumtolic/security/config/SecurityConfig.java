@@ -12,12 +12,19 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter;
+import org.springframework.security.web.authentication.session.*;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
+import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -31,6 +38,11 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http    .addFilterBefore(new IpBlackListFilter(ipService), RequestHeaderAuthenticationFilter.class)
+
+                .sessionManagement(sessionManager -> sessionManager
+                        .sessionAuthenticationStrategy(concurrentSession()) // 세션관리 전략
+                        .maximumSessions(-1) // 최대 동시 세션 수
+                        .expiredSessionStrategy(sessionInformationExpiredStrategy())) // 세션 만료 전략
 
                 .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
                         .requestMatchers(new AntPathRequestMatcher("/**")).permitAll())
@@ -64,6 +76,31 @@ public class SecurityConfig {
     @Bean
     AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    // 세션 전략 세팅
+    @Bean
+    public CompositeSessionAuthenticationStrategy concurrentSession() {
+
+        ConcurrentSessionControlAuthenticationStrategy concurrentAuthenticationStrategy = new ConcurrentSessionControlAuthenticationStrategy(sessionRegistry());
+        List<SessionAuthenticationStrategy> delegateStrategies = new ArrayList<>();
+        delegateStrategies.add(concurrentAuthenticationStrategy); // 동시 세션 제어 전략
+        delegateStrategies.add(new SessionFixationProtectionStrategy()); // 세션 보호 전략
+        delegateStrategies.add(new RegisterSessionAuthenticationStrategy(sessionRegistry())); // 세션 등록 전략
+
+        return new CompositeSessionAuthenticationStrategy(delegateStrategies);
+    }
+
+    // 세션 만료 전략
+    @Bean
+    SessionInformationExpiredStrategy sessionInformationExpiredStrategy() {
+        return new CustomSessionInformationExpiredStrategy();
+    }
+
+    // 세션 관리
+    @Bean
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
     }
 
 }
