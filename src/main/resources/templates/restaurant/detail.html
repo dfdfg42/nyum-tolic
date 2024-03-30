@@ -102,6 +102,14 @@
                         <a href="#" class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()" th:data-uri="@{|/review/delete/${reviewDto.review.id}|}" th:if="${reviewDto.review.author != null and #authentication.getPrincipal().getUsername() == reviewDto.review.author.loginId}">삭제</a>
                         <a href="#" class="delete btn btn-sm btn-outline-secondary" sec:authorize="hasRole('ROLE_ADMIN')" th:data-uri="@{|/review/admin/delete/${reviewDto.review.id}|}">삭제(관리자)</a>
                     </div>
+                    <p class="card-text">
+                        <strong>작성 시간:</strong>
+                        <span th:text="${#temporals.format(reviewDto.review.createDate, 'yyyy-MM-dd HH:mm')}"></span>
+                    </p>
+                    <div th:if="${reviewDto.review.modifyDate != null}" class="card-text">
+                        <strong>수정 시간:</strong>
+                        <span th:text="${#temporals.format(reviewDto.review.modifyDate, 'yyyy-MM-dd HH:mm')}"></span>
+                    </div>
                 </div>
             </div>
         </div>
