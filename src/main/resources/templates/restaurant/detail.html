@@ -99,6 +99,7 @@
                         </a>
                         <a th:href="@{|/review/modify/${reviewDto.review.id}|}" class="btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()" th:if="${reviewDto.review.author != null and #authentication.getPrincipal().getUsername() == reviewDto.review.author.loginId}">수정</a>
                         <a href="#" class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()" th:data-uri="@{|/review/delete/${reviewDto.review.id}|}" th:if="${reviewDto.review.author != null and #authentication.getPrincipal().getUsername() == reviewDto.review.author.loginId}">삭제</a>
+                        <a href="#" class="delete btn btn-sm btn-outline-secondary" sec:authorize="hasRole('ROLE_ADMIN')" th:data-uri="@{|/review/admin/delete/${reviewDto.review.id}|}">삭제(관리자)</a>
                     </div>
                 </div>
             </div>
