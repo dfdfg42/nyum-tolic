@@ -1,4 +1,4 @@
-import com.nyumtolic.nyumtolic.crawler.CatholicCrawlerUtil;
+import com.nyumtolic.nyumtolic.catholic.CatholicCrawlerUtil;
 import org.junit.jupiter.api.Test;
 
 public class CrawlerTest {

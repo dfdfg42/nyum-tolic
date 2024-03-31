@@ -1,4 +1,4 @@
-package com.nyumtolic.nyumtolic.crawler;
+package com.nyumtolic.nyumtolic.catholic;
 
 import com.nyumtolic.nyumtolic.controller.RestaurantController;
 import org.jsoup.Jsoup;
