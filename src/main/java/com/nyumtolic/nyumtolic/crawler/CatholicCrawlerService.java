@@ -1,5 +1,6 @@
 package com.nyumtolic.nyumtolic.crawler;
 
+import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,8 +15,16 @@ public class CatholicCrawlerService {
 
     private final CatholicCafeTableRepository catholicCafeTableRepository;
 
+    @PostConstruct // 서버 실행시 최초 초기화
+    public void onStartup() {
+        updateData();
+    }
+
     @Scheduled(cron = "0 0 0 * * SAT") // 매주 토요일 00:00에 실행
-    // @Scheduled(fixedRate = 60000) 테스팅용 60초
+    public void onSchedule() {
+        updateData();
+    }
+
     public void updateData() {
         Map<String, String> data = CatholicCrawlerUtil.crawlCafeTable();
         CatholicCafeTable catholicCafeTable = getCatholicCafeInfo();
