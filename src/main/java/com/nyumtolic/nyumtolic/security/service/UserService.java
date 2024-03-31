@@ -55,7 +55,7 @@ public class UserService {
         siteUser.setEnabled(false);
         userRepository.save(siteUser);
 
-        List<Object> loggedUsers = sessionRegistry.getAllPrincipals(); // todo 현재 세션을 못 불러옴
+        List<Object> loggedUsers = sessionRegistry.getAllPrincipals();
 
         for (Object principal : loggedUsers) {
             UserDetails userDetails = (UserDetails) principal;
