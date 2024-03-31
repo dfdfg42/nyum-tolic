@@ -1,4 +1,4 @@
-package com.nyumtolic.nyumtolic.crawler;
+package com.nyumtolic.nyumtolic.catholic;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

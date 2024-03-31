@@ -1,4 +1,4 @@
-package com.nyumtolic.nyumtolic.crawler;
+package com.nyumtolic.nyumtolic.catholic;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
