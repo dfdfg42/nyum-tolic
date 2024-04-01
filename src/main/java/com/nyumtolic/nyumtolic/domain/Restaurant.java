@@ -58,4 +58,5 @@ public class Restaurant {
     @Column(name = "userRating")
     private Double userRating;
 
+
 }

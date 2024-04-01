@@ -101,6 +101,10 @@
     <div class="text-center"  style="margin-bottom: 50px;">
         <h1 class="my-4"><strong>-음식점 리스트-</strong></h1>
     </div>
+    <div class="text-center mb-4">
+    <a href="?sort=name" class="btn btn-primary">이름순</a>
+    <a href="?sort=userRating" class="btn btn-primary">유저 평점 순</a>
+    </div>
     <div class="row">
         <div th:each="restaurant : ${restaurants}" class="col-md-2 d-flex align-items-stretch card-column">
             <a th:href="@{/restaurant/detail/{id}(id=${restaurant.id})}" class="text-decoration-none">

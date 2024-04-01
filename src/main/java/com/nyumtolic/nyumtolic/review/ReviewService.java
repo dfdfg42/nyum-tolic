@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,9 +80,6 @@ public class ReviewService {
         return new PageImpl<>(reviewWithVotesDTOs, pageable, results.getTotalElements());
     }
 
-    public List<Restaurant> getRestaurantsSortedByRating(){
-        return restaurantRepository.findAllByOrderByRatingDesc();
-    }
 
     @Transactional
     public void updateRestaurantUserRating(Long restaurantId) {
@@ -98,5 +96,7 @@ public class ReviewService {
         restaurant.setUserRating(averageRating%200000000);
         restaurantRepository.save(restaurant);
     }
+
+
 
 }

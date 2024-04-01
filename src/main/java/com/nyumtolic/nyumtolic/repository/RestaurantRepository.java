@@ -10,10 +10,9 @@ import java.util.List;
 @Repository
 public interface RestaurantRepository extends JpaRepository<Restaurant,Long> {
 
-    @Query("SELECT r FROM Restaurant r JOIN r.categories c WHERE c.id = :categoryId")
+    @Query("SELECT r FROM Restaurant r JOIN r.categories c WHERE c.id = :categoryId ORDER BY r.id")
     List<Restaurant> findAllByCategoryId(Long categoryId);
 
-    List<Restaurant> findAllByOrderByRatingDesc();
 
 
 }

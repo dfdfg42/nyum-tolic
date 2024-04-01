@@ -7,6 +7,7 @@ import com.nyumtolic.nyumtolic.repository.RestaurantRepository;
 import com.nyumtolic.nyumtolic.review.Review;
 import com.nyumtolic.nyumtolic.review.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,10 +32,19 @@ public class RestaurantService {
 
 
 
+    //음식점 버튼 정렬 (기본 list 페이지)
+    public List<Restaurant> getAllRestaurantsBySorted(String sort){
+        if (sort.equals("userRating")){
+            return restaurantRepository.findAll(Sort.by(Sort.Direction.DESC,sort));
+        }
+        return restaurantRepository.findAll(Sort.by(sort));
+    }
+
     // 전체 Restaurant 리스트를 반환하는 메서드
     public List<Restaurant> getAllRestaurants() {
-        return restaurantRepository.findAll();
+        return restaurantRepository.findAll(Sort.by("id"));
     }
+
 
     // 특정 id를 가진 Restaurant 반환하는 메서드
     public Optional<Restaurant> getRestaurantsById(Long id){
@@ -81,8 +91,6 @@ public class RestaurantService {
         }
         return false;
     }
-
-
 
 
 
