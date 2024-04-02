@@ -67,10 +67,13 @@ public class RestaurantController {
         List<Restaurant> restaurants;
         if (categoryId != null) {
 
-
-
+            if ("userRating".equals(sort)||"name".equals(sort)){
+                restaurants = restaurantService.getAllByCategoryIdSorted(categoryId, sort);
+            }
+            else {
                 // 특정 카테고리 ID가 제공된 경우, 해당 카테고리의 맛집 리스트를 가져옵니다.
                 restaurants = restaurantService.findAllByCategoryId(categoryId);
+            }
         }
         else {
             if ("userRating".equals(sort)||"name".equals(sort)){
@@ -82,6 +85,7 @@ public class RestaurantController {
             }
         }
         model.addAttribute("restaurants", restaurants);
+        model.addAttribute("categoryId",categoryId);
         return "restaurant/list"; // 맛집 리스트 페이지로 이동
     }
 

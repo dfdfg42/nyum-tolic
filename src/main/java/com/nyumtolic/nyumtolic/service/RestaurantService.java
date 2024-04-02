@@ -34,16 +34,25 @@ public class RestaurantService {
 
     //음식점 버튼 정렬 (기본 list 페이지)
     public List<Restaurant> getAllRestaurantsBySorted(String sort){
-        if (sort.equals("userRating")){
+        if (sort.equals("userRating")){ // 유저 별점 순 정렬, 내림차순
             return restaurantRepository.findAll(Sort.by(Sort.Direction.DESC,sort));
         }
-        return restaurantRepository.findAll(Sort.by(sort));
+        return restaurantRepository.findAll(Sort.by(sort)); // 이름 정렬 , 오름차순
+    }
+
+    public List<Restaurant> getAllByCategoryIdSorted(Long id ,String sort){
+        if (sort.equals("userRating")){
+            return restaurantRepository.findAllByCategoryIdOrderByUserRating(id);
+        }
+        else return restaurantRepository.findAllByCategoryIdOrderByName(id);
+
     }
 
     // 전체 Restaurant 리스트를 반환하는 메서드
     public List<Restaurant> getAllRestaurants() {
         return restaurantRepository.findAll(Sort.by("id"));
     }
+
 
 
     // 특정 id를 가진 Restaurant 반환하는 메서드
