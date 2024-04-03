@@ -34,6 +34,16 @@
             max-height: 100%; /* 이미지가 컨테이너를 넘어가지 않도록 최대 높이 설정 */
             object-fit: cover; /* 비율을 유지하며 컨테이너를 채움 */
         }
+        .time-container {
+            display: flex;
+            justify-content: start;
+            align-items: center;
+        }
+
+        .time-entry {
+            margin-right: 20px; /* 우측 여백 설정, 필요에 따라 조절 */
+        }
+
     </style>
 </head>
 
@@ -102,14 +112,17 @@
                         <a href="#" class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()" th:data-uri="@{|/review/delete/${reviewDto.review.id}|}" th:if="${reviewDto.review.author != null and #authentication.getPrincipal().getUsername() == reviewDto.review.author.loginId}">삭제</a>
                         <a href="#" class="delete btn btn-sm btn-outline-secondary" sec:authorize="hasRole('ROLE_ADMIN')" th:data-uri="@{|/review/admin/delete/${reviewDto.review.id}|}">삭제(관리자)</a>
                     </div>
-                    <p class="card-text">
-                        <strong>작성 시간:</strong>
-                        <span th:text="${#temporals.format(reviewDto.review.createDate, 'yyyy-MM-dd HH:mm')}"></span>
-                    </p>
-                    <div th:if="${reviewDto.review.modifyDate != null}" class="card-text">
-                        <strong>수정 시간:</strong>
-                        <span th:text="${#temporals.format(reviewDto.review.modifyDate, 'yyyy-MM-dd HH:mm')}"></span>
+                    <div class="time-container">
+                        <div class="time-entry">
+                            <strong>작성 시간:</strong>
+                            <span th:text="${#temporals.format(reviewDto.review.createDate, 'yyyy-MM-dd HH:mm')}"></span>
+                        </div>
+                        <div th:if="${reviewDto.review.modifyDate != null}" class="time-entry">
+                            <strong>수정 시간:</strong>
+                            <span th:text="${#temporals.format(reviewDto.review.modifyDate, 'yyyy-MM-dd HH:mm')}"></span>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </div>

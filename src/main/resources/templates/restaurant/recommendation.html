@@ -55,7 +55,9 @@
             position: relative;
             overflow: hidden;
         }
-
+        .user-rating .bi {
+            color: #2FCC71;
+        }
         .recommend-button::before {
             content: "";
             position: absolute;
@@ -120,6 +122,15 @@
                                           (${recommendedRestaurant.rating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
                     </span>
                         <span th:text="${recommendedRestaurant.rating}"></span>
+                    </div>
+                    <!-- 유저 평균 평점 -->
+                    <div class="user-rating">
+                        <span th:each="star : ${#numbers.sequence(1, 5)}">
+                                    <i class="bi star-icon"
+                                       th:classappend="${(recommendedRestaurant.userRating != null ? recommendedRestaurant.userRating : 0.0) >= star} ? 'bi-star-fill' :
+                                            (${(recommendedRestaurant.userRating != null ? recommendedRestaurant.userRating : 0.0) >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
+                            </span>
+                        <span class="rating-number" th:text="${recommendedRestaurant.userRating != null ? recommendedRestaurant.userRating : 0.0}"></span>
                     </div>
                     <p class="card-text"><strong>주소:</strong> <span th:text="${recommendedRestaurant.address}">주소</span></p>
                     <p class="card-text"><strong>전화번호:</strong> <span th:text="${recommendedRestaurant.phoneNumber}">전화번호</span></p>
