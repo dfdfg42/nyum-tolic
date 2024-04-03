@@ -39,6 +39,11 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
     }
 
     @Override
+    public String getName() {
+        return siteUser.getNickname();
+    }
+
+    @Override
     public boolean isEnabled() {
         return siteUser.getEnabled();
     }
@@ -56,11 +61,6 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
-    }
-
-    @Override
-    public String getName() {
-        return null;
     }
 
     @Override
