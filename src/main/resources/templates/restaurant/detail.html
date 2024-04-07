@@ -93,7 +93,7 @@
     </div>
 </div>
 
-<div class="reviews-section mt-4">
+<div class="container reviews-section mt-4">
     <div class="row row-cols-1 row-cols-md-2 g-4">
         <div th:each="reviewDto : ${reviewsPage.content}" class="col">
             <div class="card">
@@ -139,9 +139,7 @@
     </nav>
 </div>
 
-<div class="review-section mt-4">
-
-
+<div class="container review-section mt-4 mb-5">
     <h5 class="mb-3">리뷰 작성</h5>
     <form th:action="@{/review/create/{restaurantId}(restaurantId=${restaurant.id})}" method="post" enctype="multipart/form-data">
         <div class="mb-3">
