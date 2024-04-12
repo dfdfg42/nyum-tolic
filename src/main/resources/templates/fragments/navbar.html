@@ -24,7 +24,7 @@
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <meta name="_csrf" th:content="${_csrf.token}">
 
-    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #fa9069;">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" th:href="@{/}">
                 <img src="/images/logo.png" alt="Logo" style="height: 30px;"> <strong>냠톨릭</strong>
@@ -33,7 +33,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
+                <ul class="navbar-nav"  style="margin-right: auto;">
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/restaurant/recommendation}"><strong>음식점 랜덤 추천</strong></a>
                     </li>
@@ -61,20 +61,21 @@
                         </ul>
                     </li>
                 </ul>
-            </div>
-            <a class="nav-link" th:href="@{/user/suggestions}">건의사항</a>
-            <!-- Kakao login button or logout button based on authentication status -->
-            <div class="d-flex">
+
                 <ul class="navbar-nav">
+                    <a class="nav-link" th:href="@{/user/suggestions}">건의사항</a>
+                    <!-- Kakao login button or logout button based on authentication status -->
                     <li class="nav-item">
-                        <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/user/login}">로그인</a>
+                        <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/user/login}"><strong>로그인</strong></a>
                         <button type="button" data-bs-toggle="modal" data-bs-target="#nicknameModal" class="nav-link" sec:authorize="isAuthenticated()" style="text-decoration: underline;">
+                            <strong>
                             [[${#authentication.principal.name}]]님, 환영합니다!
+                            </strong>
                         </button>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/user/signup}">회원가입</a>
-                        <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/user/logout}">로그아웃</a>
+                        <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/user/signup}"><strong>회원가입</strong></a>
+                        <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/user/logout}"><strong>로그아웃</strong></a>
                     </li>
                 </ul>
             </div>
