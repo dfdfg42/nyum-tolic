@@ -179,7 +179,7 @@
 
 <div th:replace="fragments/footer.html :: custom-footer"></div>
 <script src="/js/bootstrap.bundle.min.js"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCK4Mx_MwZDuVOmzuLesNYjJXbn-2gINBc&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCK4Mx_MwZDuVOmzuLesNYjJXbn-2gINBc&callback=initMap" async ></script>
 
 <script layout:fragment="script" type='text/javascript'>
     document.querySelectorAll(".delete, .recommend").forEach(function(element) {
@@ -192,7 +192,7 @@
 </script>
 
 <script type='text/javascript'>
-    function initMap() {
+    async function initMap() {
         var restaurantLocation = {
             lat: parseFloat([[${restaurant.latitude}]]),
             lng: parseFloat([[${restaurant.longitude}]])

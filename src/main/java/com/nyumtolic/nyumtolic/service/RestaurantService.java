@@ -45,7 +45,6 @@ public class RestaurantService {
             return restaurantRepository.findAllByCategoryIdOrderByUserRating(id);
         }
         else return restaurantRepository.findAllByCategoryIdOrderByName(id);
-
     }
 
     // 전체 Restaurant 리스트를 반환하는 메서드
