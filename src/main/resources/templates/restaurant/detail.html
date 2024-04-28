@@ -72,6 +72,12 @@
         .rating .bi-star-half {
             color: #ffc107; /* 반 별 색상 */
         }
+        .bi-star, .bi-star-fill, .bi-star-half {
+            color: #ccc; /* Default color for unselected stars */
+        }
+        .bi-star-fill, .bi-star-half {
+            color: #2FCC71; /* Green color for filled and half-filled stars */
+        }
 
         .rating .bi-star {
             color: #e4e5e9; /* 빈 별 색상 */
@@ -174,11 +180,13 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="card-title nickname" th:text="${reviewDto.review.author.nickname}"></h5>
                         <div class="rating">
-                            <span th:each="star : ${#numbers.sequence(1,5)}">
-                                <i class="bi"
-                                   th:classappend="${reviewDto.review.rating >= star} ? 'bi-star-fill' :
-                                                    (${reviewDto.review.rating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
-                            </span>
+                                <span th:each="star : ${#numbers.sequence(1,5)}">
+                                    <i class="bi"
+                                       th:classappend="${reviewDto.review.rating >= star} ? 'bi-star-fill' :
+                                                        (${reviewDto.review.rating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"
+                                       th:style="'color: ' + (${reviewDto.review.rating >= star} ? '#2FCC71' :
+                                                            (${reviewDto.review.rating >= star - 0.5} ? '#2FCC71' : '#ccc'))"></i>
+                                </span>
                         </div>
                     </div>
                     <p class="card-text review-content" th:text="${reviewDto.review.content}"></p>
