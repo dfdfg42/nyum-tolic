@@ -18,6 +18,19 @@
             display: flex; /* Flexbox 레이아웃 사용 */
             justify-content: center; /* 가로 방향에서 중앙 정렬 */
         }
+        .nickname {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+        .review-content {
+            font-size: 1em;
+            color: #666;
+            margin-top: 10px;
+            background-color: #f8f9fa;
+            padding: 8px;
+            border-radius: 4px;
+        }
 
         .rating .bi-star-fill {
             color: #ffc107;
@@ -43,15 +56,26 @@
             object-fit: cover; /* 비율을 유지하며 컨테이너를 채움 */
         }
         .time-container {
-            display: flex;
-            justify-content: start;
-            align-items: center;
+            margin-top: 10px; /* 추가된 시간 컨테이너에 상단 여백 추가 */
+            font-size: 14px; /* 시간 표시 폰트 사이즈 */
+            color: #666; /* 색상 */
         }
 
         .time-entry {
-            margin-right: 20px; /* 우측 여백 설정, 필요에 따라 조절 */
+            margin-right: 20px; /* 오른쪽 여백 추가 */
         }
 
+        .rating .bi-star-fill {
+            color: #ffc107; /* 별점 색상 */
+        }
+
+        .rating .bi-star-half {
+            color: #ffc107; /* 반 별 색상 */
+        }
+
+        .rating .bi-star {
+            color: #e4e5e9; /* 빈 별 색상 */
+        }
         .review-section .card {
             background-color: #f8f9fa; /* Light grey background */
             border: 1px solid #dee2e6; /* Slight border for definition */
@@ -145,22 +169,19 @@
 <div class="container reviews-section mt-4">
     <div class="row row-cols-1 row-cols-md-2 g-4">
         <div th:each="reviewDto : ${reviewsPage.content}" class="col">
-            <div class="card">
+            <div class="card h-100">
                 <div class="card-body">
-                    <h5 class="card-title" th:text="${reviewDto.review.author.nickname}"></h5>
-                    <a href="#" class="delete btn btn-sm btn-outline-secondary" sec:authorize="hasRole('ROLE_ADMIN')" th:data-uri="@{|/user/admin/${reviewDto.review.author.loginId}/ban|}">벤(관리자)</a>
-                    <p class="card-text" th:text="${reviewDto.review.content}"></p>
-                    <div class="rating mt-2">
-                        <span th:text="'별점: ' + ${reviewDto.review.rating}"></span>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title nickname" th:text="${reviewDto.review.author.nickname}"></h5>
+                        <div class="rating">
+                            <span th:each="star : ${#numbers.sequence(1,5)}">
+                                <i class="bi"
+                                   th:classappend="${reviewDto.review.rating >= star} ? 'bi-star-fill' :
+                                                    (${reviewDto.review.rating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
+                            </span>
+                        </div>
                     </div>
-                    <div class="mt-3">
-                        <a href="#" class="recommend btn btn-sm btn-outline-secondary" th:data-uri="@{|/review/vote/${reviewDto.review.id}|}">
-                            추천 <span class="badge rounded-pill bg-success" th:text="${reviewDto.votesCount}"></span>
-                        </a>
-                        <a th:href="@{|/review/modify/${reviewDto.review.id}|}" class="btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()" th:if="${reviewDto.review.author != null and #authentication.getPrincipal().getUsername() == reviewDto.review.author.loginId}">수정</a>
-                        <a href="#" class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()" th:data-uri="@{|/review/delete/${reviewDto.review.id}|}" th:if="${reviewDto.review.author != null and #authentication.getPrincipal().getUsername() == reviewDto.review.author.loginId}">삭제</a>
-                        <a href="#" class="delete btn btn-sm btn-outline-secondary" sec:authorize="hasRole('ROLE_ADMIN')" th:data-uri="@{|/review/admin/delete/${reviewDto.review.id}|}">삭제(관리자)</a>
-                    </div>
+                    <p class="card-text review-content" th:text="${reviewDto.review.content}"></p>
                     <div class="time-container">
                         <div class="time-entry">
                             <strong>작성 시간:</strong>
@@ -171,12 +192,20 @@
                             <span th:text="${#temporals.format(reviewDto.review.modifyDate, 'yyyy-MM-dd HH:mm')}"></span>
                         </div>
                     </div>
-
+                    <div class="mt-3">
+                        <a href="#" class="recommend btn btn-sm btn-outline-secondary" th:data-uri="@{|/review/vote/${reviewDto.review.id}|}">
+                            추천 <span class="badge rounded-pill bg-success" th:text="${reviewDto.votesCount}"></span>
+                        </a>
+                        <a th:href="@{|/review/modify/${reviewDto.review.id}|}" class="btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()" th:if="${reviewDto.review.author != null and #authentication.getPrincipal().getUsername() == reviewDto.review.author.loginId}">수정</a>
+                        <a href="#" class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()" th:data-uri="@{|/review/delete/${reviewDto.review.id}|}" th:if="${reviewDto.review.author != null and #authentication.getPrincipal().getUsername() == reviewDto.review.author.loginId}">삭제</a>
+                        <a href="#" class="delete btn btn-sm btn-outline-secondary" sec:authorize="hasRole('ROLE_ADMIN')" th:data-uri="@{|/review/admin/delete/${reviewDto.review.id}|}">삭제(관리자)</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 
 <div th:if="${reviewsPage.totalPages > 1}" class="pagination-container mt-4">
     <nav>
