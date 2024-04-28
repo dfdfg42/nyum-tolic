@@ -13,9 +13,12 @@
     <link rel="stylesheet" href="/css/my-fonts.css">
     <style>
         .pagination-container {
-            text-align: center;
-            margin-top: 20px;
+            text-align: center; /* 텍스트를 중앙 정렬 */
+            width: 100%; /* 컨테이너의 너비를 최대로 설정 */
+            display: flex; /* Flexbox 레이아웃 사용 */
+            justify-content: center; /* 가로 방향에서 중앙 정렬 */
         }
+
         .rating .bi-star-fill {
             color: #ffc107;
         }
@@ -48,6 +51,47 @@
         .time-entry {
             margin-right: 20px; /* 우측 여백 설정, 필요에 따라 조절 */
         }
+
+        .review-section .card {
+            background-color: #f8f9fa; /* Light grey background */
+            border: 1px solid #dee2e6; /* Slight border for definition */
+            box-shadow: 0 2px 4px rgba(0,0,0,.05); /* Soft shadow for depth */
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; /* A clean, friendly font */
+            color: #333; /* Dark grey text for better readability */
+            font-size: 16px; /* Slightly larger base font size for readability */
+            line-height: 1.5; /* Adequate line height for reading comfort */
+        }
+
+        .review-section .card-title {
+            font-size: 20px; /* 제목의 글자 크기를 크게 설정 */
+            color: #007bff; /* 강조를 위해 부트스트랩의 기본 'primary' 색상 사용 */
+            font-weight: bold; /* 글자를 굵게 */
+            font-weight: 700; /* 더 굵은 글자로 설정하기 위해 700으로 변경 */
+        }
+
+        .review-section .form-label {
+            font-weight: bold; /* Make labels bold */
+            font-size: 14px; /* Optimal size for labels */
+            margin-bottom: 0.5rem; /* Space below labels */
+        }
+
+        .review-section .form-select, .review-section .form-control {
+            font-size: 14px; /* Maintain uniform font size for inputs */
+            border-radius: 0.25rem; /* Rounded borders for inputs */
+            padding: 0.5rem 0.75rem; /* Padding inside inputs for ease of use */
+        }
+
+        .review-section .btn-primary {
+            font-size: 16px; /* Larger font size for button text */
+            padding: 0.5rem 1rem; /* Comfortable padding for button presses */
+            border-radius: 0.375rem; /* Softly rounded corners on the button */
+        }
+
+        .review-section textarea.form-control {
+            min-height: 120px; /* Larger textarea for more text */
+        }
+
+
 
     </style>
 </head>
@@ -145,41 +189,39 @@
 </div>
 
 <div class="container review-section mt-4 mb-5">
-    <h5 class="mb-3">리뷰 작성</h5>
-    <form th:action="@{/review/create/{restaurantId}(restaurantId=${restaurant.id})}" method="post" enctype="multipart/form-data">
-        <div class="mb-3">
-            <label for="rating" class="form-label">별점</label>
-            <div class="mb-3">
-                <select class="form-select" name="rating" required>
-                    <option value="">별점을 선택하세요</option>
-                    <option value="5">5</option>
-                    <option value="4.5">4.5</option>
-                    <option value="4">4</option>
-                    <option value="3.5">3.5</option>
-                    <option value="3">3</option>
-                    <option value="2.5">2.5</option>
-                    <option value="2">2</option>
-                    <option value="1.5">1.5</option>
-                    <option value="1">1</option>
-                    <option value="0.5">0.5</option>
-                    <option value="0">0</option>
-                </select>
-            </div>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title mb-3">리뷰 작성</h5>
+            <form th:action="@{/review/create/{restaurantId}(restaurantId=${restaurant.id})}" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="rating" class="form-label">별점</label>
+                    <select class="form-select" name="rating" required>
+                        <option value="">별점을 선택하세요</option>
+                        <option value="5">5</option>
+                        <option value="4.5">4.5</option>
+                        <option value="4">4</option>
+                        <option value="3.5">3.5</option>
+                        <option value="3">3</option>
+                        <option value="2.5">2.5</option>
+                        <option value="2">2</option>
+                        <option value="1.5">1.5</option>
+                        <option value="1">1</option>
+                        <option value="0.5">0.5</option>
+                        <option value="0">0</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="content" class="form-label">리뷰 내용</label>
+                    <textarea class="form-control" id="content" name="content" rows="3"
+                              th:placeholder="${#authorization.expression('isAuthenticated()') ? '리뷰 내용' : '로그인을 해야 리뷰작성이 가능합니다'}"
+                              th:disabled="${#authorization.expression('!isAuthenticated()')}"
+                              th:readonly="${#authorization.expression('!isAuthenticated()')}"
+                              th:required="${#authorization.expression('isAuthenticated()')}"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" th:disabled="${#authorization.expression('!isAuthenticated()')}">제출</button>
+            </form>
         </div>
-        <div class="mb-3">
-            <label for="content" class="form-label">리뷰 내용</label>
-            <textarea class="form-control" id="content" name="content" rows="3"
-                      th:placeholder="${#authorization.expression('isAuthenticated()') ? '리뷰 내용' : '로그인을 해야 리뷰작성이 가능합니다'}"
-                      th:disabled="${#authorization.expression('!isAuthenticated()')}"
-                      th:readonly="${#authorization.expression('!isAuthenticated()')}"
-                      th:required="${#authorization.expression('isAuthenticated()')}"></textarea>
-        </div>
-        <div class="mb-3">
-            <label for="image" class="form-label">사진 첨부</label>
-            <input type="file" class="form-control" id="image" name="image" accept="image/*">
-        </div>
-        <button type="submit" class="btn btn-primary" th:disabled="${#authorization.expression('!isAuthenticated()')}">제출</button>
-    </form>
+    </div>
 </div>
 
 <div th:replace="fragments/footer.html :: custom-footer"></div>
