@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="/css/bootstrap.css">
@@ -28,6 +29,20 @@
             text-align: center;
             margin-bottom: 30px;
         }
+        @media (max-width: 767px) {
+            .form-container {
+                width: 90%;
+                margin: 20px auto;
+                padding: 20px;
+            }
+            input[type="text"], input[type="password"], .btn {
+                font-size: 16px;
+                height: 50px;
+            }
+        }
+
+
+
     </style>
 </head>
 <body>
