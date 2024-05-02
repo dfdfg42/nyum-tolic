@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>맛집 랜덤 추천</title>
     <link rel="stylesheet" href="/css/bootstrap.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
@@ -83,7 +83,7 @@
             transition: transform 0.5s ease, box-shadow 0.5s ease;
         }
         .card {
-            transition: transform 0.2s; /* 애니메이션 효과 속도 조정 */
+            transition: transform 0.2s;
         }
 
         .card:hover {
@@ -91,118 +91,211 @@
             z-index: 10; /* 확대된 컨테이너가 다른 요소들 위에 표시되도록 z-index 조정 */
         }
 
+        @media (max-width: 767px) {
+            .desktop-version {
+                display: none;
+            }
+            .mobile-version {
+                display: block;
+            }
+            .custom-label {
+                background: linear-gradient(to right, #ff9a9e, #fad0c4);
+                color: #fff;
+                padding: 10px;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+                font-weight: bold;
+                transition: background-color 0.3s;
+                cursor: pointer;
+                width: 105%; /* 100 * 1.05 */
+                box-sizing: border-box;
+            }
+            .excluded-categories-mobile {
+                font-size: 16px;
+                padding: 12px;
+                height: auto;
+                margin: 10px;
+            }
+        }
+        @media (min-width: 768px) {
+            .desktop-version {
+                display: block;
+            }
+            .mobile-version {
+                display: none;
+            }
+        }
+
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/pulltorefreshjs/dist/pulltorefresh.min.js"></script>
 </head>
 
 <body class="d-fledex flex-column min-vh-100">
 <!-- Navbar Section -->
 <div th:replace="fragments/navbar :: navbar"></div>
 
-<div class="container mt-3 ps-0">
-    <p class="text-left text-muted small">냠톨릭-가톨릭대 주변 음식점 사이트</p>
-</div>
+<div class="desktop-version">
+    <div class="container mt-3 ps-0">
+        <p class="text-left text-muted small">냠톨릭-가톨릭대 주변 음식점 사이트</p>
+    </div>
+    <div class="text-center title-space">
+        <button id="recommendButton" class="btn btn-lg btn-primary recommend-button">
+            <strong>음식점 랜덤 추천</strong>
+        </button>
+    </div>
 
-<div class="text-center title-space">
-    <button id="recommendButton" class="btn btn-lg btn-primary recommend-button">
-        <strong>음식점 랜덤 추천</strong>
-    </button>
-</div>
-
-<div th:if="${recommendedRestaurant}" class="container mt-4">
-    <a th:href="@{/restaurant/detail/{id}(id=${recommendedRestaurant.id})}" class="text-decoration-none">
-    <div class="card mb-3">
-        <div class="row g-0">
-            <div class="col-md-4 d-flex align-items-center justify-content-center p-3">
-                <div class="image-container">
-                    <img th:src="@{'/' + ${recommendedRestaurant.photo}}" class="img-fluid rounded-start" alt="음식점 사진">
-                </div>
-            </div>
-            <div class="col-md-8">
-                <div class="card-body">
-                    <h5 class="card-title" th:text="${recommendedRestaurant.name}">음식점 이름</h5>
-                    <div class="rating mt-2">
-                    <span th:each="star : ${#numbers.sequence(1, 5)}">
-                        <i class="bi"
-                           th:classappend="${recommendedRestaurant.rating >= star} ? 'bi-star-fill' :
-                                          (${recommendedRestaurant.rating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
-                    </span>
-                        <span th:text="${recommendedRestaurant.rating}"></span>
+    <div th:if="${recommendedRestaurant}" class="container mt-4">
+        <a th:href="@{/restaurant/detail/{id}(id=${recommendedRestaurant.id})}" class="text-decoration-none">
+            <div class="card mb-3">
+                <div class="row g-0">
+                    <div class="col-md-4 d-flex align-items-center justify-content-center p-3">
+                        <div class="image-container">
+                            <img th:src="@{'/' + ${recommendedRestaurant.photo}}" class="img-fluid rounded-start" alt="음식점 사진">
+                        </div>
                     </div>
-                    <!-- 유저 평균 평점 -->
-                    <div class="user-rating">
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${recommendedRestaurant.name}">음식점 이름</h5>
+                            <div class="rating mt-2">
                         <span th:each="star : ${#numbers.sequence(1, 5)}">
-                                    <i class="bi star-icon"
-                                       th:classappend="${(recommendedRestaurant.userRating != null ? recommendedRestaurant.userRating : 0.0) >= star} ? 'bi-star-fill' :
-                                            (${(recommendedRestaurant.userRating != null ? recommendedRestaurant.userRating : 0.0) >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
-                            </span>
-                        <span class="rating-number" th:text="${recommendedRestaurant.userRating != null ? recommendedRestaurant.userRating : 0.0}"></span>
+                            <i class="bi"
+                               th:classappend="${recommendedRestaurant.rating >= star} ? 'bi-star-fill' :
+                                              (${recommendedRestaurant.rating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
+                        </span>
+                                <span th:text="${recommendedRestaurant.rating}"></span>
+                            </div>
+                            <!-- 유저 평균 평점 -->
+                            <div class="user-rating">
+                            <span th:each="star : ${#numbers.sequence(1, 5)}">
+                                        <i class="bi star-icon"
+                                           th:classappend="${(recommendedRestaurant.userRating != null ? recommendedRestaurant.userRating : 0.0) >= star} ? 'bi-star-fill' :
+                                                (${(recommendedRestaurant.userRating != null ? recommendedRestaurant.userRating : 0.0) >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
+                                </span>
+                                <span class="rating-number" th:text="${recommendedRestaurant.userRating != null ? recommendedRestaurant.userRating : 0.0}"></span>
+                            </div>
+                            <p class="card-text"><strong>주소:</strong> <span th:text="${recommendedRestaurant.address}">주소</span></p>
+                            <p class="card-text"><strong>전화번호:</strong> <span th:text="${recommendedRestaurant.phoneNumber}">전화번호</span></p>
+                            <p class="card-text"><strong>소요 시간:</strong> <span th:text="${recommendedRestaurant.travelTime} + '분'">소요 시간</span></p>
+                            <p class="card-text"><strong>설명:</strong> <span th:text="${recommendedRestaurant.description}">설명</span></p>
+                            <p class="card-text"><strong>카테고리:</strong><span th:each="category, iterStat : ${recommendedRestaurant.categories}" th:text="${category.name} + (${iterStat.last} ? '' : ', ')">카테고리</span></p>
+                            <p class="card-text"><strong>대표 메뉴:</strong><span th:each="menu, iterStat : ${recommendedRestaurant.menu}" th:text="${menu} + (${iterStat.last} ? '' : ', ')">메뉴</span></p>
+                        </div>
                     </div>
-                    <p class="card-text"><strong>주소:</strong> <span th:text="${recommendedRestaurant.address}">주소</span></p>
-                    <p class="card-text"><strong>전화번호:</strong> <span th:text="${recommendedRestaurant.phoneNumber}">전화번호</span></p>
-                    <p class="card-text"><strong>소요 시간:</strong> <span th:text="${recommendedRestaurant.travelTime} + '분'">소요 시간</span></p>
-                    <p class="card-text"><strong>설명:</strong> <span th:text="${recommendedRestaurant.description}">설명</span></p>
-                    <p class="card-text"><strong>카테고리:</strong><span th:each="category, iterStat : ${recommendedRestaurant.categories}" th:text="${category.name} + (${iterStat.last} ? '' : ', ')">카테고리</span></p>
-                    <p class="card-text"><strong>대표 메뉴:</strong><span th:each="menu, iterStat : ${recommendedRestaurant.menu}" th:text="${menu} + (${iterStat.last} ? '' : ', ')">메뉴</span></p>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
-    </a>
-</div>
 
-<div th:unless="${recommendedRestaurant}" class="container mt-4 info-placeholder">
-    <!-- 음식점 정보가 없을 경우 보여질 공간 -->
-</div>
-<!--<div th:if="${recommendedRestaurant == null}" class="container mt-4 info-placeholder">-->
-<!--    <div class="card">-->
-<!--        <div class="card-body text-center">-->
-<!--            <h3 class="card-title mb-4">죄송합니다! 선택한 카테고리에 맞는 맛집을 찾을 수 없습니다.</h3>-->
-<!--            <p class="card-text mb-4">선택한 카테고리를 조정하거나 새로운 카테고리를 선택해 보세요.</p>-->
-<!--            <div class="icon-container mb-4">-->
-<!--                <i class="fas fa-utensils fa-5x text-muted"></i>-->
-<!--            </div>-->
-<!--            <button class="btn btn-primary btn-lg recommend-button" onclick="resetCategories()">카테고리 초기화</button>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-</body>
-
-<div class="d-flex justify-content-center">
-    <form th:action="@{/restaurant/recommendation}" method="post" class="w-50">
-        <div class="row g-2 align-items-center">
-            <div class="col">
-                <label for="excludedCategories" class="form-label"><strong>제외할 카테고리를 골라주세요:</strong></label>
-                <input type="text" class="form-control" id="excludedCategories" name="excludedCategories"
-                       th:value="${excludedCategories}" placeholder="제외할 카테고리를 아래에서 골라주세요!">
+    <div class="d-flex justify-content-center">
+        <form th:action="@{/restaurant/recommendation}" method="post" class="w-50">
+            <div class="row g-2 align-items-center">
+                <div class="col">
+                    <label class="form-label"><strong>제외할 카테고리를 골라주세요:</strong></label>
+                    <input type="text" class="form-control excluded-categories-desktop" name="excludedCategories"
+                           th:value="${excludedCategories}" placeholder="제외할 카테고리를 아래에서 골라주세요!">
+                </div>
             </div>
+        </form>
+    </div>
+
+    <div class="category-buttons">
+        <div th:each="category : ${mainCategories}">
+            <button type="button" class="btn btn-primary m-1"
+                    th:data-category-name="${category.name}" onclick="toggleCategory(this)">
+                <span th:text="${category.name}"></span>
+            </button>
         </div>
-    </form>
-</div>
-
-<div class="category-buttons">
-    <div th:each="category : ${mainCategories}">
-        <button type="button" class="btn btn-primary m-1"
-                th:data-category-name="${category.name}" onclick="toggleCategory(this)">
-            <span th:text="${category.name}"></span>
-        </button>
-    </div>
-    <div th:each="category : ${otherCategories}">
-        <button type="button" class="btn btn-secondary m-1"
-                th:data-category-name="${category.name}" onclick="toggleCategory(this)">
-            <span th:text="${category.name}"></span>
-        </button>
+        <div th:each="category : ${otherCategories}">
+            <button type="button" class="btn btn-secondary m-1"
+                    th:data-category-name="${category.name}" onclick="toggleCategory(this)">
+                <span th:text="${category.name}"></span>
+            </button>
+        </div>
     </div>
 </div>
 
-<div th:replace="fragments/footer.html :: custom-footer"></div>
+<div class="mobile-version">
+    <div class="container mt-3 ps-0 text-center">
+        <div class="custom-label">화면을 위로 튕겨주세요</div>
+    </div>
+
+    <div th:if="${recommendedRestaurant}" class="container mt-4">
+        <a th:href="@{/restaurant/detail/{id}(id=${recommendedRestaurant.id})}" class="text-decoration-none">
+            <div class="card mb-3">
+                <div class="row g-0">
+                    <div class="col-md-4 d-flex align-items-center justify-content-center p-3">
+                        <div class="image-container">
+                            <img th:src="@{'/' + ${recommendedRestaurant.photo}}" class="img-fluid rounded-start" alt="음식점 사진">
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${recommendedRestaurant.name}">음식점 이름</h5>
+                            <div class="rating mt-2">
+                        <span th:each="star : ${#numbers.sequence(1, 5)}">
+                            <i class="bi"
+                               th:classappend="${recommendedRestaurant.rating >= star} ? 'bi-star-fill' :
+                                              (${recommendedRestaurant.rating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
+                        </span>
+                                <span th:text="${recommendedRestaurant.rating}"></span>
+                            </div>
+                            <!-- 유저 평균 평점 -->
+                            <div class="user-rating">
+                            <span th:each="star : ${#numbers.sequence(1, 5)}">
+                                        <i class="bi star-icon"
+                                           th:classappend="${(recommendedRestaurant.userRating != null ? recommendedRestaurant.userRating : 0.0) >= star} ? 'bi-star-fill' :
+                                                (${(recommendedRestaurant.userRating != null ? recommendedRestaurant.userRating : 0.0) >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
+                                </span>
+                                <span class="rating-number" th:text="${recommendedRestaurant.userRating != null ? recommendedRestaurant.userRating : 0.0}"></span>
+                            </div>
+                            <p class="card-text"><strong>주소:</strong> <span th:text="${recommendedRestaurant.address}">주소</span></p>
+                            <p class="card-text"><strong>전화번호:</strong> <span th:text="${recommendedRestaurant.phoneNumber}">전화번호</span></p>
+                            <p class="card-text"><strong>소요 시간:</strong> <span th:text="${recommendedRestaurant.travelTime} + '분'">소요 시간</span></p>
+                            <p class="card-text"><strong>설명:</strong> <span th:text="${recommendedRestaurant.description}">설명</span></p>
+                            <p class="card-text"><strong>카테고리:</strong><span th:each="category, iterStat : ${recommendedRestaurant.categories}" th:text="${category.name} + (${iterStat.last} ? '' : ', ')">카테고리</span></p>
+                            <p class="card-text"><strong>대표 메뉴:</strong><span th:each="menu, iterStat : ${recommendedRestaurant.menu}" th:text="${menu} + (${iterStat.last} ? '' : ', ')">메뉴</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="d-flex justify-content-center">
+        <form th:action="@{/restaurant/recommendation}" method="post" class="w-50">
+            <div class="row g-2 align-items-center">
+                <div class="col text-center">
+                    <input type="text" class="form-control excluded-categories-mobile" name="excludedCategories"
+                           th:value="${excludedCategories}" placeholder="↓ 제외할 카테고리 선택 ↓">
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="category-buttons">
+        <div th:each="category : ${mainCategories}">
+            <button type="button" class="btn btn-primary m-1"
+                    th:data-category-name="${category.name}" onclick="toggleCategory(this)">
+                <span th:text="${category.name}"></span>
+            </button>
+        </div>
+        <div th:each="category : ${otherCategories}">
+            <button type="button" class="btn btn-secondary m-1"
+                    th:data-category-name="${category.name}" onclick="toggleCategory(this)">
+                <span th:text="${category.name}"></span>
+            </button>
+        </div>
+    </div>
+</div>
+
 <script src="/js/bootstrap.bundle.min.js"></script>
 
 <script>
     function toggleCategory(element) {
         element.classList.toggle('active');
         const categoryName = element.getAttribute('data-category-name');
-        const input = document.getElementById('excludedCategories');
-        const categories = input.value ? input.value.split(', ') : [];
+        const desktopInput = document.querySelector('.excluded-categories-desktop');
+        const mobileInput = document.querySelector('.excluded-categories-mobile');
+        const categories = desktopInput.value ? desktopInput.value.split(', ') : [];
 
         if (element.classList.contains('active')) {
             if (!categories.includes(categoryName)) {
@@ -215,12 +308,15 @@
             }
         }
 
-        input.value = categories.join(', ');
+        const newValue = categories.join(', ');
+        desktopInput.value = newValue;
+        mobileInput.value = newValue;
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        const input = document.getElementById('excludedCategories');
-        const categories = input.value ? input.value.split(', ') : [];
+        const desktopInput = document.querySelector('.excluded-categories-desktop');
+        const mobileInput = document.querySelector('.excluded-categories-mobile');
+        const categories = desktopInput.value ? desktopInput.value.split(', ') : [];
         const buttons = document.querySelectorAll('[data-category-name]');
 
         buttons.forEach(button => {
@@ -230,20 +326,29 @@
         });
 
         const recommendButton = document.getElementById('recommendButton');
-        recommendButton.addEventListener('click', function() {
-            const form = document.querySelector('form');
-            form.submit();
-        });
+        if (recommendButton) {
+            recommendButton.addEventListener('click', function() {
+                const form = document.querySelector('form');
+                form.submit();
+            });
+        }
+
+        // Initialize pull-to-refresh for mobile
+        if (window.innerWidth <= 767) {
+            PullToRefresh.init({
+                mainElement: 'body',
+                onRefresh: function() {
+                    // Simulate a form submission to get a new restaurant recommendation
+                    const form = document.querySelector('form');
+                    form.submit();
+                },
+                pullToRefreshI18n: {
+                    instructionsPullToRefresh: '음식점 랜덤 추천!',
+                },
+            });
+        }
     });
 
-    // function resetCategories() {
-    //     const input = document.getElementById('excludedCategories');
-    //     input.value = '';
-    //
-    //     const buttons = document.querySelectorAll('[data-category-name]');
-    //     buttons.forEach(button => {
-    //         button.classList.remove('active');
-    //     });
-    // }
 </script>
+</body>
 </html>
