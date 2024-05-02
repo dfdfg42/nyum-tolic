@@ -241,16 +241,19 @@
             <h5 class="card-title mb-3">리뷰 작성</h5>
             <form th:action="@{/review/create/{restaurantId}(restaurantId=${restaurant.id})}" method="post" enctype="multipart/form-data">
                 <div class="mb-3">
-                <label for="rating" class="form-label">별점</label>
-                <div id="rating" class="star-rating">
-                    <i class="bi bi-star" data-value="1"></i>
-                    <i class="bi bi-star" data-value="2"></i>
-                    <i class="bi bi-star" data-value="3"></i>
-                    <i class="bi bi-star" data-value="4"></i>
-                    <i class="bi bi-star" data-value="5"></i>
-                    <input type="hidden" name="rating" value="0">
+                    <div class="d-flex align-items-center"> <!-- Flex container for horizontal alignment -->
+                        <label for="rating" class="form-label me-3">별점</label> <!-- Added margin right for spacing -->
+                        <div id="rating" class="star-rating">
+                            <i class="bi bi-star" data-value="1"></i>
+                            <i class="bi bi-star" data-value="2"></i>
+                            <i class="bi bi-star" data-value="3"></i>
+                            <i class="bi bi-star" data-value="4"></i>
+                            <i class="bi bi-star" data-value="5"></i>
+                            <input type="hidden" name="rating" value="0">
+                        </div>
+                    </div>
                 </div>
-            </div>
+
                 <div class="mb-3">
                     <label for="content" class="form-label">리뷰 내용</label>
                     <textarea class="form-control" id="content" name="content" rows="3"
