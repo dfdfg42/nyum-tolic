@@ -137,11 +137,6 @@
     <div class="container mt-3 ps-0">
         <p class="text-left text-muted small">냠톨릭-가톨릭대 주변 음식점 사이트</p>
     </div>
-    <div class="text-center title-space">
-        <button id="recommendButton" class="btn btn-lg btn-primary recommend-button">
-            <strong>음식점 랜덤 추천</strong>
-        </button>
-    </div>
 
     <div th:if="${recommendedRestaurant}" class="container mt-4">
         <a th:href="@{/restaurant/detail/{id}(id=${recommendedRestaurant.id})}" class="text-decoration-none">
@@ -185,6 +180,10 @@
         </a>
     </div>
 
+    <div th:unless="${recommendedRestaurant}" class="container mt-4 info-placeholder">
+        <!-- 음식점 정보가 없을 경우 보여질 공간 -->
+    </div>
+
     <div class="d-flex justify-content-center">
         <form th:action="@{/restaurant/recommendation}" method="post" class="w-50">
             <div class="row g-2 align-items-center">
@@ -211,11 +210,21 @@
             </button>
         </div>
     </div>
+
+    <div class="text-center title-space">
+        <button id="recommendButton" class="btn btn-lg btn-primary recommend-button">
+            <strong>음식점 랜덤 추천</strong>
+        </button>
+    </div>
+
+
 </div>
+
+
 
 <div class="mobile-version">
     <div class="container mt-3 ps-0 text-center">
-        <div class="custom-label">화면을 위로 튕겨주세요</div>
+        <div class="custom-label" style="cursor:pointer;">화면을 위로 튕겨주세요</div>
     </div>
 
     <div th:if="${recommendedRestaurant}" class="container mt-4">
@@ -348,7 +357,9 @@
             });
         }
     });
-
+    document.querySelector('.custom-label').addEventListener('click', function() {
+        document.getElementById('recommendButton').click();
+    });
 </script>
 </body>
 </html>
