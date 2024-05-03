@@ -18,6 +18,8 @@
             flex-wrap: wrap;
             justify-content: center;
         }
+
+
         .rating .bi-star-fill {
             color: #ffc107;
         }
@@ -51,8 +53,8 @@
         .recommend-button {
             padding: 15px 30px;
             font-size: 24px;
-            border-radius: 50px;
-            background: linear-gradient(45deg, #007bff, #00a8ff);
+            border-radius: 5px;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
             color: #fff;
             border: none;
             cursor: pointer;
@@ -294,6 +296,13 @@
             </button>
         </div>
     </div>
+
+    <div class="text-center title-space">
+        <button id="recommendButtonMobile" class="btn btn-lg btn-primary recommend-button">
+            <strong>음식점 랜덤 추천</strong>
+        </button>
+    </div>
+
 </div>
 
 <script src="/js/bootstrap.bundle.min.js"></script>
@@ -335,8 +344,17 @@
         });
 
         const recommendButton = document.getElementById('recommendButton');
+        const recommendButtonMobile = document.getElementById('recommendButtonMobile'); // 모바일 버튼 추가
+
         if (recommendButton) {
             recommendButton.addEventListener('click', function() {
+                const form = document.querySelector('form');
+                form.submit();
+            });
+        }
+
+        if (recommendButtonMobile) { // 모바일 버튼에 대한 이벤트 리스너 추가
+            recommendButtonMobile.addEventListener('click', function() {
                 const form = document.querySelector('form');
                 form.submit();
             });
@@ -356,9 +374,9 @@
                 },
             });
         }
-    });
-    document.querySelector('.custom-label').addEventListener('click', function() {
-        document.getElementById('recommendButton').click();
+        document.querySelector('.custom-label').addEventListener('click', function() {
+            document.getElementById('recommendButtonMobile').click(); // 모바일 버튼을 클릭하도록 변경
+        });
     });
 </script>
 </body>
