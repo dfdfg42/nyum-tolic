@@ -102,6 +102,9 @@
         }
 
         @media (max-width: 767px) {
+            .pc-only {
+                display: none;
+            }
             .pc-only.card-container {
                 display: none;
             }
@@ -274,9 +277,10 @@
         </div>
     </div>
 
-    <!-- 모바일 버전, only when categoryId is null -->
-    <div class="mobile-only" >
-        <div th:each="category : ${categories}">
+
+    <!-- 모바일 버전, only when categoryId is not null -->
+    <div class="mobile-only" th:if="${categoryId != null}">
+        <div th:each="category : ${categories}" th:if="${category.id == categoryId}">
             <h2 class="category-title" th:attr="data-category=${category.name}" th:text="${category.name}"></h2>
             <div class="card-container" th:attr="id='category' + ${category.id}">
                 <div th:each="restaurant : ${restaurants}" th:if="${restaurant.categories.contains(category)}" class="col-md-2 d-flex align-items-stretch card-column">
@@ -287,9 +291,9 @@
                                 <h5 class="card-title restaurant-name mb-0" th:classappend="${#strings.length(restaurant.name) > 10} ? 'long'" th:text="${restaurant.name}">맛집 이름</h5>
                                 <span class="card-subtitle text-body-secondary" th:text="${restaurant.getMenu().get(0)}"></span>
                                 <p class="card-text">
-                                <span th:each="category, iterStat : ${restaurant.getCategories()}"
+                                <span th:each="restaurantCategory : ${restaurant.getCategories()}"
                                       class="category-item"
-                                      th:text="${category.name}"></span>
+                                      th:text="${restaurantCategory.name}"></span>
                                 </p>
                                 <div class="d-flex justify-content-end flex-column">
                                     <div class="rating mb-2">
@@ -315,8 +319,8 @@
                 </div>
             </div>
         </div>
-        </div>
     </div>
+</div>
 
     <div th:replace="fragments/footer.html :: custom-footer"></div>
 <script src="/js/bootstrap.bundle.min.js"></script>
