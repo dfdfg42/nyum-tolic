@@ -274,49 +274,98 @@
         </div>
     </div>
 
-    <!-- 모바일 버전, only when categoryId is null -->
-    <div class="mobile-only" >
-        <div th:each="category : ${categories}">
-            <h2 class="category-title" th:attr="data-category=${category.name}" th:text="${category.name}"></h2>
-            <div class="card-container" th:attr="id='category' + ${category.id}">
-                <div th:each="restaurant : ${restaurants}" th:if="${restaurant.categories.contains(category)}" class="col-md-2 d-flex align-items-stretch card-column">
-                    <a th:href="@{/restaurant/detail/{id}(id=${restaurant.id})}" class="text-decoration-none">
-                        <div class="card mb-4" th:attr="data-restaurant-id=${restaurant.id}">
-                            <img th:attr="data-src=@{'/' + ${restaurant.photo}}" class="card-img-top lazy-image" alt="맛집 사진" src="">
-                            <div class="card-body">
-                                <h5 class="card-title restaurant-name mb-0" th:classappend="${#strings.length(restaurant.name) > 10} ? 'long'" th:text="${restaurant.name}">맛집 이름</h5>
-                                <span class="card-subtitle text-body-secondary" th:text="${restaurant.getMenu().get(0)}"></span>
-                                <p class="card-text">
-                                <span th:each="category, iterStat : ${restaurant.getCategories()}"
-                                      class="category-item"
-                                      th:text="${category.name}"></span>
-                                </p>
-                                <div class="d-flex justify-content-end flex-column">
-                                    <div class="rating mb-2">
-                                        <span the="rating-number" th:text="${restaurant.rating}"></span>
-                                        <span th:each="star : ${#numbers.sequence(1, 5)}">
-                                        <i class="bi star-icon"
-                                           th:classappend="${restaurant.rating >= star} ? 'bi-star-fill' :
-                                                            (${restaurant.rating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
-                                    </span>
-                                    </div>
-                                    <div class="user-rating">
-                                        <span class="rating-number" th:text="${restaurant.userRating != null ? restaurant.userRating : 0.0}"></span>
-                                        <span th:each="star : ${#numbers.sequence(1, 5)}">
-                                        <i class="bi star-icon"
-                                           th:classappend="${(restaurant.userRating != null ? restaurant.userRating : 0.0) >= star} ? 'bi-star-fill' :
-                                                            (${(restaurant.userRating != null ? restaurant.userRating : 0.0) >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
-                                    </span>
+    <!-- 모바일 버전 -->
+    <div class="mobile-only">
+        <div th:if="${categoryId == null}">
+            <!-- categoryId가 null일 때 (기본 list.html) -->
+            <div th:each="category : ${categories}">
+                <h2 class="category-title" th:attr="data-category=${category.name}" th:text="${category.name}"></h2>
+                <div class="card-container" th:attr="id='category' + ${category.id}">
+                    <div th:each="restaurant : ${restaurants}" th:if="${restaurant.categories.contains(category)}" class="col-md-2 d-flex align-items-stretch card-column">
+                        <a th:href="@{/restaurant/detail/{id}(id=${restaurant.id})}" class="text-decoration-none">
+                            <div class="card mb-4" th:attr="data-restaurant-id=${restaurant.id}">
+                                <img th:attr="data-src=@{'/' + ${restaurant.photo}}" class="card-img-top lazy-image" alt="맛집 사진" src="">
+                                <div class="card-body">
+                                    <h5 class="card-title restaurant-name mb-0" th:classappend="${#strings.length(restaurant.name) > 10} ? 'long'" th:text="${restaurant.name}">맛집 이름</h5>
+                                    <span class="card-subtitle text-body-secondary" th:text="${restaurant.getMenu().get(0)}"></span>
+                                    <p class="card-text">
+                                        <span th:each="category, iterStat : ${restaurant.getCategories()}"
+                                              class="category-item"
+                                              th:text="${category.name}"></span>
+                                    </p>
+                                    <div class="d-flex justify-content-end flex-column">
+                                        <div class="rating mb-2">
+                                            <span the="rating-number" th:text="${restaurant.rating}"></span>
+                                            <span th:each="star : ${#numbers.sequence(1, 5)}">
+                                                <i class="bi star-icon"
+                                                   th:classappend="${restaurant.rating >= star} ? 'bi-star-fill' :
+                                                                    (${restaurant.rating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
+                                            </span>
+                                        </div>
+                                        <div class="user-rating">
+                                            <span class="rating-number" th:text="${restaurant.userRating != null ? restaurant.userRating : 0.0}"></span>
+                                            <span th:each="star : ${#numbers.sequence(1, 5)}">
+                                                <i class="bi star-icon"
+                                                   th:classappend="${(restaurant.userRating != null ? restaurant.userRating : 0.0) >= star} ? 'bi-star-fill' :
+                                                                    (${(restaurant.userRating != null ? restaurant.userRating : 0.0) >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </a>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${categoryId != null}">
+            <!-- categoryId가 null이 아닐 때 (특정 카테고리 클릭 시) -->
+            <div th:each="category : ${categories}" th:if="${category.id == categoryId}">
+                <h2 class="category-title" th:attr="data-category=${category.name}" th:text="${category.name}"></h2>
+                <div class="card-container" th:attr="id='category' + ${category.id}">
+                    <div th:each="restaurant : ${restaurants}" class="col-md-2 d-flex align-items-stretch card-column">
+                        <a th:href="@{/restaurant/detail/{id}(id=${restaurant.id})}" class="text-decoration-none">
+                            <div class="card mb-4" th:attr="data-restaurant-id=${restaurant.id}">
+                                <img th:attr="data-src=@{'/' + ${restaurant.photo}}" class="card-img-top lazy-image" alt="맛집 사진" src="">
+                                <div class="card-body">
+                                    <h5 class="card-title restaurant-name mb-0" th:classappend="${#strings.length(restaurant.name) > 10} ? 'long'" th:text="${restaurant.name}">맛집 이름</h5>
+                                    <span class="card-subtitle text-body-secondary" th:text="${restaurant.getMenu().get(0)}"></span>
+                                    <p class="card-text">
+                                        <span th:each="restaurantCategory : ${restaurant.getCategories()}"
+                                              class="category-item"
+                                              th:text="${restaurantCategory.name}"></span>
+                                    </p>
+                                    <div class="d-flex justify-content-end flex-column">
+                                        <div class="rating mb-2">
+                                            <span the="rating-number" th:text="${restaurant.rating}"></span>
+                                            <span th:each="star : ${#numbers.sequence(1, 5)}">
+                                                <i class="bi star-icon"
+                                                   th:classappend="${restaurant.rating >= star} ? 'bi-star-fill' :
+                                                                    (${restaurant.rating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
+                                            </span>
+                                        </div>
+                                        <div class="user-rating">
+                                            <span class="rating-number" th:text="${restaurant.userRating != null ? restaurant.userRating : 0.0}"></span>
+                                            <span th:each="star : ${#numbers.sequence(1, 5)}">
+                                                <i class="bi star-icon"
+                                                   th:classappend="${(restaurant.userRating != null ? restaurant.userRating : 0.0) >= star} ? 'bi-star-fill' :
+                                                                    (${(restaurant.userRating != null ? restaurant.userRating : 0.0) >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+
 
 <div th:replace="fragments/footer.html :: custom-footer"></div>
 <script src="/js/bootstrap.bundle.min.js"></script>
