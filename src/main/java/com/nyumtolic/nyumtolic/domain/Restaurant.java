@@ -36,7 +36,7 @@ public class Restaurant {
     @Column(name = "rating")
     private Double rating; // 개발자 평점임
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Column(name = "menu")
     private List<String> menu;
 

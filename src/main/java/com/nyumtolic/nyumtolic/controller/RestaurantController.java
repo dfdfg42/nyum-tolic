@@ -15,6 +15,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,18 +92,30 @@ public class RestaurantController {
 
     @GetMapping("/recommendation")
     public String showRecommendationForm(Model model) {
-        model.addAttribute("recommendedRestaurant", null);
         return "restaurant/recommendation";
     }
 
     @PostMapping("/recommendation")
-    public String recommendRestaurant(@RequestParam("excludedCategories") String excludedCategories, Model model) {
-        // 사용자 입력을 쉼표로 분리하여 배열로 변환
+    public String recommendRestaurant(@RequestParam("excludedCategories") String excludedCategories,
+                                      RedirectAttributes redirectAttributes) {
         String[] categoriesArray = excludedCategories.split("\\s*,\\s*");
         Optional<Restaurant> recommendedRestaurant = restaurantService.recommendRandomRestaurantExcludingCategories(categoriesArray);
-        model.addAttribute("recommendedRestaurant", recommendedRestaurant.orElse(null));
-        // 사용자가 선택한 카테고리를 모델에 추가
-        model.addAttribute("excludedCategories", excludedCategories);
+
+        redirectAttributes.addFlashAttribute("recommendedRestaurant", recommendedRestaurant.orElse(null));
+        redirectAttributes.addFlashAttribute("excludedCategories", excludedCategories);
+        return "redirect:/restaurant/recommendation/result";
+    }
+
+    // 결과를 보여주는 새로운 GET 메서드
+    @GetMapping("/recommendation/result")
+    public String showRecommendedRestaurant(Model model) {
+        // 예를 들어, recommendedRestaurant와 excludedCategories 속성을 확인하고 명시적으로 추가
+        if (!model.containsAttribute("recommendedRestaurant")) {
+            model.addAttribute("recommendedRestaurant", null);
+        }
+        if (!model.containsAttribute("excludedCategories")) {
+            model.addAttribute("excludedCategories", "");
+        }
         return "restaurant/recommendation";
     }
 
