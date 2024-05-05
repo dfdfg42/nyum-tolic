@@ -133,6 +133,72 @@
                 height: auto;
                 margin: 10px;
             }
+            .restaurant-card {
+                opacity: 0;
+                transform: translateY(50px);
+                animation: fadeInUp 1s ease forwards;
+            }
+
+            .fade-in {
+                opacity: 0;
+                animation: fadeIn 0.5s ease forwards;
+            }
+
+            .card-title.fade-in {
+                animation-delay: 0.1s;
+            }
+
+            .rating.fade-in {
+                animation-delay: 0.2s;
+            }
+
+            .user-rating.fade-in {
+                animation-delay: 0.3s;
+            }
+
+            .card-text.fade-in:nth-child(4) {
+                animation-delay: 0.4s;
+            }
+
+            .card-text.fade-in:nth-child(5) {
+                animation-delay: 0.5s;
+            }
+
+            .card-text.fade-in:nth-child(6) {
+                animation-delay: 0.6s;
+            }
+
+            .card-text.fade-in:nth-child(7) {
+                animation-delay: 0.7s;
+            }
+
+            .card-text.fade-in:nth-child(8) {
+                animation-delay: 0.8s;
+            }
+
+            .card-text.fade-in:nth-child(9) {
+                animation-delay: 0.9s;
+            }
+
+            @keyframes fadeInUp {
+                0% {
+                    opacity: 0;
+                    transform: translateY(50px);
+                }
+                100% {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes fadeIn {
+                0% {
+                    opacity: 0;
+                }
+                100% {
+                    opacity: 1;
+                }
+            }
         }
         @media (min-width: 768px) {
             .desktop-version {
@@ -193,8 +259,8 @@
                             <p class="card-text"><strong>전화번호:</strong> <span th:text="${recommendedRestaurant.phoneNumber}">전화번호</span></p>
                             <p class="card-text"><strong>소요 시간:</strong> <span th:text="${recommendedRestaurant.travelTime} + '분'">소요 시간</span></p>
                             <p class="card-text"><strong>설명:</strong> <span th:text="${recommendedRestaurant.description}">설명</span></p>
-                            <p class="card-text"><strong>카테고리:</strong><span th:each="category, iterStat : ${recommendedRestaurant.categories}" th:text="${category.name} + (${iterStat.last} ? '' : ', ')">카테고리</span></p>
-                            <p class="card-text"><strong>대표 메뉴:</strong><span th:each="menu, iterStat : ${recommendedRestaurant.menu}" th:text="${menu} + (${iterStat.last} ? '' : ', ')">메뉴</span></p>
+                            <p class="card-text"><strong>카테고리: </strong><span th:each="category, iterStat : ${recommendedRestaurant.categories}" th:text="${category.name} + (${iterStat.last} ? '' : ', ')">카테고리</span></p>
+                            <p class="card-text"><strong>대표 메뉴: </strong><span th:each="menu, iterStat : ${recommendedRestaurant.menu}" th:text="${menu} + (${iterStat.last} ? '' : ', ')">메뉴</span></p>
                         </div>
                     </div>
                 </div>
@@ -238,11 +304,7 @@
             <strong>음식점 랜덤 추천</strong>
         </button>
     </div>
-
-
 </div>
-
-
 
 <div class="mobile-version">
     <div class="container mt-3 ps-0 text-center">
@@ -251,7 +313,7 @@
 
     <div th:if="${recommendedRestaurant}" class="container mt-4">
         <a th:href="@{/restaurant/detail/{id}(id=${recommendedRestaurant.id})}" class="text-decoration-none">
-            <div class="card mb-3">
+            <div class="card mb-3 restaurant-card">
                 <div class="row g-0">
                     <div class="col-md-4 d-flex align-items-center justify-content-center p-3">
                         <div class="image-container">
@@ -260,30 +322,30 @@
                     </div>
                     <div class="col-md-8">
                         <div class="card-body">
-                            <h5 class="card-title" th:text="${recommendedRestaurant.name}">음식점 이름</h5>
-                            <div class="rating mt-2">
-                        <span th:each="star : ${#numbers.sequence(1, 5)}">
-                            <i class="bi"
-                               th:classappend="${recommendedRestaurant.rating >= star} ? 'bi-star-fill' :
-                                              (${recommendedRestaurant.rating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
-                        </span>
+                            <h5 class="card-title fade-in" th:text="${recommendedRestaurant.name}">음식점 이름</h5>
+                            <div class="rating mt-2 fade-in">
+                                <span th:each="star : ${#numbers.sequence(1, 5)}">
+                                    <i class="bi"
+                                       th:classappend="${recommendedRestaurant.rating >= star} ? 'bi-star-fill' :
+                                                      (${recommendedRestaurant.rating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
+                                </span>
                                 <span th:text="${recommendedRestaurant.rating}"></span>
                             </div>
                             <!-- 유저 평균 평점 -->
-                            <div class="user-rating">
-                            <span th:each="star : ${#numbers.sequence(1, 5)}">
-                                        <i class="bi star-icon"
-                                           th:classappend="${(recommendedRestaurant.userRating != null ? recommendedRestaurant.userRating : 0.0) >= star} ? 'bi-star-fill' :
-                                                (${(recommendedRestaurant.userRating != null ? recommendedRestaurant.userRating : 0.0) >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
+                            <div class="user-rating fade-in">
+                                <span th:each="star : ${#numbers.sequence(1, 5)}">
+                                    <i class="bi star-icon"
+                                       th:classappend="${(recommendedRestaurant.userRating != null ? recommendedRestaurant.userRating : 0.0) >= star} ? 'bi-star-fill' :
+                                            (${(recommendedRestaurant.userRating != null ? recommendedRestaurant.userRating : 0.0) >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
                                 </span>
                                 <span class="rating-number" th:text="${recommendedRestaurant.userRating != null ? recommendedRestaurant.userRating : 0.0}"></span>
                             </div>
-                            <p class="card-text"><strong>주소:</strong> <span th:text="${recommendedRestaurant.address}">주소</span></p>
-                            <p class="card-text"><strong>전화번호:</strong> <span th:text="${recommendedRestaurant.phoneNumber}">전화번호</span></p>
-                            <p class="card-text"><strong>소요 시간:</strong> <span th:text="${recommendedRestaurant.travelTime} + '분'">소요 시간</span></p>
-                            <p class="card-text"><strong>설명:</strong> <span th:text="${recommendedRestaurant.description}">설명</span></p>
-                            <p class="card-text"><strong>카테고리:</strong><span th:each="category, iterStat : ${recommendedRestaurant.categories}" th:text="${category.name} + (${iterStat.last} ? '' : ', ')">카테고리</span></p>
-                            <p class="card-text"><strong>대표 메뉴:</strong><span th:each="menu, iterStat : ${recommendedRestaurant.menu}" th:text="${menu} + (${iterStat.last} ? '' : ', ')">메뉴</span></p>
+                            <p class="card-text fade-in"><strong>주소:</strong> <span th:text="${recommendedRestaurant.address}">주소</span></p>
+                            <p class="card-text fade-in"><strong>전화번호:</strong> <span th:text="${recommendedRestaurant.phoneNumber}">전화번호</span></p>
+                            <p class="card-text fade-in"><strong>소요 시간:</strong> <span th:text="${recommendedRestaurant.travelTime} + '분'">소요 시간</span></p>
+                            <p class="card-text fade-in"><strong>설명:</strong> <span th:text="${recommendedRestaurant.description}">설명</span></p>
+                            <p class="card-text fade-in"><strong>카테고리: </strong><span th:each="category, iterStat : ${recommendedRestaurant.categories}" th:text="${category.name} + (${iterStat.last} ? '' : ', ')">카테고리</span></p>
+                            <p class="card-text fade-in"><strong>대표 메뉴: </strong><span th:each="menu, iterStat : ${recommendedRestaurant.menu}" th:text="${menu} + (${iterStat.last} ? '' : ', ')">메뉴</span></p>
                         </div>
                     </div>
                 </div>
@@ -322,7 +384,6 @@
             <strong>음식점 랜덤 추천</strong>
         </button>
     </div>
-
 </div>
 
 <script src="/js/bootstrap.bundle.min.js"></script>
