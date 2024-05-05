@@ -1,6 +1,5 @@
 package com.nyumtolic.nyumtolic.review;
 
-
 import com.nyumtolic.nyumtolic.DataNotFoundException;
 import com.nyumtolic.nyumtolic.domain.Restaurant;
 import com.nyumtolic.nyumtolic.repository.RestaurantRepository;
@@ -9,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +28,7 @@ public class ReviewService {
         this.reviewRepository.save(review);
     }
 
-    public Review create(Long restaurantId, String content, Double rating,SiteUser author) {
+    public Review create(Long restaurantId, String content, Double rating, SiteUser author) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new DataNotFoundException("Restaurant not found"));
         Review review = new Review();
@@ -51,6 +49,17 @@ public class ReviewService {
         } else {
             throw new DataNotFoundException("review not found");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Review getReviewById(Long id) {
+        return reviewRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid review id: " + id));
+    }
+
+    @Transactional
+    public void saveReview(Review review) {
+        reviewRepository.save(review);
     }
 
     public void modify(Review review, String content, Double rating) {
@@ -80,7 +89,6 @@ public class ReviewService {
         return new PageImpl<>(reviewWithVotesDTOs, pageable, results.getTotalElements());
     }
 
-
     @Transactional
     public void updateRestaurantUserRating(Long restaurantId) {
         List<Review> reviews = reviewRepository.findByRestaurantId(restaurantId);
@@ -89,14 +97,11 @@ public class ReviewService {
                 .average()
                 .orElse(0.0); // 리뷰가 없는 경우 기본값으로 0임.
 
-        averageRating = Math.round(averageRating*10)/10.0;
+        averageRating = Math.round(averageRating * 10) / 10.0;
 
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new RuntimeException("Restaurant not found"));
-        restaurant.setUserRating(averageRating%200000000);
+        restaurant.setUserRating(averageRating % 200000000);
         restaurantRepository.save(restaurant);
     }
-
-
-
 }

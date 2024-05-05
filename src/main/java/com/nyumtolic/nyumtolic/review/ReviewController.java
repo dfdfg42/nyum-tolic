@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -40,12 +41,12 @@ public class ReviewController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{reviewId}")
-    public String answerModify(ReviewForm reviewForm, @PathVariable Long reviewId, Principal principal) {
+    public String showModifyForm(@PathVariable Long reviewId, Model model, Principal principal) {
         Review review = reviewService.getReview(reviewId);
         if (!review.getAuthor().getLoginId().equals(principal.getName())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "수정 권한이 없습니다.");
         }
-        reviewForm.setContent(review.getContent());
+        model.addAttribute("review", review);
         return "review_form";
     }
 
@@ -58,7 +59,7 @@ public class ReviewController {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.reviewForm", bindingResult);
             redirectAttributes.addFlashAttribute("reviewForm", reviewForm);
-            return "/";
+            return "redirect:/review/modify/" + reviewId;
         }
         Review review = reviewService.getReview(reviewId);
         if (!review.getAuthor().getLoginId().equals(principal.getName())) {
