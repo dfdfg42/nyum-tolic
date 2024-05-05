@@ -18,11 +18,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+
 @Component
 @RequiredArgsConstructor
 public class ExcelDataLoader implements CommandLineRunner {
 
-    private final CategoryService categoryService;
+
+  private final CategoryService categoryService;
     private final RestaurantService restaurantService;
 
     @Override
@@ -121,5 +123,12 @@ public class ExcelDataLoader implements CommandLineRunner {
             }
         }
     }
+
+
 }
+
+
+
+
+
 

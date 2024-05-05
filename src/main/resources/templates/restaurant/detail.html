@@ -1,8 +1,20 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:layout="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-8M9WMZF406');
+    </script>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-W22W278P');</script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -131,276 +143,145 @@
         .review-section textarea.form-control {
             min-height: 120px; /* Larger textarea for more text */
         }
-        @media (min-width: 768px) {
-            .desktop-version {
-                display: block;
-            }
-            .mobile-version {
-                display: none;
-            }
-        }
-        @media (max-width: 767px) {
-            .desktop-version {
-                display: none;
-            }
-            .mobile-version {
-                display: block;
-            }
-        }
+
+
 
     </style>
 </head>
 
-<div th:replace="fragments/navbar :: navbar"></div>
-<div class="desktop-version">
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-6">
-                <div th:if="${restaurant}" class="card mb-3">
-                    <div class="row">
-                        <div class="col-md-5 image-container">
-                            <img th:src="@{'/' + ${restaurant.photo}}" class="img-fluid rounded-start" alt="음식점 사진">
-                        </div>
-                        <div class="col-md-7">
-                            <div class="card-body">
-                                <h5 class="card-title" th:text="${restaurant.name}"></h5>
-                                <div class="rating mt-2">
-                                <span th:each="star : ${#numbers.sequence(1, 5)}">
-                                    <i class="bi"
-                                       th:classappend="${restaurant.rating >= star} ? 'bi-star-fill' :
-                                                        (${restaurant.rating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
-                                </span>
-                                    <span th:text="${restaurant.rating}"></span>
-                                </div>
-                                <div class="user-rating mt-2">
-                                    <span th:each="star : ${#numbers.sequence(1,5)}">
-                                        <i class="bi"
-                                           th:classappend="${restaurant.userRating >= star} ? 'bi-star-fill' :
-                                                            (${restaurant.userRating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
-                                    </span>
-                                    <span th:text="${restaurant.userRating != null ? restaurant.userRating : 0.0}"></span>
-                                </div>
-                                <p class="card-text"><strong>주소:</strong> <span th:text="${restaurant.address}"></span></p>
-                                <p class="card-text"><strong>전화번호:</strong> <span th:text="${restaurant.phoneNumber}"></span></p>
-                                <p class="card-text"><strong>소요 시간:</strong> <span th:text="${restaurant.travelTime} + '분'"></span></p>
-                                <p class="card-text"><strong>설명:</strong> <span th:text="${restaurant.description}"></span></p>
-                                <p class="card-text"><strong>카테고리:</strong> <span th:text="${categoryString}"></span></p>
-                                <p class="card-text"><strong>대표 메뉴:</strong> <span th:text="${menuString}"></span></p>
-                            </div>
-                        </div>
+<div th:replace="fragments/navbar :: navbar"></div><!DOCTYPE html>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            <div th:if="${restaurant}" class="card mb-3">
+                <div class="row">
+                    <div class="col-md-5 image-container">
+                        <img th:src="@{'/' + ${restaurant.photo}}" class="img-fluid rounded-start" alt="음식점 사진">
                     </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div id="map" style="height: 312px;"></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="container reviews-section mt-4">
-        <div class="row row-cols-1 row-cols-md-2 g-4">
-            <div th:each="reviewDto : ${reviewsPage.content}" class="col">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="card-title nickname" th:text="${reviewDto.review.author.nickname}"></h5>
-                            <div class="rating">
-                                    <span th:each="star : ${#numbers.sequence(1,5)}">
-                                        <i class="bi"
-                                           th:classappend="${reviewDto.review.rating >= star} ? 'bi-star-fill' :
-                                                            (${reviewDto.review.rating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"
-                                           th:style="'color: ' + (${reviewDto.review.rating >= star} ? '#2FCC71' :
-                                                                (${reviewDto.review.rating >= star - 0.5} ? '#2FCC71' : '#ccc'))"></i>
-                                    </span>
-                            </div>
-                        </div>
-                        <p class="card-text review-content" th:text="${reviewDto.review.content}"></p>
-                        <div class="time-container">
-                            <div class="time-entry">
-                                <strong>작성 시간:</strong>
-                                <span th:text="${#temporals.format(reviewDto.review.createDate, 'yyyy-MM-dd HH:mm')}"></span>
-                            </div>
-                            <div th:if="${reviewDto.review.modifyDate != null}" class="time-entry">
-                                <strong>수정 시간:</strong>
-                                <span th:text="${#temporals.format(reviewDto.review.modifyDate, 'yyyy-MM-dd HH:mm')}"></span>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <a href="#" class="recommend btn btn-sm btn-outline-secondary" th:data-uri="@{|/review/vote/${reviewDto.review.id}|}">
-                                추천 <span class="badge rounded-pill bg-success" th:text="${reviewDto.votesCount}"></span>
-                            </a>
-                            <a th:href="@{|/review/modify/${reviewDto.review.id}|}" class="btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()" th:if="${reviewDto.review.author != null and #authentication.getPrincipal().getUsername() == reviewDto.review.author.loginId}">수정</a>
-                            <a href="#" class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()" th:data-uri="@{|/review/delete/${reviewDto.review.id}|}" th:if="${reviewDto.review.author != null and #authentication.getPrincipal().getUsername() == reviewDto.review.author.loginId}">삭제</a>
-                            <a href="#" class="delete btn btn-sm btn-outline-secondary" sec:authorize="hasRole('ROLE_ADMIN')" th:data-uri="@{|/review/admin/delete/${reviewDto.review.id}|}">삭제(관리자)</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div th:if="${reviewsPage.totalPages > 1}" class="pagination-container mt-4">
-        <nav>
-            <ul class="pagination">
-                <li th:each="pageNum : ${#numbers.sequence(1, reviewsPage.totalPages)}" class="page-item">
-                    <a th:href="@{/restaurant/detail/{id}(id=${restaurant.id}, page=${pageNum - 1})}" class="page-link" th:text="${pageNum}"></a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-
-    <div class="container review-section mt-4 mb-5">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title mb-3">리뷰 작성</h5>
-                <form th:action="@{/review/create/{restaurantId}(restaurantId=${restaurant.id})}" method="post" enctype="multipart/form-data">
-                    <div class="mb-3">
-                        <div class="d-flex align-items-center"> <!-- Flex container for horizontal alignment -->
-                            <label for="rating" class="form-label me-3">별점</label> <!-- Added margin right for spacing -->
-                            <div id="rating" class="star-rating">
-                                <i class="bi bi-star" data-value="1"></i>
-                                <i class="bi bi-star" data-value="2"></i>
-                                <i class="bi bi-star" data-value="3"></i>
-                                <i class="bi bi-star" data-value="4"></i>
-                                <i class="bi bi-star" data-value="5"></i>
-                                <input type="hidden" name="rating" value="0">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="content" class="form-label">리뷰 내용</label>
-                        <textarea class="form-control" id="content" name="content" rows="3"
-                                  th:placeholder="${#authorization.expression('isAuthenticated()') ? '리뷰 내용' : '로그인을 해야 리뷰작성이 가능합니다'}"
-                                  th:disabled="${#authorization.expression('!isAuthenticated()')}"
-                                  th:readonly="${#authorization.expression('!isAuthenticated()')}"
-                                  th:required="${#authorization.expression('isAuthenticated()')}"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary" th:disabled="${#authorization.expression('!isAuthenticated()')}">제출</button>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div th:replace="fragments/footer.html :: custom-footer"></div>
-</div>
-
-<div class="mobile-version">
-    <div th:if="${restaurant}" class="container mt-4">
-        <div class="card mb-3">
-            <div class="row g-0">
-                <div class="col-4">
-                    <img th:src="@{'/' + ${restaurant.photo}}" class="img-fluid rounded-start" alt="음식점 사진">
-                </div>
-                <div class="col-8">
-                    <div class="card-body">
-                        <h5 class="card-title" th:text="${restaurant.name}"></h5>
-                        <div class="rating mt-2">
+                    <div class="col-md-7">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${restaurant.name}"></h5>
+                            <div class="rating mt-2">
                             <span th:each="star : ${#numbers.sequence(1, 5)}">
-                                <i class="bi" th:classappend="${restaurant.rating >= star} ? 'bi-star-fill' : (${restaurant.rating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
+                                <i class="bi"
+                                   th:classappend="${restaurant.rating >= star} ? 'bi-star-fill' :
+                                                    (${restaurant.rating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
                             </span>
-                            <span th:text="${restaurant.rating}"></span>
-                        </div>
-                        <div class="user-rating mt-2">
-                            <span th:each="star : ${#numbers.sequence(1,5)}">
-                                <i class="bi" th:classappend="${restaurant.userRating >= star} ? 'bi-star-fill' : (${restaurant.userRating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
-                            </span>
-                            <span th:text="${restaurant.userRating != null ? restaurant.userRating : 0.0}"></span>
-                        </div>
-                        <p class="card-text"><strong>주소:</strong> <span th:text="${restaurant.address}"></span></p>
-                        <p class="card-text"><strong>전화번호:</strong> <span th:text="${restaurant.phoneNumber}"></span></p>
-                        <p class="card-text"><strong>소요 시간:</strong> <span th:text="${restaurant.travelTime} + '분'"></span></p>
-                        <p class="card-text"><strong>설명:</strong> <span th:text="${restaurant.description}"></span></p>
-                        <p class="card-text"><strong>카테고리:</strong> <span th:text="${categoryString}"></span></p>
-                        <p class="card-text"><strong>대표 메뉴:</strong> <span th:text="${menuString}"></span></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="container reviews-section mt-4">
-        <div class="row row-cols-1 g-4">
-            <div th:each="reviewDto : ${reviewsPage.content}" class="col">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h6 class="card-title nickname mb-0" th:text="${reviewDto.review.author.nickname}"></h6>
-                            <div class="rating">
+                                <span th:text="${restaurant.rating}"></span>
+                            </div>
+                            <div class="user-rating mt-2">
                                 <span th:each="star : ${#numbers.sequence(1,5)}">
-                                    <i class="bi" th:classappend="${reviewDto.review.rating >= star} ? 'bi-star-fill' : (${reviewDto.review.rating >= star - 0.5} ? 'bi-star-half' : 'bi-star')" th:style="'color: ' + (${reviewDto.review.rating >= star} ? '#2FCC71' : (${reviewDto.review.rating >= star - 0.5} ? '#2FCC71' : '#ccc'))"></i>
+                                    <i class="bi"
+                                       th:classappend="${restaurant.userRating >= star} ? 'bi-star-fill' :
+                                                        (${restaurant.userRating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"></i>
                                 </span>
+                                <span th:text="${restaurant.userRating != null ? restaurant.userRating : 0.0}"></span>
                             </div>
-                        </div>
-                        <p class="card-text review-content" th:text="${reviewDto.review.content}"></p>
-                        <div class="time-container">
-                            <div class="time-entry">
-                                <strong>작성 시간:</strong>
-                                <span th:text="${#temporals.format(reviewDto.review.createDate, 'yyyy-MM-dd HH:mm')}"></span>
-                            </div>
-                            <div th:if="${reviewDto.review.modifyDate != null}" class="time-entry">
-                                <strong>수정 시간:</strong>
-                                <span th:text="${#temporals.format(reviewDto.review.modifyDate, 'yyyy-MM-dd HH:mm')}"></span>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <a href="#" class="recommend btn btn-sm btn-outline-secondary" th:data-uri="@{|/review/vote/${reviewDto.review.id}|}">
-                                추천 <span class="badge rounded-pill bg-success" th:text="${reviewDto.votesCount}"></span>
-                            </a>
-                            <a th:href="@{|/review/modify/${reviewDto.review.id}|}" class="btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()" th:if="${reviewDto.review.author != null and #authentication.getPrincipal().getUsername() == reviewDto.review.author.loginId}">수정</a>
-                            <a href="#" class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()" th:data-uri="@{|/review/delete/${reviewDto.review.id}|}" th:if="${reviewDto.review.author != null and #authentication.getPrincipal().getUsername() == reviewDto.review.author.loginId}">삭제</a>
-                            <a href="#" class="delete btn btn-sm btn-outline-secondary" sec:authorize="hasRole('ROLE_ADMIN')" th:data-uri="@{|/review/admin/delete/${reviewDto.review.id}|}">삭제(관리자)</a>
+                            <p class="card-text"><strong>주소:</strong> <span th:text="${restaurant.address}"></span></p>
+                            <p class="card-text"><strong>전화번호:</strong> <span th:text="${restaurant.phoneNumber}"></span></p>
+                            <p class="card-text"><strong>소요 시간:</strong> <span th:text="${restaurant.travelTime} + '분'"></span></p>
+                            <p class="card-text"><strong>설명:</strong> <span th:text="${restaurant.description}"></span></p>
+                            <p class="card-text"><strong>카테고리:</strong> <span th:text="${categoryString}"></span></p>
+                            <p class="card-text"><strong>대표 메뉴:</strong> <span th:text="${menuString}"></span></p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="col-md-6">
+            <div id="map" style="height: 312px;"></div>
+        </div>
     </div>
+</div>
 
-    <div th:if="${reviewsPage.totalPages > 1}" class="pagination-container mt-4">
-        <nav>
-            <ul class="pagination pagination-sm justify-content-center">
-                <li th:each="pageNum : ${#numbers.sequence(1, reviewsPage.totalPages)}" class="page-item">
-                    <a th:href="@{/restaurant/detail/{id}(id=${restaurant.id}, page=${pageNum - 1})}" class="page-link" th:text="${pageNum}"></a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-
-    <div class="container review-section mt-4 mb-5">
-        <div class="card">
-            <div class="card-body">
-                <h6 class="card-title mb-3">리뷰 작성</h6>
-                <form th:action="@{/review/create/{restaurantId}(restaurantId=${restaurant.id})}" method="post" enctype="multipart/form-data">
-                    <div class="mb-3">
-                        <div class="d-flex align-items-center">
-                            <label for="mobile-rating" class="form-label me-3">별점</label>
-                            <div id="mobile-rating" class="star-rating">
-                                <i class="bi bi-star" data-value="1"></i>
-                                <i class="bi bi-star" data-value="2"></i>
-                                <i class="bi bi-star" data-value="3"></i>
-                                <i class="bi bi-star" data-value="4"></i>
-                                <i class="bi bi-star" data-value="5"></i>
-                                <input type="hidden" name="rating" value="0">
-                            </div>
+<div class="container reviews-section mt-4">
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        <div th:each="reviewDto : ${reviewsPage.content}" class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title nickname" th:text="${reviewDto.review.author.nickname}"></h5>
+                        <div class="rating">
+                                <span th:each="star : ${#numbers.sequence(1,5)}">
+                                    <i class="bi"
+                                       th:classappend="${reviewDto.review.rating >= star} ? 'bi-star-fill' :
+                                                        (${reviewDto.review.rating >= star - 0.5} ? 'bi-star-half' : 'bi-star')"
+                                       th:style="'color: ' + (${reviewDto.review.rating >= star} ? '#2FCC71' :
+                                                            (${reviewDto.review.rating >= star - 0.5} ? '#2FCC71' : '#ccc'))"></i>
+                                </span>
                         </div>
                     </div>
-
-                    <div class="mb-3">
-                        <label for="mobile-content" class="form-label">리뷰 내용</label>
-                        <textarea class="form-control" id="mobile-content" name="content" rows="3" th:placeholder="${#authorization.expression('isAuthenticated()') ? '리뷰 내용' : '로그인을 해야 리뷰작성이 가능합니다'}" th:disabled="${#authorization.expression('!isAuthenticated()')}" th:readonly="${#authorization.expression('!isAuthenticated()')}" th:required="${#authorization.expression('isAuthenticated()')}"></textarea>
+                    <p class="card-text review-content" th:text="${reviewDto.review.content}"></p>
+                    <div class="time-container">
+                        <div class="time-entry">
+                            <strong>작성 시간:</strong>
+                            <span th:text="${#temporals.format(reviewDto.review.createDate, 'yyyy-MM-dd HH:mm')}"></span>
+                        </div>
+                        <div th:if="${reviewDto.review.modifyDate != null}" class="time-entry">
+                            <strong>수정 시간:</strong>
+                            <span th:text="${#temporals.format(reviewDto.review.modifyDate, 'yyyy-MM-dd HH:mm')}"></span>
+                        </div>
                     </div>
-                    <div class="d-flex justify-content-end">
-                        <button type="submit" class="btn btn-primary btn-sm" th:disabled="${#authorization.expression('!isAuthenticated()')}">제출</button>
+                    <div class="mt-3">
+                        <a href="#" class="recommend btn btn-sm btn-outline-secondary" th:data-uri="@{|/review/vote/${reviewDto.review.id}|}">
+                            추천 <span class="badge rounded-pill bg-success" th:text="${reviewDto.votesCount}"></span>
+                        </a>
+                        <a th:href="@{|/review/modify/${reviewDto.review.id}|}" class="btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()" th:if="${reviewDto.review.author != null and #authentication.getPrincipal().getUsername() == reviewDto.review.author.loginId}">수정</a>
+                        <a href="#" class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()" th:data-uri="@{|/review/delete/${reviewDto.review.id}|}" th:if="${reviewDto.review.author != null and #authentication.getPrincipal().getUsername() == reviewDto.review.author.loginId}">삭제</a>
+                        <a href="#" class="delete btn btn-sm btn-outline-secondary" sec:authorize="hasRole('ROLE_ADMIN')" th:data-uri="@{|/review/admin/delete/${reviewDto.review.id}|}">삭제(관리자)</a>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 
+<div th:if="${reviewsPage.totalPages > 1}" class="pagination-container mt-4">
+    <nav>
+        <ul class="pagination">
+            <li th:each="pageNum : ${#numbers.sequence(1, reviewsPage.totalPages)}" class="page-item">
+                <a th:href="@{/restaurant/detail/{id}(id=${restaurant.id}, page=${pageNum - 1})}" class="page-link" th:text="${pageNum}"></a>
+            </li>
+        </ul>
+    </nav>
+</div>
 
+<div class="container review-section mt-4 mb-5">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title mb-3">리뷰 작성</h5>
+            <form th:action="@{/review/create/{restaurantId}(restaurantId=${restaurant.id})}" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <div class="d-flex align-items-center"> <!-- Flex container for horizontal alignment -->
+                        <label for="rating" class="form-label me-3">별점</label> <!-- Added margin right for spacing -->
+                        <div id="rating" class="star-rating">
+                            <i class="bi bi-star" data-value="1"></i>
+                            <i class="bi bi-star" data-value="2"></i>
+                            <i class="bi bi-star" data-value="3"></i>
+                            <i class="bi bi-star" data-value="4"></i>
+                            <i class="bi bi-star" data-value="5"></i>
+                            <input type="hidden" name="rating" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="content" class="form-label">리뷰 내용</label>
+                    <textarea class="form-control" id="content" name="content" rows="3"
+                              th:placeholder="${#authorization.expression('isAuthenticated()') ? '리뷰 내용' : '로그인을 해야 리뷰작성이 가능합니다'}"
+                              th:disabled="${#authorization.expression('!isAuthenticated()')}"
+                              th:readonly="${#authorization.expression('!isAuthenticated()')}"
+                              th:required="${#authorization.expression('isAuthenticated()')}"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" th:disabled="${#authorization.expression('!isAuthenticated()')}">제출</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer.html :: custom-footer"></div>
 <script src="/js/bootstrap.bundle.min.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCK4Mx_MwZDuVOmzuLesNYjJXbn-2gINBc&callback=initMap" async ></script>
 
@@ -439,42 +320,31 @@
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const desktopStars = document.querySelectorAll('.desktop-version .star-rating .bi');
-        const desktopRatingInput = document.querySelector('.desktop-version .star-rating input[type="hidden"]');
+        const stars = document.querySelectorAll('.star-rating .bi');
+        const ratingInput = document.querySelector('.star-rating input[type="hidden"]');
 
-        const mobileStars = document.querySelectorAll('.mobile-version .star-rating .bi');
-        const mobileRatingInput = document.querySelector('.mobile-version .star-rating input[type="hidden"]');
-
-        function updateRating(stars, ratingInput, value) {
+        function updateRating(value) {
             ratingInput.value = value;
             stars.forEach(star => {
                 star.style.color = star.dataset.value <= value ? '#ffc107' : '#ccc';
             });
         }
 
-        function addEventListeners(stars, ratingInput) {
-            stars.forEach(star => {
-                star.addEventListener('mouseenter', function() {
-                    updateRating(stars, ratingInput, this.dataset.value);
-                });
-                star.addEventListener('mouseleave', function() {
-                    updateRating(stars, ratingInput, ratingInput.value);
-                });
-                star.addEventListener('click', function() {
-                    updateRating(stars, ratingInput, this.dataset.value);
-                });
+        stars.forEach(star => {
+            star.addEventListener('mouseenter', function() {
+                updateRating(this.dataset.value);
             });
-        }
-
-        addEventListeners(desktopStars, desktopRatingInput);
-        addEventListeners(mobileStars, mobileRatingInput);
-
-        document.querySelector('.desktop-version .star-rating').addEventListener('mouseleave', function() {
-            updateRating(desktopStars, desktopRatingInput, desktopRatingInput.value);
+            star.addEventListener('mouseleave', function() {
+                updateRating(ratingInput.value);
+            });
+            star.addEventListener('click', function() {
+                updateRating(this.dataset.value);
+            });
         });
 
-        document.querySelector('.mobile-version .star-rating').addEventListener('mouseleave', function() {
-            updateRating(mobileStars, mobileRatingInput, mobileRatingInput.value);
+        // Reset to actual selected on mouseleave
+        document.querySelector('.star-rating').addEventListener('mouseleave', function() {
+            updateRating(ratingInput.value);
         });
     });
 </script>
