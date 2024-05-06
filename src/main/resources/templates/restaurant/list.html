@@ -29,6 +29,10 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
     <style>
+        html, body {
+            width: 100%;
+            overflow-x: hidden;
+        }
         .rating .bi-star-fill {
             color: #ffc107;
         }
@@ -117,10 +121,6 @@
         }
 
         @media (max-width: 767px) {
-            html, body {
-                width: 100%;
-                overflow-x: hidden;
-            }
 
             .pc-only.card-container {
                 display: none;
