@@ -30,8 +30,6 @@ public class RestaurantService {
         restaurantRepository.save(restaurant);
     }
 
-
-
     //음식점 버튼 정렬 (기본 list 페이지)
     public List<Restaurant> getAllRestaurantsBySorted(String sort){
         if (sort.equals("userRating")){ // 유저 별점 순 정렬, 내림차순

@@ -222,6 +222,23 @@
             .category-title[data-category="혼밥"]::before {
                 content: "🍽️";
             }
+            /* 스크롤바 전체의 스타일 */
+            ::-webkit-scrollbar {
+                width: 12px; /* 스크롤바의 너비 */
+            }
+
+            /* 스크롤바 핸들(움직이는 부분)의 스타일 */
+            ::-webkit-scrollbar-thumb {
+                background-color: darkgrey; /* 핸들의 색상 */
+                border-radius: 10px; /* 핸들의 모서리 둥글게 */
+                border: 3px solid #fad0c4; /* 핸들 주변의 테두리 (선택적) */
+            }
+
+            /* 스크롤바 트랙(바탕)의 스타일 */
+            ::-webkit-scrollbar-track {
+                background: #f1f1f1; /* 트랙의 배경색 */
+                border-radius: 10px; /* 트랙의 모서리 둥글게 */
+            }
         }
         @media (min-width: 768px) {
             .pc-only {
