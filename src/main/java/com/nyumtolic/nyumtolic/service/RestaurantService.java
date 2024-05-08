@@ -1,6 +1,8 @@
 package com.nyumtolic.nyumtolic.service;
 
 
+import com.nyumtolic.nyumtolic.api.CategoryDTO;
+import com.nyumtolic.nyumtolic.api.RestaurantDTO;
 import com.nyumtolic.nyumtolic.domain.Category;
 import com.nyumtolic.nyumtolic.domain.Restaurant;
 import com.nyumtolic.nyumtolic.repository.RestaurantRepository;
@@ -98,6 +100,36 @@ public class RestaurantService {
         return false;
     }
 
+    ////api 관련 서비스 메소드임
+
+    public List<RestaurantDTO> getAllRestaurantsDTO(){
+        List<Restaurant> restaurants = restaurantRepository.findAll();
+        return restaurants.stream().map(
+                this::createRestaurantDTO
+        ).collect(Collectors.toList());
+    }
+
+    public RestaurantDTO createRestaurantDTO(Restaurant restaurant){
+        List<CategoryDTO> categoryDTOs = restaurant.getCategories().stream()
+                .map(category -> new CategoryDTO(category.getId(), category.getName()))
+                .collect(Collectors.toList());
+
+        return new RestaurantDTO(
+                restaurant.getId(),
+                restaurant.getPhoto(),
+                restaurant.getName(),
+                restaurant.getAddress(),
+                restaurant.getPhoneNumber(),
+                categoryDTOs,
+                restaurant.getRating(),
+                restaurant.getMenu(),
+                restaurant.getDescription(),
+                restaurant.getTravelTime(),
+                restaurant.getLatitude(),
+                restaurant.getLongitude(),
+                restaurant.getUserRating()
+        );
+    }
 
 
 }
