@@ -91,30 +91,12 @@ public class RestaurantController {
     }
 
     @GetMapping("/recommendation")
-    public String showRecommendationForm(Model model) {
-        return "restaurant/recommendation";
-    }
-
-    @PostMapping("/recommendation")
-    public String recommendRestaurant(@RequestParam("excludedCategories") String excludedCategories,
-                                      RedirectAttributes redirectAttributes) {
-        String[] categoriesArray = excludedCategories.split("\\s*,\\s*");
-        Optional<Restaurant> recommendedRestaurant = restaurantService.recommendRandomRestaurantExcludingCategories(categoriesArray);
-
-        redirectAttributes.addFlashAttribute("recommendedRestaurant", recommendedRestaurant.orElse(null));
-        redirectAttributes.addFlashAttribute("excludedCategories", excludedCategories);
-        return "redirect:/restaurant/recommendation/result";
-    }
-
-    // 결과를 보여주는 새로운 GET 메서드
-    @GetMapping("/recommendation/result")
-    public String showRecommendedRestaurant(Model model) {
-        // 예를 들어, recommendedRestaurant와 excludedCategories 속성을 확인하고 명시적으로 추가
-        if (!model.containsAttribute("recommendedRestaurant")) {
-            model.addAttribute("recommendedRestaurant", null);
-        }
-        if (!model.containsAttribute("excludedCategories")) {
-            model.addAttribute("excludedCategories", "");
+    public String recommendRestaurant(@RequestParam(value = "excludedCategories", required = false) String excludedCategories, Model model) {
+        model.addAttribute("excludedCategories", excludedCategories != null ? excludedCategories : "");
+        if (excludedCategories != null) {
+            String[] categoriesArray = excludedCategories.split("\\s*,\\s*");
+            Optional<Restaurant> recommendedRestaurant = restaurantService.recommendRandomRestaurantExcludingCategories(categoriesArray);
+            model.addAttribute("recommendedRestaurant", recommendedRestaurant.orElse(null));
         }
         return "restaurant/recommendation";
     }

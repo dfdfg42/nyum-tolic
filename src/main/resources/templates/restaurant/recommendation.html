@@ -273,7 +273,7 @@
     </div>
 
     <div class="d-flex justify-content-center">
-        <form th:action="@{/restaurant/recommendation}" method="post" class="w-50">
+        <form th:action="@{/restaurant/recommendation}" method="get" class="w-50">
             <div class="row g-2 align-items-center">
                 <div class="col">
                     <label class="form-label"><strong>제외할 카테고리를 골라주세요:</strong></label>
@@ -354,7 +354,7 @@
     </div>
 
     <div class="d-flex justify-content-center">
-        <form th:action="@{/restaurant/recommendation}" method="post" class="w-50">
+        <form th:action="@{/restaurant/recommendation}" method="get" class="w-50">
             <div class="row g-2 align-items-center">
                 <div class="col text-center">
                     <input type="text" class="form-control excluded-categories-mobile" name="excludedCategories"
