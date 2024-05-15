@@ -1,23 +1,22 @@
 package com.nyumtolic.nyumtolic.service;
 
 
-import com.nyumtolic.nyumtolic.api.CategoryDTO;
-import com.nyumtolic.nyumtolic.api.RestaurantDTO;
+import com.nyumtolic.nyumtolic.api.domain.CategoryDTO;
+import com.nyumtolic.nyumtolic.api.domain.PageResponse;
+import com.nyumtolic.nyumtolic.api.domain.RestaurantDTO;
 import com.nyumtolic.nyumtolic.domain.Category;
 import com.nyumtolic.nyumtolic.domain.Restaurant;
 import com.nyumtolic.nyumtolic.repository.RestaurantRepository;
-import com.nyumtolic.nyumtolic.review.Review;
 import com.nyumtolic.nyumtolic.review.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -103,8 +102,9 @@ public class RestaurantService {
 
     ////api 관련 서비스 메소드임
 
-    public List<RestaurantDTO> getAllRestaurantsDTO(Pageable pageable){
-        return restaurantRepository.findAll(pageable).stream().map(this::createRestaurantDTO).collect(Collectors.toList());
+    public PageResponse<RestaurantDTO> getAllRestaurantsDTO(Pageable pageable){
+        Page<RestaurantDTO> data = restaurantRepository.findAll(pageable).map(this::createRestaurantDTO);
+        return new PageResponse<>(data);
     }
 
     public RestaurantDTO createRestaurantDTO(Restaurant restaurant){
