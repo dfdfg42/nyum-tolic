@@ -9,6 +9,7 @@ import com.nyumtolic.nyumtolic.repository.RestaurantRepository;
 import com.nyumtolic.nyumtolic.review.Review;
 import com.nyumtolic.nyumtolic.review.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -102,11 +103,8 @@ public class RestaurantService {
 
     ////api 관련 서비스 메소드임
 
-    public List<RestaurantDTO> getAllRestaurantsDTO(){
-        List<Restaurant> restaurants = restaurantRepository.findAll();
-        return restaurants.stream().map(
-                this::createRestaurantDTO
-        ).collect(Collectors.toList());
+    public List<RestaurantDTO> getAllRestaurantsDTO(Pageable pageable){
+        return restaurantRepository.findAll(pageable).stream().map(this::createRestaurantDTO).collect(Collectors.toList());
     }
 
     public RestaurantDTO createRestaurantDTO(Restaurant restaurant){
