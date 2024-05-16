@@ -40,3 +40,6 @@ out/
 /src/main/resources/oauth.properties
 /src/main/resources/mail.properties
 /src/main/resources/application-prod.properties
+
+### mac ###
+*.DS_Store
