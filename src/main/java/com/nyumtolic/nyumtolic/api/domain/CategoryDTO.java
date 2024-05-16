@@ -1,4 +1,4 @@
-package com.nyumtolic.nyumtolic.api;
+package com.nyumtolic.nyumtolic.api.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
