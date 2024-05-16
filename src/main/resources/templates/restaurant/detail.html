@@ -283,6 +283,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="card-title nickname" th:text="${reviewDto.review.author.nickname}"></h5>
+                            <a href="#" class="delete btn btn-sm btn-outline-secondary" sec:authorize="hasRole('ROLE_ADMIN')" th:data-uri="@{|/user/admin/${reviewDto.review.author.loginId}/ban|}">벤(관리자)</a>
                             <div class="rating">
                                     <span th:each="star : ${#numbers.sequence(1,5)}">
                                         <i class="bi"
@@ -399,6 +400,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h6 class="card-title nickname mb-0" th:text="${reviewDto.review.author.nickname}"></h6>
+                            <a href="#" class="delete btn btn-sm btn-outline-secondary" sec:authorize="hasRole('ROLE_ADMIN')" th:data-uri="@{|/user/admin/${reviewDto.review.author.loginId}/ban|}">벤(관리자)</a>
                             <div class="rating">
                                 <span th:each="star : ${#numbers.sequence(1,5)}">
                                     <i class="bi" th:classappend="${reviewDto.review.rating >= star} ? 'bi-star-fill' : (${reviewDto.review.rating >= star - 0.5} ? 'bi-star-half' : 'bi-star')" th:style="'color: ' + (${reviewDto.review.rating >= star} ? '#2FCC71' : (${reviewDto.review.rating >= star - 0.5} ? '#2FCC71' : '#ccc'))"></i>
