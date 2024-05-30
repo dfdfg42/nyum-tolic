@@ -14,17 +14,17 @@ https://nyumtolic.com/restaurant/list
   
 |음식점 별점 리뷰|
 |:---:|
-|<img src="https://github.com/SolfE/nyum-tolic/assets/74342496/3540c5c4-d0ed-4a71-a314-42e898d08119" width = "500">|
+|<img src="https://github.com/SolfE/nyum-tolic/assets/74342496/3540c5c4-d0ed-4a71-a314-42e898d08119" width = "700">|
 |학생들이 직접 작성한 믿을만한 별점 리뷰를 제공합니다.|
 
 |랜덤 추천|
 |:---:|
-|<img src="https://github.com/SolfE/nyum-tolic/assets/74342496/23806200-35ca-4770-8609-d5b458450b4e" width = "500">|
+|<img src="https://github.com/SolfE/nyum-tolic/assets/74342496/23806200-35ca-4770-8609-d5b458450b4e" width = "700">|
 |고민되는 점심메뉴를 카테고리에 따라 자동으로 추천해줍니다.|
 
 |학식 정보|
 |:---:|
-|<img src="https://github.com/SolfE/nyum-tolic/assets/74342496/e54ecba5-c35c-4bc8-85ad-62598f93acb8" width = "500">|
+|<img src="https://github.com/SolfE/nyum-tolic/assets/74342496/e54ecba5-c35c-4bc8-85ad-62598f93acb8" width = "700">|
 |가톨릭대학교 학식메뉴 정보를 제공합니다.|
 </div>
 
