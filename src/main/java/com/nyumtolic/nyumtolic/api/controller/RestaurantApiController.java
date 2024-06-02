@@ -31,7 +31,7 @@ public class RestaurantApiController {
     @Operation(summary = "GET restaurant", description = "음식점 목록을 가져옵니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-            content = {@Content(schema = @Schema(implementation = RestaurantDTO.class))})
+            content = {@Content(schema = @Schema(implementation = PageResponse.class))})
     })
     public PageResponse<RestaurantDTO> getCreateAPI(@PageableDefault(size = 5) Pageable pageable) {
         return restaurantService.getAllRestaurantsDTO(pageable);
