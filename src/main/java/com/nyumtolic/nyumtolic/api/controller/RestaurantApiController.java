@@ -4,8 +4,10 @@ package com.nyumtolic.nyumtolic.api.controller;
 import com.nyumtolic.nyumtolic.api.domain.PageResponse;
 import com.nyumtolic.nyumtolic.api.domain.RestaurantDTO;
 import com.nyumtolic.nyumtolic.service.RestaurantService;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -30,10 +32,13 @@ public class RestaurantApiController {
     @GetMapping("/restaurants")
     @Operation(summary = "GET restaurant", description = "음식점 목록을 가져옵니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공",
-            content = {@Content(schema = @Schema(implementation = PageResponse.class))})
+            @ApiResponse(responseCode = "200", description = "성공", useReturnTypeSchema = true)
     })
-    public PageResponse<RestaurantDTO> getCreateAPI(@PageableDefault(size = 5) Pageable pageable) {
+    @Parameters({
+            @Parameter(name = "page", description = "페이지 번호", example = "1"),
+            @Parameter(name = "size", description = "페이지당 음식점 개수", example = "10")
+    })
+    public PageResponse<RestaurantDTO> getCreateAPI(@Parameter(hidden = true) @PageableDefault(size = 5) Pageable pageable) {
         return restaurantService.getAllRestaurantsDTO(pageable);
     }
 
