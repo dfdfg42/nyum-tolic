@@ -14,10 +14,10 @@ public class PageResponse<E> {
     @Schema(description = "전체 페이지 수", example = "20")
     private long totalPages;
 
-    @Schema(description = "전체 음식점 개수", example = "300")
+    @Schema(description = "전체 데이터 개수", example = "300")
     private long totalElements;
 
-    @Schema(description = "음식점 목록")
+    @Schema(description = "데이터 목록")
     private List<E> content;
 
     public PageResponse(Page<E> page) {
