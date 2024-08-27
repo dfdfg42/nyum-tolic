@@ -1,0 +1,23 @@
+@font-face {
+    font-family: 'MyCustomFont';
+    src: url('../fonts/NotoSansKR-Regular.woff2') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'MyCustomFont', sans-serif;
+}
+
+h1.my-4 {
+    font-family: 'MyCustomFont', sans-serif;
+    font-size: 56px;
+    font-weight: bold;
+    margin-top: 300px;
+}
+
+.subtitle {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 60px;
+}
