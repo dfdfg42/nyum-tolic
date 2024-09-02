@@ -50,8 +50,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/**").permitAll() // POST 요청을 허용
                         .anyRequest().authenticated()) // 나머지 요청에 대해서는 인증 필요
 
-                .csrf((csrf) -> csrf.disable())
-                        //.ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**")))
+                .csrf((csrf) -> csrf
+                        .ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**")))
 
                 .headers((headers) -> headers
                         .addHeaderWriter(new XFrameOptionsHeaderWriter(

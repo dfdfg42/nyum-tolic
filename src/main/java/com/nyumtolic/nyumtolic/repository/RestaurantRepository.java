@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RestaurantRepository extends JpaRepository<Restaurant,Long> {
@@ -24,6 +25,8 @@ public interface RestaurantRepository extends JpaRepository<Restaurant,Long> {
 
     @Query("SELECT r FROM Restaurant r JOIN r.categories c WHERE c.id = :categoryId ORDER BY r.name")
     List<Restaurant> findAllByCategoryIdOrderByName(Long categoryId);
+
+    Optional<Restaurant> findByName(String name);
 
 }
 
