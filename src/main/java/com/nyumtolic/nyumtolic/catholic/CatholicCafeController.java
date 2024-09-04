@@ -15,6 +15,7 @@ public class CatholicCafeController {
 
     private final CatholicCafeTableRepository catholicCafeTableRepository;
 
+    // todo 메뉴 페이지 수정
     @GetMapping("/menu")
     public String showCatholicMenu(Model model) {
         List<CatholicCafeTable> catholicCafeTable = catholicCafeTableRepository.findAll();

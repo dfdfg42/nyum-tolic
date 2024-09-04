@@ -1,9 +1,12 @@
 package com.nyumtolic.nyumtolic.catholic;
 
 import com.nyumtolic.nyumtolic.S3.S3Service;
+import com.nyumtolic.nyumtolic.controller.RestaurantController;
 import com.nyumtolic.nyumtolic.s3.CustomMultipartFile;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,6 +19,8 @@ import java.util.Optional;
 @EnableScheduling
 @RequiredArgsConstructor
 public class CatholicCrawlerService {
+
+    private static final Logger logger = LoggerFactory.getLogger(RestaurantController.class);
 
     private final CatholicCafeTableRepository catholicCafeTableRepository;
 
@@ -49,6 +54,8 @@ public class CatholicCrawlerService {
                         .build());
 
                 catholicCafeTableRepository.save(updatedCafe);
+                logger.info(key + "학식정보 업데이트 완료");
+
             } catch (Exception e) {
                 Optional<CatholicCafeTable> cafe = catholicCafeTableRepository.findByName(key);
                 CatholicCafeTable updatedCafe = cafe.orElseGet(() -> CatholicCafeTable.builder()
@@ -58,6 +65,7 @@ public class CatholicCrawlerService {
                         .build());
 
                 catholicCafeTableRepository.save(updatedCafe);
+                logger.warn(key + "학식정보 업데이트 실패 " + url + "이 유효하지 않습니다.");
             }
         }
     }

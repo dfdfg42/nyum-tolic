@@ -58,10 +58,10 @@ public class CatholicCrawler {
                 String link = baseUrl + tag.attr("href");
                 links.put(keys[i], link);
             }
-            logger.info("학식정보 크롤링 완료");
+            logger.info("학식정보 url 크롤링 완료");
             return links;
         } catch (IOException e) {
-            logger.info("학식정보 크롤링 실패");
+            logger.warn("학식정보 url 크롤링 실패");
             return new HashMap<>();
         }
 
