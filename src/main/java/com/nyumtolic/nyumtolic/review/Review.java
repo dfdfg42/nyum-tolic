@@ -40,8 +40,4 @@ public class Review {
     private Double rating;
 
 
-    // New field for storing image URL
-    @Column(name = "image_url")
-    private String imageUrl;
 }
-

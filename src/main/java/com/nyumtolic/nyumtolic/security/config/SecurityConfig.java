@@ -7,7 +7,6 @@ import com.nyumtolic.nyumtolic.security.service.PrincipalOauth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -46,9 +45,7 @@ public class SecurityConfig {
                         .expiredSessionStrategy(sessionInformationExpiredStrategy())) // 세션 만료 전략
 
                 .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
-                        .requestMatchers(new AntPathRequestMatcher("/**")).permitAll() // 모든 요청을 허용
-                        .requestMatchers(HttpMethod.POST, "/**").permitAll() // POST 요청을 허용
-                        .anyRequest().authenticated()) // 나머지 요청에 대해서는 인증 필요
+                        .requestMatchers(new AntPathRequestMatcher("/**")).permitAll())
 
                 .csrf((csrf) -> csrf
                         .ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**")))
@@ -71,7 +68,7 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/")
                         .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint
                                 .userService(principalOauth2UserService)))
-        ;
+                ;
         return http.build();
 
     }

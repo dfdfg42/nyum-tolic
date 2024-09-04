@@ -7,8 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import java.util.Optional;
-
 @Repository
 public interface RestaurantRepository extends JpaRepository<Restaurant,Long> {
     @Query("SELECT r FROM Restaurant r ORDER BY COALESCE(r.userRating, 0) DESC")
@@ -26,8 +24,6 @@ public interface RestaurantRepository extends JpaRepository<Restaurant,Long> {
 
     @Query("SELECT r FROM Restaurant r JOIN r.categories c WHERE c.id = :categoryId ORDER BY r.name")
     List<Restaurant> findAllByCategoryIdOrderByName(Long categoryId);
-
-    Optional<Restaurant> findByName(String name);
 
 }
 

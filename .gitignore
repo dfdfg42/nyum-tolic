@@ -42,7 +42,4 @@ out/
 /src/main/resources/application-prod.properties
 
 ### mac ###
-
 *.DS_Store
-/src/main/resources/aws.properties
-

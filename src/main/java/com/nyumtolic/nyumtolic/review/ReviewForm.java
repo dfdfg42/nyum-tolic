@@ -17,7 +17,4 @@ public class ReviewForm {
     @Min(0)
     @Max(5)
     private Double rating;
-
-
-    private String imageUrl;
 }
