@@ -31,6 +31,10 @@ public class S3Service {
         return fileUrl;
     }
 
+    public String getFileUrl(String fileName) {
+        return "https://" + bucket + ".s3." + amazonS3Client.getRegionName() + ".amazonaws.com/" + fileName;
+    }
+
     public void deleteFile(String fileName) {
         amazonS3Client.deleteObject(bucket, fileName);
     }
