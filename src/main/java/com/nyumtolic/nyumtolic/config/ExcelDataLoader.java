@@ -150,7 +150,4 @@ public class ExcelDataLoader implements CommandLineRunner {
 
 
 
-<<<<<<< HEAD
-=======
 
->>>>>>> s3ver

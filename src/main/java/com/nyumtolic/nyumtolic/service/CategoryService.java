@@ -13,14 +13,10 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-<<<<<<< HEAD
 
-    //저장
-    public void save(Category category){
-=======
     // 저장
     public void save(Category category) {
->>>>>>> s3ver
+
         categoryRepository.save(category);
     }
 
@@ -39,22 +35,12 @@ public class CategoryService {
         return categoryRepository.findByIsMainCategoryTrue();
     }
 
-<<<<<<< HEAD
-=======
+
     // 서브 카테고리 조회
->>>>>>> s3ver
     public List<Category> findOtherCategories() {
         return categoryRepository.findByIsMainCategoryFalse();
     }
 
-<<<<<<< HEAD
-    public Category findByName(String name){
-        return categoryRepository.findByName(name).get();
-    }
-
-
-
-=======
     // 카테고리 이름으로 조회
     public Category findByName(String name) {
         return categoryRepository.findByName(name).orElse(null);
@@ -69,5 +55,4 @@ public class CategoryService {
     public void delete(Category category) {
         categoryRepository.delete(category);
     }
->>>>>>> s3ver
 }
