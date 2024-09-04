@@ -24,7 +24,8 @@ import java.util.List;
 public class ExcelDataLoader implements CommandLineRunner {
 
 
-  private final CategoryService categoryService;
+
+    private final CategoryService categoryService;
     private final RestaurantService restaurantService;
 
     @Override
@@ -34,52 +35,70 @@ public class ExcelDataLoader implements CommandLineRunner {
 
         Sheet categorySheet = workbook.getSheet("Category");
         Sheet restaurantSheet = workbook.getSheet("Restaurant");
-        Sheet menuSheet = workbook.getSheet("Menu");
 
-        // 카테고리 데이터 로드 및 저장
-        loadAndSaveCategories(categorySheet);
+        // 카테고리 데이터 로드 및 동기화
+        syncCategories(categorySheet);
 
-        // 레스토랑 데이터 로드 및 저장
-        loadAndSaveRestaurants(restaurantSheet);
-
-
+        // 레스토랑 데이터 로드 및 동기화
+        syncRestaurants(restaurantSheet);
 
         workbook.close();
     }
 
 
+    private void syncCategories(Sheet categorySheet) {
+        List<Category> existingCategories = categoryService.findAll();
+        List<Category> loadedCategories = new ArrayList<>();
 
-    private void loadAndSaveCategories(Sheet categorySheet) {
-        // 카테고리 데이터 읽기 및 저장 로직 구현
         Iterator<Row> rowIterator = categorySheet.iterator();
-
         if (rowIterator.hasNext()) {
             rowIterator.next();
         }
 
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
-            Category category = new Category();
-            category.setName(row.getCell(0).getStringCellValue());
-            category.setMainCategory(row.getCell(1).getBooleanCellValue());
+
+            String categoryName = row.getCell(0).getStringCellValue();
+            boolean isMainCategory = row.getCell(1).getBooleanCellValue();
+
+            Category category = categoryService.findByName(categoryName);
+            if (category == null) {
+                category = new Category();
+                category.setName(categoryName);
+            }
+
+            category.setMainCategory(isMainCategory);
             categoryService.save(category);
+            loadedCategories.add(category);
+        }
+
+        // 기존 데이터베이스에 있지만 Excel에는 없는 카테고리 삭제
+        for (Category existingCategory : existingCategories) {
+            if (!loadedCategories.contains(existingCategory)) {
+                categoryService.delete(existingCategory);
+            }
         }
     }
 
-    private void loadAndSaveRestaurants(Sheet restaurantSheet) {
-        // 레스토랑 데이터 읽기 및 저장 로직 구현
+    private void syncRestaurants(Sheet restaurantSheet) {
+        List<Restaurant> existingRestaurants = restaurantService.findAll();
+        List<Restaurant> loadedRestaurants = new ArrayList<>();
 
         Iterator<Row> rowIterator = restaurantSheet.iterator();
-
-        // 첫 번째 행은 헤더이므로 건너뜁니다.
         if (rowIterator.hasNext()) {
             rowIterator.next();
         }
 
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
-            Restaurant restaurant = new Restaurant();
-            restaurant.setName(row.getCell(0).getStringCellValue());
+
+            String restaurantName = row.getCell(0).getStringCellValue();
+
+            Restaurant restaurant = restaurantService.findByName(restaurantName);
+            if (restaurant == null) {
+                restaurant = new Restaurant();
+                restaurant.setName(restaurantName);
+            }
 
             restaurant.setAddress(row.getCell(1).getStringCellValue());
             restaurant.setPhoneNumber(row.getCell(2).getStringCellValue());
@@ -90,25 +109,20 @@ public class ExcelDataLoader implements CommandLineRunner {
             restaurant.setLongitude(row.getCell(9).getNumericCellValue());
             restaurant.setPhoto(row.getCell(10).getStringCellValue());
 
-            // 메뉴 이름을 기반으로 메뉴에 추가
 
+            // 메뉴 업데이트
             String menuName = row.getCell(4).getStringCellValue();
             List<String> menuNames = new ArrayList<>();
-
-            for (String name: menuName.split(",")){
-                if (name !=null){
-                    menuNames.add(name);
+            for (String name : menuName.split(",")) {
+                if (name != null) {
+                    menuNames.add(name.trim());
                 }
             }
-            if (!menuNames.isEmpty()) {
-                restaurant.setMenu(menuNames);
-            }
+            restaurant.setMenu(menuNames);
 
-            // 카테고리 이름을 기반으로 카테고리 엔티티를 찾습니다.
+            // 카테고리 업데이트
             String categoryName = row.getCell(7).getStringCellValue();
             List<Category> categories = new ArrayList<>();
-
-            // ','를 기준으로 카테고리 이름을 분리합니다(여러 카테고리 지원).
             for (String name : categoryName.split(",")) {
                 Category category = categoryService.findByName(name.trim());
                 if (category != null) {
@@ -116,16 +130,21 @@ public class ExcelDataLoader implements CommandLineRunner {
                 }
             }
 
-            // 찾은 카테고리들을 레스토랑에 설정합니다.
-            if (!categories.isEmpty()) {
-                restaurant.setCategories(categories);
-                restaurantService.save(restaurant);
+            restaurant.setCategories(categories);
+
+            restaurantService.save(restaurant);
+            loadedRestaurants.add(restaurant);
+        }
+
+        // 기존 데이터베이스에 있지만 Excel에는 없는 레스토랑 삭제
+        for (Restaurant existingRestaurant : existingRestaurants) {
+            if (!loadedRestaurants.contains(existingRestaurant)) {
+                restaurantService.delete(existingRestaurant);
             }
         }
     }
-
-
 }
+
 
 
 

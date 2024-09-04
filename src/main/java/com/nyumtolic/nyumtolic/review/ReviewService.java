@@ -1,6 +1,7 @@
 package com.nyumtolic.nyumtolic.review;
 
 import com.nyumtolic.nyumtolic.DataNotFoundException;
+import com.nyumtolic.nyumtolic.S3.S3Service;
 import com.nyumtolic.nyumtolic.domain.Restaurant;
 import com.nyumtolic.nyumtolic.repository.RestaurantRepository;
 import com.nyumtolic.nyumtolic.security.domain.SiteUser;
@@ -10,7 +11,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -23,12 +26,15 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final RestaurantRepository restaurantRepository;
 
+    private final S3Service s3Service;
+
     public void vote(Review review, SiteUser siteUser) {
         review.getVoter().add(siteUser);
         this.reviewRepository.save(review);
     }
 
-    public Review create(Long restaurantId, String content, Double rating, SiteUser author) {
+
+    public Review create(Long restaurantId, String content, Double rating, SiteUser author, String imageUrl) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new DataNotFoundException("Restaurant not found"));
         Review review = new Review();
@@ -37,6 +43,9 @@ public class ReviewService {
         review.setRating(rating);
         review.setRestaurant(restaurant);
         review.setAuthor(author);
+
+        review.setImageUrl(imageUrl);
+
         reviewRepository.save(review);
         updateRestaurantUserRating(restaurantId);
         return review;
@@ -62,18 +71,23 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 
-    public void modify(Review review, String content, Double rating) {
+    public void modify(Review review, String content, Double rating, String imageUrl) {
         review.setContent(content);
         review.setModifyDate(LocalDateTime.now());
         review.setRating(rating);
+        review.setImageUrl(imageUrl);
         this.reviewRepository.save(review);
         updateRestaurantUserRating(review.getRestaurant().getId());
     }
 
-    public void delete(Review answer) {
-        this.reviewRepository.delete(answer);
-        Long restaurantId = answer.getRestaurant().getId();
-        updateRestaurantUserRating(restaurantId);
+
+    public void delete(Review review) {
+        if (review.getImageUrl() != null) {
+            String fileName = review.getImageUrl().substring(review.getImageUrl().lastIndexOf("/") + 1);
+            s3Service.deleteFile(fileName);
+        }
+        this.reviewRepository.delete(review);
+        updateRestaurantUserRating(review.getRestaurant().getId());
     }
 
     public List<Review> findReviewsByRestaurantId(Long restaurantId) {
@@ -101,7 +115,29 @@ public class ReviewService {
 
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new RuntimeException("Restaurant not found"));
-        restaurant.setUserRating(averageRating % 200000000);
+        restaurant.setUserRating(averageRating);
         restaurantRepository.save(restaurant);
     }
+
+    public void saveReviewImage(Long reviewId, MultipartFile image) throws IOException {
+        Review review = getReview(reviewId);
+        if (review.getImageUrl() != null) {
+            String fileName = review.getImageUrl().substring(review.getImageUrl().lastIndexOf("/") + 1);
+            s3Service.deleteFile(fileName);
+        }
+        String imageUrl = s3Service.uploadFile(image);
+        review.setImageUrl(imageUrl);
+        reviewRepository.save(review);
+    }
+
+    public void deleteReviewImage(Long reviewId) {
+        Review review = getReview(reviewId);
+        if (review.getImageUrl() != null) {
+            String fileName = review.getImageUrl().substring(review.getImageUrl().lastIndexOf("/") + 1);
+            s3Service.deleteFile(fileName);
+            review.setImageUrl(null);
+            reviewRepository.save(review);
+        }
+    }
 }
+
