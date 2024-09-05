@@ -15,11 +15,12 @@ public class CatholicCafeController {
 
     private final CatholicCafeTableRepository catholicCafeTableRepository;
 
-    // todo 메뉴 페이지 수정
     @GetMapping("/menu")
     public String showCatholicMenu(Model model) {
         List<CatholicCafeTable> catholicCafeTable = catholicCafeTableRepository.findAll();
-        model.addAttribute("catholicCafeTable", catholicCafeTable);
+        for (CatholicCafeTable cafe : catholicCafeTable) {
+            model.addAttribute(cafe.getName(), cafe.getLink());
+        }
         return "catholic/menu";
     }
 }

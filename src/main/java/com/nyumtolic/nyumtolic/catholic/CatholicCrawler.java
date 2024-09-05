@@ -26,7 +26,7 @@ public class CatholicCrawler {
     private static final Logger logger = LoggerFactory.getLogger(RestaurantController.class);
 
     @Getter
-    private static final String[] keys = {"Buon-Pranzo", "Cafe-Bona", "Cafe-Mensa"};
+    private static final String[] keys = {"buonPranzo", "cafeBona", "cafeMensa"};
 
     private static final String baseUrl = "https://www.catholic.ac.kr";
     private static final String pdfUrl = "/ko/campuslife/restaurant.do";
