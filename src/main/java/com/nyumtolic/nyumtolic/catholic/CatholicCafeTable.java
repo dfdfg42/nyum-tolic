@@ -22,6 +22,6 @@ public class CatholicCafeTable {
     private String link;
 
     @Column(nullable = false)
-    private String s3Ling;
+    private String s3Link;
 
 }

@@ -3,6 +3,8 @@ package com.nyumtolic.nyumtolic.catholic;
 import com.nyumtolic.nyumtolic.controller.RestaurantController;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.PDFRenderer;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,6 +45,18 @@ public class CatholicCrawler {
             return new ByteArrayResource(pdfBytes);
         } else {
             throw new RuntimeException("Failed to download file from URL");
+        }
+    }
+
+    public static byte[] convertPdfToJpg(byte[] pdfBytes, int pageNumber) throws IOException {
+        try (PDDocument document = PDDocument.load(new ByteArrayInputStream(pdfBytes))) {
+            PDFRenderer renderer = new PDFRenderer(document);
+
+            BufferedImage image = renderer.renderImageWithDPI(pageNumber, 300);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(image, "jpg", baos);
+            return baos.toByteArray();
         }
     }
 

@@ -20,6 +20,7 @@ public class CatholicCafeController {
         List<CatholicCafeTable> catholicCafeTable = catholicCafeTableRepository.findAll();
         for (CatholicCafeTable cafe : catholicCafeTable) {
             model.addAttribute(cafe.getName(), cafe.getLink());
+            model.addAttribute(cafe.getName() + "JPG", cafe.getS3Link());
         }
         return "catholic/menu";
     }

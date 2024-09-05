@@ -44,13 +44,14 @@ public class CatholicCrawlerService {
 
             try {
                 ByteArrayResource pdf = CatholicCrawler.downloadPdf(url);
-                String s3Url = s3Service.uploadFile(new CustomMultipartFile(pdf.getByteArray(), key, "application/pdf"));
+                byte[] jpg = CatholicCrawler.convertPdfToJpg(pdf.getByteArray(), 0);
+                String s3Url = s3Service.uploadFile(new CustomMultipartFile(jpg, key, "image/jpeg"));
 
                 Optional<CatholicCafeTable> cafe = catholicCafeTableRepository.findByName(key);
                 CatholicCafeTable updatedCafe = cafe.orElseGet(() -> CatholicCafeTable.builder()
                         .name(key)
                         .link(url)
-                        .s3Ling(s3Url)
+                        .s3Link(s3Url)
                         .build());
 
                 catholicCafeTableRepository.save(updatedCafe);
@@ -61,7 +62,7 @@ public class CatholicCrawlerService {
                 CatholicCafeTable updatedCafe = cafe.orElseGet(() -> CatholicCafeTable.builder()
                         .name(key)
                         .link(url)
-                        .s3Ling("")
+                        .s3Link("")
                         .build());
 
                 catholicCafeTableRepository.save(updatedCafe);
