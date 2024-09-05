@@ -6,17 +6,22 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/catholic")
 public class CatholicCafeController {
 
-    private final CatholicCrawlerService catholicCrawlerService;
+    private final CatholicCafeTableRepository catholicCafeTableRepository;
 
     @GetMapping("/menu")
     public String showCatholicMenu(Model model) {
-        CatholicCafeTable catholicCafeTable = catholicCrawlerService.getCatholicCafeInfo();
-        model.addAttribute("catholicCafeTable", catholicCafeTable);
+        List<CatholicCafeTable> catholicCafeTable = catholicCafeTableRepository.findAll();
+        for (CatholicCafeTable cafe : catholicCafeTable) {
+            model.addAttribute(cafe.getName(), cafe.getLink());
+            model.addAttribute(cafe.getName() + "JPG", cafe.getS3Link());
+        }
         return "catholic/menu";
     }
 }

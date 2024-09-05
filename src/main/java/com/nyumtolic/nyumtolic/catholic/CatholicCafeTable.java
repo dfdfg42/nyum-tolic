@@ -1,9 +1,6 @@
 package com.nyumtolic.nyumtolic.catholic;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -18,10 +15,13 @@ public class CatholicCafeTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String buonPranzo;
+    @Column(nullable = false)
+    private String name;
 
-    private String cafeBona;
+    @Column(nullable = false)
+    private String link;
 
-    private String cafeMensa;
+    @Column(nullable = false)
+    private String s3Link;
 
 }
