@@ -101,4 +101,43 @@ public class RestaurantController {
         return "restaurant/recommendation";
     }
 
+    //관리자 페이지용
+
+    // 관리자 페이지 전용
+    @GetMapping("/admin/list")
+    public String listRestaurantsForAdmin(Model model) {
+        model.addAttribute("restaurants", restaurantService.findAll());
+        return "restaurant/admin/restaurant_admin_list";
+    }
+
+    // 레스토랑 생성 폼 보여주기 (관리자용)
+    @GetMapping("/admin/create")
+    public String showCreateFormForAdmin(Model model) {
+        model.addAttribute("restaurant", new Restaurant());
+        return "restaurant/admin/restaurant_admin_form";
+    }
+
+    // 레스토랑 저장 또는 업데이트 (관리자용)
+    @PostMapping("/admin/save")
+    public String saveRestaurantForAdmin(@ModelAttribute("restaurant") Restaurant restaurant) {
+        restaurantService.save(restaurant);
+        return "redirect:/restaurant/admin/list";
+    }
+
+    // 레스토랑 수정 폼 (관리자용)
+    @GetMapping("/admin/edit/{id}")
+    public String showEditFormForAdmin(@PathVariable Long id, Model model) {
+        Restaurant restaurant = restaurantService.findById(id);
+        model.addAttribute("restaurant", restaurant);
+        return "restaurant/admin/restaurant_admin_form";
+    }
+
+    // 레스토랑 삭제 (관리자용)
+    @GetMapping("/admin/delete/{id}")
+    public String deleteRestaurantForAdmin(@PathVariable Long id) {
+        restaurantService.delete(id);
+        return "redirect:/restaurant/admin/list";
+    }
+
+
 }

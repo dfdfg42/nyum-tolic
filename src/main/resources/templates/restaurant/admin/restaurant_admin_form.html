@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>레스토랑 생성/수정</title>
+</head>
+<body>
+<h1 th:text="${restaurant.id == null ? '새 레스토랑 추가' : '레스토랑 수정'}"></h1>
+<form th:action="@{/restaurant/admin/save}" th:object="${restaurant}" method="post">
+    <label>이름:</label>
+    <input type="text" th:field="*{name}" /><br/>
+    <label>주소:</label>
+    <input type="text" th:field="*{address}" /><br/>
+    <label>전화번호:</label>
+    <input type="text" th:field="*{phoneNumber}" /><br/>
+    <label>평점:</label>
+    <input type="number" step="0.1" th:field="*{rating}" /><br/>
+    <button type="submit">저장</button>
+</form>
+</body>
+</html>

@@ -108,6 +108,14 @@ public class RestaurantService {
         restaurantRepository.delete(restaurant);
     }
 
+    public void delete(Long id) {
+        restaurantRepository.deleteById(id);
+    }
+
+    public Restaurant findById(Long id) {
+        return restaurantRepository.findById(id).orElse(null);
+    }
+
     public List<Restaurant> findAll() {
         return restaurantRepository.findAll();
     }

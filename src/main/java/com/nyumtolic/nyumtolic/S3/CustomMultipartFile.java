@@ -1,4 +1,4 @@
-package com.nyumtolic.nyumtolic.s3;
+package com.nyumtolic.nyumtolic.S3;
 
 import org.springframework.web.multipart.MultipartFile;
 
