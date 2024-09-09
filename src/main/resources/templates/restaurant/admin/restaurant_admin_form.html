@@ -30,15 +30,13 @@
     <label>메뉴:</label><br/>
     <textarea th:field="*{menu}" rows="3" cols="50" placeholder="메뉴를 콤마(,)로 구분하여 입력하세요"></textarea><br/>
 
-    <!-- 카테고리 (다중 선택) -->
+    <!-- 카테고리 (체크박스) -->
     <label>카테고리:</label><br/>
-    <select th:field="*{categories}" multiple>
-        <option th:each="category : ${allCategories}"
-                th:value="${category.id}"
-                th:text="${category.name}"
-                th:selected="${restaurant.categories.contains(category)}">
-        </option>
-    </select><br/>
+    <div th:each="category : ${allCategories}">
+        <input type="checkbox" th:field="*{categories}" th:value="${category.id}"
+               th:checked="${restaurant.categories.contains(category)}"/>
+        <span th:text="${category.name}"></span><br/>
+    </div>
 
     <!-- 설명 -->
     <label>설명:</label><br/>
