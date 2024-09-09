@@ -5,6 +5,7 @@ import com.nyumtolic.nyumtolic.domain.Category;
 import com.nyumtolic.nyumtolic.domain.Restaurant;
 import com.nyumtolic.nyumtolic.review.ReviewService;
 import com.nyumtolic.nyumtolic.review.ReviewWithVotesDTO;
+import com.nyumtolic.nyumtolic.service.CategoryService;
 import com.nyumtolic.nyumtolic.service.RestaurantService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ public class RestaurantController {
 
     private final RestaurantService restaurantService;
     private final ReviewService reviewService;
+    private final CategoryService categoryService;
     private static final Logger logger = LoggerFactory.getLogger(RestaurantController.class);
 
 
@@ -155,10 +157,12 @@ public class RestaurantController {
 
     // 레스토랑 수정 폼 (관리자용)
     @GetMapping("/admin/edit/{id}")
-    public String showEditFormForAdmin(@PathVariable Long id, Model model) {
+    public String showEditForm(@PathVariable Long id, Model model) {
         Restaurant restaurant = restaurantService.findById(id);
+        List<Category> allCategories = categoryService.findAll();
         model.addAttribute("restaurant", restaurant);
-        return "restaurant/admin/restaurant_admin_form";
+        model.addAttribute("allCategories", allCategories);
+        return "/restaurant/admin/restaurant_admin_form";
     }
 
     // 레스토랑 삭제 (관리자용)
