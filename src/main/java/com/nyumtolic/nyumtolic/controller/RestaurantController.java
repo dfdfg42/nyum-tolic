@@ -118,11 +118,40 @@ public class RestaurantController {
     }
 
     // 레스토랑 저장 또는 업데이트 (관리자용)
+// 레스토랑 저장 또는 업데이트 (관리자용)
     @PostMapping("/admin/save")
     public String saveRestaurantForAdmin(@ModelAttribute("restaurant") Restaurant restaurant) {
-        restaurantService.save(restaurant);
+        // 기존 레스토랑이 있는지 확인
+        if (restaurant.getId() != null) {
+            Restaurant existingRestaurant = restaurantService.findById(restaurant.getId());
+            if (existingRestaurant != null) {
+                // 기존 레스토랑 데이터 업데이트
+                existingRestaurant.setName(restaurant.getName());
+                existingRestaurant.setAddress(restaurant.getAddress());
+                existingRestaurant.setPhoneNumber(restaurant.getPhoneNumber());
+                existingRestaurant.setRating(restaurant.getRating());
+                existingRestaurant.setDescription(restaurant.getDescription());
+                existingRestaurant.setTravelTime(restaurant.getTravelTime());
+                existingRestaurant.setMenu(restaurant.getMenu());
+                existingRestaurant.setCategories(restaurant.getCategories());
+                existingRestaurant.setLatitude(restaurant.getLatitude());
+                existingRestaurant.setLongitude(restaurant.getLongitude());
+                existingRestaurant.setUserRating(restaurant.getUserRating());
+
+                // 업데이트된 레스토랑 저장
+                restaurantService.save(existingRestaurant);
+            } else {
+                // 새로운 레스토랑 저장
+                restaurantService.save(restaurant);
+            }
+        } else {
+            // 새로운 레스토랑 저장
+            restaurantService.save(restaurant);
+        }
+
         return "redirect:/restaurant/admin/list";
     }
+
 
     // 레스토랑 수정 폼 (관리자용)
     @GetMapping("/admin/edit/{id}")

@@ -6,6 +6,9 @@
 <body>
 <h1 th:text="${restaurant.id == null ? '새 레스토랑 추가' : '레스토랑 수정'}"></h1>
 <form th:action="@{/restaurant/admin/save}" th:object="${restaurant}" method="post">
+    <!-- 숨겨진 ID 필드 추가 -->
+    <input type="hidden" th:field="*{id}" />
+
     <label>이름:</label>
     <input type="text" th:field="*{name}" /><br/>
     <label>주소:</label>
