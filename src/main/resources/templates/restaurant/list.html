@@ -298,7 +298,7 @@
         <div th:each="restaurant : ${restaurants}" class="w-100 d-flex justify-content-center">
             <a th:href="@{/restaurant/detail/{id}(id=${restaurant.id})}" class="text-decoration-none">
             <div class="card mb-4" th:attr="data-restaurant-id=${restaurant.id}" th:href="@{/restaurant/detail/{id}(id=${restaurant.id})}">
-                <img th:attr="data-src=@{'/' + ${restaurant.photo}}" class="card-img-top lazy-image" alt="맛집 사진" src="">
+                <img th:attr="data-src=${restaurant.photo}" class="card-img-top lazy-image" alt="맛집 사진" src="">
                 <div class="card-body">
                     <h5 class="card-title restaurant-name mb-0" th:classappend="${#strings.length(restaurant.name) > 10} ? 'long'" th:text="${restaurant.name}">맛집 이름</h5>
                     <span class="card-subtitle text-body-secondary">
@@ -344,7 +344,7 @@
                     <div th:each="restaurant : ${restaurants}" th:if="${restaurant.categories.contains(category)}" class="col-md-2 d-flex align-items-stretch card-column">
                         <a th:href="@{/restaurant/detail/{id}(id=${restaurant.id})}" class="text-decoration-none">
                             <div class="card mb-4" th:attr="data-restaurant-id=${restaurant.id}">
-                                <img th:attr="data-src=@{'/' + ${restaurant.photo}}" class="card-img-top lazy-image" alt="맛집 사진" src="">
+                                <img th:attr="data-src=${restaurant.photo}" class="card-img-top lazy-image" alt="맛집 사진" src="">
                                 <div class="card-body">
                                     <h5 class="card-title restaurant-name mb-0" th:classappend="${#strings.length(restaurant.name) > 10} ? 'long'" th:text="${restaurant.name}">맛집 이름</h5>
                                     <span class="card-subtitle text-body-secondary">

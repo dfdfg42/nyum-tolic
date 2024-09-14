@@ -2,6 +2,8 @@ package com.nyumtolic.nyumtolic.service;
 
 
 
+import com.amazonaws.services.kms.model.NotFoundException;
+import com.nyumtolic.nyumtolic.S3.S3Service;
 import com.nyumtolic.nyumtolic.api.domain.CategoryDTO;
 import com.nyumtolic.nyumtolic.api.domain.PageResponse;
 import com.nyumtolic.nyumtolic.api.domain.RestaurantDTO;
@@ -10,12 +12,14 @@ import com.nyumtolic.nyumtolic.domain.Restaurant;
 import com.nyumtolic.nyumtolic.repository.RestaurantRepository;
 import com.nyumtolic.nyumtolic.review.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -26,6 +30,7 @@ public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
     private final ReviewRepository reviewRepository;
+    private final S3Service s3Service;
 
 
     // 저장
@@ -109,6 +114,9 @@ public class RestaurantService {
     }
 
     public void delete(Long id) {
+        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(
+                () -> new NoSuchElementException("음식점을 찾을 수 없습니다."));
+        s3Service.deleteFileByURL(restaurant.getPhoto());
         restaurantRepository.deleteById(id);
     }
 
