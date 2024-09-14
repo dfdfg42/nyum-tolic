@@ -5,7 +5,7 @@
 </head>
 <body>
 <h1 th:text="${restaurant.id == null ? '새 레스토랑 추가' : '레스토랑 수정'}"></h1>
-<form th:action="@{/restaurant/admin/save}" th:object="${restaurant}" method="post">
+<form th:action="@{/restaurant/admin/save}" th:object="${restaurant}" method="post" enctype="multipart/form-data">
 
     <!-- 숨겨진 ID 필드 -->
     <input type="hidden" th:field="*{id}" />
@@ -60,7 +60,7 @@
 
     <!-- 사진 URL -->
     <label>사진 URL:</label>
-    <input type="text" th:field="*{photo}" /><br/>
+    <input type="file" name="photoFile" /><br/>
 
     <button type="submit">저장</button>
 </form>

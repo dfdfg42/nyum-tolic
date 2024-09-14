@@ -31,11 +31,23 @@ public class S3Service {
         return fileUrl;
     }
 
-    public String getFileUrl(String fileName) {
-        return "https://" + bucket + ".s3." + amazonS3Client.getRegionName() + ".amazonaws.com/" + fileName;
+    public String uploadFileWithName(MultipartFile file, String fileName) throws IOException {
+        String fileUrl = "https://" + bucket + ".s3." + amazonS3Client.getRegionName() + ".amazonaws.com/" + fileName;
+
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType(file.getContentType());
+        metadata.setContentLength(file.getSize());
+
+        amazonS3Client.putObject(bucket, fileName, file.getInputStream(), metadata);
+        return fileUrl;
     }
 
     public void deleteFile(String fileName) {
+        amazonS3Client.deleteObject(bucket, fileName);
+    }
+
+    public void deleteFileByURL(String URL) {
+        String fileName = URL.substring(URL.lastIndexOf("/") + 1);
         amazonS3Client.deleteObject(bucket, fileName);
     }
 }

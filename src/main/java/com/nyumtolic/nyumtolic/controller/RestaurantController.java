@@ -1,6 +1,7 @@
 package com.nyumtolic.nyumtolic.controller;
 
 
+import com.nyumtolic.nyumtolic.S3.S3Service;
 import com.nyumtolic.nyumtolic.domain.Category;
 import com.nyumtolic.nyumtolic.domain.Restaurant;
 import com.nyumtolic.nyumtolic.review.ReviewService;
@@ -16,11 +17,13 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RequestMapping("/restaurant")
@@ -30,6 +33,7 @@ public class RestaurantController {
     private final RestaurantService restaurantService;
     private final ReviewService reviewService;
     private final CategoryService categoryService;
+    private final S3Service s3Service;
     private static final Logger logger = LoggerFactory.getLogger(RestaurantController.class);
 
 
@@ -122,34 +126,32 @@ public class RestaurantController {
     // 레스토랑 저장 또는 업데이트 (관리자용)
 // 레스토랑 저장 또는 업데이트 (관리자용)
     @PostMapping("/admin/save")
-    public String saveRestaurantForAdmin(@ModelAttribute("restaurant") Restaurant restaurant) {
-        // 기존 레스토랑이 있는지 확인
-        if (restaurant.getId() != null) {
-            Restaurant existingRestaurant = restaurantService.findById(restaurant.getId());
-            if (existingRestaurant != null) {
-                // 기존 레스토랑 데이터 업데이트
-                existingRestaurant.setName(restaurant.getName());
-                existingRestaurant.setAddress(restaurant.getAddress());
-                existingRestaurant.setPhoneNumber(restaurant.getPhoneNumber());
-                existingRestaurant.setRating(restaurant.getRating());
-                existingRestaurant.setDescription(restaurant.getDescription());
-                existingRestaurant.setTravelTime(restaurant.getTravelTime());
-                existingRestaurant.setMenu(restaurant.getMenu());
-                existingRestaurant.setCategories(restaurant.getCategories());
-                existingRestaurant.setLatitude(restaurant.getLatitude());
-                existingRestaurant.setLongitude(restaurant.getLongitude());
-                existingRestaurant.setUserRating(restaurant.getUserRating());
+    public String saveRestaurantForAdmin(@ModelAttribute("restaurant") Restaurant restaurant,
+                                            @RequestParam("photoFile")MultipartFile file) {
+        Restaurant findedRestaurant = new Restaurant();
+        if (restaurant.getId() != null) findedRestaurant = restaurantService.findById(restaurant.getId());
 
-                // 업데이트된 레스토랑 저장
-                restaurantService.save(existingRestaurant);
-            } else {
-                // 새로운 레스토랑 저장
-                restaurantService.save(restaurant);
-            }
-        } else {
-            // 새로운 레스토랑 저장
-            restaurantService.save(restaurant);
+        findedRestaurant.setName(restaurant.getName());
+        findedRestaurant.setAddress(restaurant.getAddress());
+        findedRestaurant.setPhoneNumber(restaurant.getPhoneNumber());
+        findedRestaurant.setRating(restaurant.getRating());
+        findedRestaurant.setDescription(restaurant.getDescription());
+        findedRestaurant.setTravelTime(restaurant.getTravelTime());
+        findedRestaurant.setMenu(restaurant.getMenu());
+        findedRestaurant.setCategories(restaurant.getCategories());
+        findedRestaurant.setLatitude(restaurant.getLatitude());
+        findedRestaurant.setLongitude(restaurant.getLongitude());
+        findedRestaurant.setUserRating(restaurant.getUserRating());
+
+        if (findedRestaurant.getPhoto() != null) s3Service.deleteFileByURL(findedRestaurant.getPhoto());
+        try {
+            String url = s3Service.uploadFileWithName(file, UUID.randomUUID().toString());
+            findedRestaurant.setPhoto(url);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
         }
+
+        restaurantService.save(findedRestaurant);
 
         return "redirect:/restaurant/admin/list";
     }
