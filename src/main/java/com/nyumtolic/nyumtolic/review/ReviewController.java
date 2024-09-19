@@ -1,7 +1,5 @@
 package com.nyumtolic.nyumtolic.review;
 
-
-import com.nyumtolic.nyumtolic.S3.S3Service;
 import com.nyumtolic.nyumtolic.security.domain.SiteUser;
 import com.nyumtolic.nyumtolic.security.service.UserService;
 import jakarta.validation.Valid;
@@ -26,10 +24,8 @@ public class ReviewController {
 
     private final ReviewService reviewService;
     private final UserService userService;
-    private final S3Service s3Service;
 
-
-    // 리뷰 생성
+    // Create Review
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create/{restaurantId}")
     public String createReview(@PathVariable Long restaurantId, @Valid ReviewForm reviewForm,
@@ -37,7 +33,6 @@ public class ReviewController {
                                @RequestParam("image") MultipartFile image,
                                RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            // 오류 정보와 함께 리다이렉트
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.reviewForm", bindingResult);
             redirectAttributes.addFlashAttribute("reviewForm", reviewForm);
             return "redirect:/restaurant/detail/" + restaurantId;
@@ -45,18 +40,13 @@ public class ReviewController {
 
         SiteUser siteUser = userService.getUser(principal.getName());
 
-        // 이미지가 업로드되었는지 확인하고 처리
-        String imageUrl = null;
-        if (!image.isEmpty()) {
-            try {
-                imageUrl = s3Service.uploadFile(image);
-            } catch (IOException e) {
-                redirectAttributes.addFlashAttribute("error", "Image upload failed.");
-                return "redirect:/restaurant/detail/" + restaurantId;
-            }
+        try {
+            reviewService.create(restaurantId, reviewForm.getContent(), reviewForm.getRating(), siteUser, image);
+        } catch (IOException e) {
+            redirectAttributes.addFlashAttribute("error", "Image upload failed.");
+            return "redirect:/restaurant/detail/" + restaurantId;
         }
 
-        reviewService.create(restaurantId, reviewForm.getContent(), reviewForm.getRating(), siteUser, imageUrl);
         return "redirect:/restaurant/detail/" + restaurantId;
     }
 
@@ -65,13 +55,13 @@ public class ReviewController {
     public String showModifyForm(@PathVariable Long reviewId, Model model, Principal principal) {
         Review review = reviewService.getReview(reviewId);
         if (!review.getAuthor().getLoginId().equals(principal.getName())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "수정 권한이 없습니다.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to modify this review.");
         }
         model.addAttribute("review", review);
         return "review_form";
     }
 
-    // 리뷰 수정
+    // Modify Review
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{reviewId}")
     public String modifyReview(@PathVariable Long reviewId, @Valid ReviewForm reviewForm,
@@ -85,51 +75,43 @@ public class ReviewController {
         }
         Review review = reviewService.getReview(reviewId);
         if (!review.getAuthor().getLoginId().equals(principal.getName())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "수정 권한이 없습니다.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to modify this review.");
         }
 
-        String imageUrl = review.getImageUrl();
-        if (!image.isEmpty()) {
-            try {
-                if (imageUrl != null) {
-                    s3Service.deleteFile(imageUrl.substring(imageUrl.lastIndexOf("/") + 1));
-                }
-                imageUrl = s3Service.uploadFile(image);
-            } catch (IOException e) {
-                redirectAttributes.addFlashAttribute("error", "Image upload failed.");
-                return "redirect:/review/modify/" + reviewId;
-            }
+        try {
+            reviewService.modify(review, reviewForm.getContent(), reviewForm.getRating(), image);
+        } catch (IOException e) {
+            redirectAttributes.addFlashAttribute("error", "Image upload failed.");
+            return "redirect:/review/modify/" + reviewId;
         }
 
-        reviewService.modify(review, reviewForm.getContent(), reviewForm.getRating(), imageUrl);
         return "redirect:/restaurant/detail/" + review.getRestaurant().getId();
     }
 
-    // 리뷰 삭제
+    // Delete Review
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{reviewId}")
     public String deleteReview(@PathVariable Long reviewId, Principal principal) {
         Review review = reviewService.getReview(reviewId);
         if (!review.getAuthor().getLoginId().equals(principal.getName())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "삭제 권한이 없습니다.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to delete this review.");
         }
         Long restaurantId = review.getRestaurant().getId();
         reviewService.delete(review);
         return "redirect:/restaurant/detail/" + restaurantId;
     }
 
-
-    // 리뷰 추천
+    // Vote Review
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/vote/{reviewId}")
-    public String answerVote(Principal principal, @PathVariable Long reviewId) {
+    public String reviewVote(Principal principal, @PathVariable Long reviewId) {
         Review review = reviewService.getReview(reviewId);
         SiteUser siteUser = this.userService.getUser(principal.getName());
         this.reviewService.vote(review, siteUser);
         return "redirect:/restaurant/detail/" + review.getRestaurant().getId();
     }
 
-
+    // Delete Review Image
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{reviewId}/image")
     public String deleteReviewImage(@PathVariable Long reviewId, Principal principal, RedirectAttributes redirectAttributes) {
@@ -137,7 +119,12 @@ public class ReviewController {
         if (!review.getAuthor().getLoginId().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to delete the image for this review.");
         }
-        reviewService.deleteReviewImage(reviewId);
+        try {
+            reviewService.deleteReviewImage(reviewId);
+        } catch (IOException e) {
+            redirectAttributes.addFlashAttribute("error", "Image deletion failed.");
+            return "redirect:/restaurant/detail/" + review.getRestaurant().getId();
+        }
         return "redirect:/restaurant/detail/" + review.getRestaurant().getId();
     }
 }

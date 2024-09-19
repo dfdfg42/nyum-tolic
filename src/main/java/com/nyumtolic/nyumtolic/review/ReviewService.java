@@ -25,7 +25,6 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final RestaurantRepository restaurantRepository;
-
     private final S3Service s3Service;
 
     public void vote(Review review, SiteUser siteUser) {
@@ -33,8 +32,7 @@ public class ReviewService {
         this.reviewRepository.save(review);
     }
 
-
-    public Review create(Long restaurantId, String content, Double rating, SiteUser author, String imageUrl) {
+    public Review create(Long restaurantId, String content, Double rating, SiteUser author, MultipartFile image) throws IOException {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new DataNotFoundException("Restaurant not found"));
         Review review = new Review();
@@ -44,6 +42,8 @@ public class ReviewService {
         review.setRestaurant(restaurant);
         review.setAuthor(author);
 
+        // Handle image upload
+        String imageUrl = uploadImage(image);
         review.setImageUrl(imageUrl);
 
         reviewRepository.save(review);
@@ -52,18 +52,13 @@ public class ReviewService {
     }
 
     public Review getReview(Long id) {
-        Optional<Review> review = this.reviewRepository.findById(id);
-        if (review.isPresent()) {
-            return review.get();
-        } else {
-            throw new DataNotFoundException("review not found");
-        }
+        return reviewRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("Review not found"));
     }
 
     @Transactional(readOnly = true)
     public Review getReviewById(Long id) {
-        return reviewRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid review id: " + id));
+        return getReview(id);
     }
 
     @Transactional
@@ -71,22 +66,28 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 
-    public void modify(Review review, String content, Double rating, String imageUrl) {
+    public void modify(Review review, String content, Double rating, MultipartFile image) throws IOException {
         review.setContent(content);
         review.setModifyDate(LocalDateTime.now());
         review.setRating(rating);
-        review.setImageUrl(imageUrl);
-        this.reviewRepository.save(review);
+
+        if (image != null && !image.isEmpty()) {
+            deleteImageIfExists(review);
+            String imageUrl = uploadImage(image);
+            review.setImageUrl(imageUrl);
+        }
+
+        reviewRepository.save(review);
         updateRestaurantUserRating(review.getRestaurant().getId());
     }
 
-
     public void delete(Review review) {
-        if (review.getImageUrl() != null) {
-            String fileName = review.getImageUrl().substring(review.getImageUrl().lastIndexOf("/") + 1);
-            s3Service.deleteFile(fileName);
+        try {
+            deleteImageIfExists(review);
+        } catch (IOException e) {
+            // Log the exception (optional)
         }
-        this.reviewRepository.delete(review);
+        reviewRepository.delete(review);
         updateRestaurantUserRating(review.getRestaurant().getId());
     }
 
@@ -109,7 +110,7 @@ public class ReviewService {
         double averageRating = reviews.stream()
                 .mapToDouble(Review::getRating)
                 .average()
-                .orElse(0.0); // 리뷰가 없는 경우 기본값으로 0임.
+                .orElse(0.0); // Default to 0 if no reviews
 
         averageRating = Math.round(averageRating * 10) / 10.0;
 
@@ -119,25 +120,25 @@ public class ReviewService {
         restaurantRepository.save(restaurant);
     }
 
-    public void saveReviewImage(Long reviewId, MultipartFile image) throws IOException {
+    public void deleteReviewImage(Long reviewId) throws IOException {
         Review review = getReview(reviewId);
-        if (review.getImageUrl() != null) {
-            String fileName = review.getImageUrl().substring(review.getImageUrl().lastIndexOf("/") + 1);
-            s3Service.deleteFile(fileName);
-        }
-        String imageUrl = s3Service.uploadFile(image);
-        review.setImageUrl(imageUrl);
+        deleteImageIfExists(review);
         reviewRepository.save(review);
     }
 
-    public void deleteReviewImage(Long reviewId) {
-        Review review = getReview(reviewId);
+    // Helper Methods
+
+    private String uploadImage(MultipartFile image) throws IOException {
+        if (image != null && !image.isEmpty()) {
+            return s3Service.uploadFile(image);
+        }
+        return null;
+    }
+
+    private void deleteImageIfExists(Review review) throws IOException {
         if (review.getImageUrl() != null) {
-            String fileName = review.getImageUrl().substring(review.getImageUrl().lastIndexOf("/") + 1);
-            s3Service.deleteFile(fileName);
+            s3Service.deleteFileByURL(review.getImageUrl());
             review.setImageUrl(null);
-            reviewRepository.save(review);
         }
     }
 }
-
