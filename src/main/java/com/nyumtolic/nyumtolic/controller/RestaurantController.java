@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -110,6 +111,7 @@ public class RestaurantController {
     //관리자 페이지용
 
     // 관리자 페이지 전용
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/list")
     public String listRestaurantsForAdmin(Model model) {
         model.addAttribute("restaurants", restaurantService.findAll());
@@ -117,6 +119,7 @@ public class RestaurantController {
     }
 
     // 레스토랑 생성 폼 보여주기 (관리자용)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/create")
     public String showCreateFormForAdmin(Model model) {
         model.addAttribute("restaurant", new Restaurant());
@@ -125,6 +128,7 @@ public class RestaurantController {
 
     // 레스토랑 저장 또는 업데이트 (관리자용)
 // 레스토랑 저장 또는 업데이트 (관리자용)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/admin/save")
     public String saveRestaurantForAdmin(@ModelAttribute("restaurant") Restaurant restaurant,
                                             @RequestParam("photoFile")MultipartFile file) {
@@ -158,6 +162,7 @@ public class RestaurantController {
 
 
     // 레스토랑 수정 폼 (관리자용)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
         Restaurant restaurant = restaurantService.findById(id);
@@ -168,6 +173,7 @@ public class RestaurantController {
     }
 
     // 레스토랑 삭제 (관리자용)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/delete/{id}")
     public String deleteRestaurantForAdmin(@PathVariable Long id) {
         restaurantService.delete(id);
