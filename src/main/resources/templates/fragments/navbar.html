@@ -27,13 +27,13 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" th:href="@{/}">
-                <img src="/images/logo.png" alt="Logo" style="height: 30px;"> <strong>냠톨릭</strong>
+                <img src="/images/logo.png" alt="Logo" style="height: 30px;"> <strong>냠톨릭/공사중</strong>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav"  style="margin-right: auto;">
+                <ul class="navbar-nav" style="margin-right: auto;">
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/restaurant/recommendation}"><strong>음식점 랜덤 추천</strong></a>
                     </li>
@@ -42,6 +42,10 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/catholic/menu}"><strong>학식정보</strong></a>
+                    </li>
+                    <!-- New nav-item for 만냠 -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://csec.site" target="_blank"><strong>만냠</strong></a>
                     </li>
                     <!-- 메인 카테고리와 기타 카테고리 사이의 세로선 추가 -->
                     <div class="navbar-text vertical-divider"></div>
