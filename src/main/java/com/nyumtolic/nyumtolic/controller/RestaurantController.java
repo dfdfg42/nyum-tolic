@@ -170,7 +170,7 @@ public class RestaurantController {
         List<Category> allCategories = categoryService.findAll();
         model.addAttribute("restaurant", restaurant);
         model.addAttribute("allCategories", allCategories);
-        return "/restaurant/admin/restaurant_admin_form";
+        return "restaurant/admin/restaurant_admin_form";
     }
 
     // 레스토랑 삭제 (관리자용)
