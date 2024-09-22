@@ -149,7 +149,8 @@ public class RestaurantController {
 
         if (findedRestaurant.getPhoto() != null) s3Service.deleteFileByURL(findedRestaurant.getPhoto());
         try {
-            String url = s3Service.uploadFileWithName(file, UUID.randomUUID().toString());
+            String fileName = "restaurant/" + UUID.randomUUID().toString();
+            String url = s3Service.uploadFileWithName(file, fileName);
             findedRestaurant.setPhoto(url);
         } catch (Exception e) {
             logger.error(e.getMessage());

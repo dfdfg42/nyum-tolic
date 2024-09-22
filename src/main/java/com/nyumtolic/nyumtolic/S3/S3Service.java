@@ -47,7 +47,7 @@ public class S3Service {
     }
 
     public void deleteFileByURL(String URL) {
-        String fileName = URL.substring(URL.lastIndexOf("/") + 1);
+        String fileName = URL.replaceFirst("^https://[^/]+/", "");
         amazonS3Client.deleteObject(bucket, fileName);
     }
 }

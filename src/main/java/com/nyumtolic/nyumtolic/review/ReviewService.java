@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -130,7 +131,8 @@ public class ReviewService {
 
     private String uploadImage(MultipartFile image) throws IOException {
         if (image != null && !image.isEmpty()) {
-            return s3Service.uploadFile(image);
+            String fileName = "review/" + UUID.randomUUID().toString();
+            return s3Service.uploadFileWithName(image, fileName);
         }
         return null;
     }
