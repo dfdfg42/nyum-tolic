@@ -120,9 +120,12 @@ public class RestaurantController {
 
     // 레스토랑 생성 폼 보여주기 (관리자용)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    // 레스토랑 생성 폼 보여주기 (관리자용)
     @GetMapping("/admin/create")
     public String showCreateFormForAdmin(Model model) {
         model.addAttribute("restaurant", new Restaurant());
+        List<Category> allCategories = categoryService.findAll();
+        model.addAttribute("allCategories", allCategories);
         return "restaurant/admin/restaurant_admin_form";
     }
 
