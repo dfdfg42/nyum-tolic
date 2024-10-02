@@ -2,8 +2,7 @@ package com.nyumtolic.nyumtolic.service;
 
 
 
-import com.amazonaws.services.kms.model.NotFoundException;
-import com.nyumtolic.nyumtolic.S3.S3Service;
+import com.nyumtolic.nyumtolic.s3.S3Service;
 import com.nyumtolic.nyumtolic.api.domain.CategoryDTO;
 import com.nyumtolic.nyumtolic.api.domain.PageResponse;
 import com.nyumtolic.nyumtolic.api.domain.RestaurantDTO;
@@ -12,7 +11,6 @@ import com.nyumtolic.nyumtolic.domain.Restaurant;
 import com.nyumtolic.nyumtolic.repository.RestaurantRepository;
 import com.nyumtolic.nyumtolic.review.ReviewRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
