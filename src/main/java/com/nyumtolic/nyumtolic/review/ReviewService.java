@@ -1,7 +1,7 @@
 package com.nyumtolic.nyumtolic.review;
 
 import com.nyumtolic.nyumtolic.DataNotFoundException;
-import com.nyumtolic.nyumtolic.S3.S3Service;
+import com.nyumtolic.nyumtolic.s3.S3Service;
 import com.nyumtolic.nyumtolic.domain.Restaurant;
 import com.nyumtolic.nyumtolic.repository.RestaurantRepository;
 import com.nyumtolic.nyumtolic.security.domain.SiteUser;
@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 

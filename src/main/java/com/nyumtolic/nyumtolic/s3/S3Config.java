@@ -1,4 +1,4 @@
-package com.nyumtolic.nyumtolic.S3;
+package com.nyumtolic.nyumtolic.s3;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;

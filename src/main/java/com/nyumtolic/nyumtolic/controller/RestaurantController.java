@@ -1,7 +1,7 @@
 package com.nyumtolic.nyumtolic.controller;
 
 
-import com.nyumtolic.nyumtolic.S3.S3Service;
+import com.nyumtolic.nyumtolic.s3.S3Service;
 import com.nyumtolic.nyumtolic.domain.Category;
 import com.nyumtolic.nyumtolic.domain.Restaurant;
 import com.nyumtolic.nyumtolic.review.ReviewService;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
