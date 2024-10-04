@@ -1,6 +1,6 @@
 # 냠톨릭
 <div align="center">
-<img src="https://scontent.cdninstagram.com/v/t51.29350-15/444789923_1364664330897390_4767800419171619150_n.jpg?stp=dst-jpg_e15&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi4xMDgweDEwODAuc2RyLmYyOTM1MCJ9&_nc_ht=scontent.cdninstagram.com&_nc_cat=106&_nc_ohc=yAUbUIycoUsQ7kNvgHw9-B_&edm=APs17CUBAAAA&ccb=7-5&ig_cache_key=MzM2OTI3MzM1MjY4NzgyMzY2OA%3D%3D.2-ccb7-5&oh=00_AYCCSNsIgANWj6hM_KTXAUrwrwEZisUn0R80b_qXNcjr7Q&oe=665E5778&_nc_sid=10d13b" width="300" height ="300">
+<img src="https://github.com/user-attachments/assets/09412cb9-7782-4694-8e16-8f2b53ec82dd" width="300" height ="300">
 
 **냠톨릭**은 가톨릭대학교 근처 음식점을 대상으로 하는 음식점 멀티 플랫폼입니다.
 
