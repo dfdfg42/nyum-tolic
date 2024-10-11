@@ -13,71 +13,168 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
+
     <style>
         body {
             background-color: #f8f9fa;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
+
+        .navbar-custom {
+            background-color: white;
+            border-bottom: 1px solid #ccc;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin: 0 auto; /* 중앙 정렬 */
+            max-width: 700px; /* 최대 너비를 설정하여 페이지 전체에 퍼지지 않도록 */
+            height: 100vh; /* 세로 중앙 정렬 */
+        }
+
+
         .form-container {
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 40px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        .form-container h2 {
+            padding-top: 60px;
+            width: 700px;
+            background-color: transparent;
             text-align: center;
-            margin-bottom: 30px;
         }
+
+        .form-container h2 {
+            width: 700px;
+            margin-bottom: 30px;
+            font-size: 60px;
+            font-family: 'Gmarket', sans-serif;
+            font-weight: bold;
+            letter-spacing: 10px;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 700px;
+            height: 80px;
+            font-size: 1.5rem;
+            border-radius: 10px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .form-check {
+            margin-bottom: 20px;
+            width: 700px;
+            display: flex;
+            align-items: flex-start; /* 수직 방향 상단 정렬 */
+            gap: 10px; /* 요소 사이에 10px 간격 */
+        }
+
+        .form-check-input {
+            margin-bottom: 8px;
+        }
+
+
+        .form-container .btn-primary {
+            background-color: #FF7F27;
+            border-color: #FF7F27;
+            height: 80px;
+            width: 700px;
+            font-size: 35px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+        }
+
+        .form-container .btn-primary:hover {
+            background-color: #ff6500;
+            border-color: #ff6500;
+        }
+
+        .form-container .btn-kakao {
+            background-color: #FEE500;
+            color: black!important;
+            border-color: #FEE500;
+            font-size: 35px;
+            height: 80px;
+            width: 700px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+            .bi-chat-fill{
+                margin-right: 10px;
+            }
+        }
+
+        .form-container .btn-kakao:hover {
+            background-color: #e4cc00;
+        }
+
+        .form-container .text-center a {
+            text-decoration: none;
+            color: #FF7F27;
+            font-size: 1.1rem;
+            margin: 0 10px;
+        }
+
+        .form-container .text-center a:hover {
+            color: #ff6500;
+        }
+
         @media (max-width: 767px) {
             .form-container {
                 width: 90%;
-                margin: 20px auto;
                 padding: 20px;
             }
             input[type="text"], input[type="password"], .btn {
+                width: 100%;
                 font-size: 16px;
                 height: 50px;
             }
         }
-
-
-
     </style>
 </head>
 <body>
 <!-- Navbar Section -->
-<div th:replace="fragments/navbar :: navbar"></div>
-<div class="container" style="margin-top: 100px;">
+<div th:replace="fragments/navbar :: navbar" class="navbar-custom"></div>
+
+<div class="container">
     <div class="form-container">
-        <h2>로그인</h2>
+        <h2>냠톨릭</h2>
         <form th:action="@{/user/login}" method="post">
             <div th:if="${param.error}" class="alert alert-danger">
                 사용자ID 또는 비밀번호를 확인해 주세요.
             </div>
             <div class="mb-3">
-                <label for="username" class="form-label">사용자ID</label>
-                <input type="text" name="username" id="username" class="form-control" placeholder="사용자ID" required autofocus>
+                <input type="text" name="username" id="username" class="form-control" placeholder="아이디" required autofocus>
             </div>
             <div class="mb-3">
-                <label for="password" class="form-label">비밀번호</label>
                 <input type="password" name="password" id="password" class="form-control" placeholder="비밀번호" required>
             </div>
-            <div class="form-check mb-3">
+            <div class="form-check">
                 <input type="checkbox" class="form-check-input" id="rememberMe" name="remember-me">
-                <label class="form-check-label" for="rememberMe">로그인 유지</label>
+                <label class="form-check-label" for="rememberMe">로그인 상태 유지</label>
             </div>
-            <button type="submit" class="btn btn-primary mb-3" style="width: 100%;">로그인</button>
+            <button type="submit" class="btn btn-primary">로그인</button>
         </form>
-        <a href="/oauth2/authorization/kakao" class="kakao-login-btn, mt-2">
-            <img src="/images/kakao_login.png" alt="Kakao Login">
+        <a href="/oauth2/authorization/kakao" class="btn btn-kakao mt-2">
+            <i class="bi bi-chat-fill"></i> 카카오 로그인
         </a>
         <div class="text-center mt-2">
-            <a th:href="@{/user/signup}">회원가입</a>
+            <a th:href="@{/user/signup}">회원가입</a> |
+            <a th:href="@{/user/forgot-password}">비밀번호찾기</a>
         </div>
-
     </div>
 </div>
+
 <script src="/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

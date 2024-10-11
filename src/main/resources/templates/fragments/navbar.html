@@ -2,20 +2,21 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <title>Navbar Fragment</title>
-    <link rel="stylesheet" href="/css/bootstrap.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/my-fonts.css">
+    <link rel="stylesheet" href="/css/bootstrap.css">
 
     <style>
-        .kakao-login-btn {
-            background: none;
-            border: none;
-            padding: 0;
-            cursor: pointer;
+        .navbar-custom {
+            background-color: white; /* 배경을 하얀색으로 변경 */
         }
-        .kakao-login-btn img {
-            width: 100px;
-            height: auto;
+        .navbar-nav .nav-link {
+            color: black; /* 네비게이션 링크 색상을 검은색으로 설정 */
+        }
+        .navbar-nav .nav-link:hover {
+            color: orange; /* 링크 hover 시 오렌지색으로 변경 */
+        }
+        .navbar-brand > strong{
         }
     </style>
 </head>
@@ -24,10 +25,10 @@
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <meta name="_csrf" th:content="${_csrf.token}">
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-custom">
         <div class="container-fluid">
             <a class="navbar-brand" th:href="@{/}">
-                <img src="/images/logo.png" alt="Logo" style="height: 30px;"> <strong>냠톨릭/공사중</strong>
+                <strong>냠톨릭</strong>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -35,50 +36,28 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav" style="margin-right: auto;">
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/restaurant/recommendation}"><strong>음식점 랜덤 추천</strong></a>
+                        <a class="nav-link" th:href="@{/restaurant/recommendation}"><strong>맛집리스트</strong></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/restaurant/list}"><strong>음식점 리스트</strong></a>
+                        <a class="nav-link" th:href="@{/restaurant/list}"><strong>학식정보</strong></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/catholic/menu}"><strong>학식정보</strong></a>
+                        <a class="nav-link" th:href="@{/catholic/menu}"><strong>랜덤추천</strong></a>
                     </li>
-                    <!-- New nav-item for 만냠 -->
                     <li class="nav-item">
-                        <a class="nav-link" href="https://csec.site" target="_blank"><strong>만냠</strong></a>
-                    </li>
-                    <!-- 메인 카테고리와 기타 카테고리 사이의 세로선 추가 -->
-                    <div class="navbar-text vertical-divider"></div>
-                    <!-- 메인 카테고리 -->
-                    <li class="nav-item" th:each="category : ${mainCategories}">
-                        <a class="nav-link" th:href="@{/restaurant/list(categoryId=${category.id})}" th:text="${category.name}">메인 카테고리 이름</a>
-                    </li>
-                    <!-- 더보기 드롭다운 -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            더보기
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li th:each="category : ${otherCategories}">
-                                <a class="dropdown-item" th:href="@{/restaurant/list(categoryId=${category.id})}" th:text="${category.name}">기타 카테고리 이름</a>
-                            </li>
-                        </ul>
+                        <a class="nav-link" href="https://csec.site" target="_blank"><strong>더보기</strong></a>
                     </li>
                 </ul>
 
                 <ul class="navbar-nav">
-                    <a class="nav-link" th:href="@{/user/suggestions}">건의사항</a>
-                    <!-- Kakao login button or logout button based on authentication status -->
                     <li class="nav-item">
-                        <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/user/login}"><strong>로그인</strong></a>
+                        <a class="nav-link nav-orange" sec:authorize="isAnonymous()" th:href="@{/user/login}"><strong>로그인</strong></a>
                         <button type="button" data-bs-toggle="modal" data-bs-target="#nicknameModal" class="nav-link" sec:authorize="isAuthenticated()" style="text-decoration: underline;">
-                            <strong>
-                            [[${#authentication.principal.name}]]님, 환영합니다!
-                            </strong>
+                            <strong>[[${#authentication.principal.name}]]님, 환영합니다!</strong>
                         </button>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/user/signup}"><strong>회원가입</strong></a>
+                        <a class="nav-link nav-orange" sec:authorize="isAnonymous()" th:href="@{/user/signup}"><strong>회원가입</strong></a>
                         <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/user/logout}"><strong>로그아웃</strong></a>
                     </li>
                 </ul>

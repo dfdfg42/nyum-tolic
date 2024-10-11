@@ -5,8 +5,36 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'Gmarket';
+    src: url('../fonts/GmarketSansLight.otf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'GmarketM';
+    src: url('../fonts/GmarketSansMedium.otf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'GmarketB';
+    src: url('../fonts/GmarketSansBold.otf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 body {
-    font-family: 'MyCustomFont', sans-serif;
+    font-family: 'GmarketM', sans-serif;
+}
+.navbar{
+    font-family: 'Gmarket', sans-serif;
+}
+.navbar-brand{
+    font-family: 'Gmarket', sans-serif;
+    font-weight: bold;
 }
 
 h1.my-4 {
