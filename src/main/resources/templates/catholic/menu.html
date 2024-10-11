@@ -44,34 +44,37 @@
         }
 
         .info-label {
-            color: #6c757d;
-            font-weight: bold;
+            color: #000000;
+            display: inline; /* 라벨을 같은 줄에 표시 */
         }
-             /* 전체 카드의 배경 및 그림자 스타일 */
-         .card {
-             background-color: #ffffff; /* 카드 배경색 */
-             border: none;
-             box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* 그림자 추가 */
-             border-radius: 8px; /* 모서리 둥글게 */
-             overflow: hidden; /* 내용이 밖으로 넘치지 않도록 */
-         }
+        .inner-label{
+            padding-left: 5px;
+        }
+        /* 전체 카드의 배경 및 그림자 스타일 */
+        .card {
+            background-color: #ffffff; /* 카드 배경색 */
+            border: 2px solid #F4B100;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* 그림자 추가 */
+            border-radius: 30px; /* 모서리 둥글게 */
+            overflow: hidden; /* 내용이 밖으로 넘치지 않도록 */
+        }
 
         /* 카드 타이틀과 텍스트 스타일 */
         .card-title {
             color: #333333; /* 제목 색상 */
             font-size: 1.25rem; /* 제목 크기 */
             font-weight: bold; /* 제목 굵기 */
+            margin:0;
         }
 
         .card-text {
             color: #666666; /* 텍스트 색상 */
-            font-size: 0.9rem; /* 텍스트 크기 */
+            font-size: 20px; /* 텍스트 크기 */
         }
 
         /* 정보 라벨 스타일 */
         .info-label {
-            color: #0056b3; /* 라벨 색상 변경 */
-            font-weight: bold;
+            color: #000000; /* 라벨 색상 변경 */
         }
 
         /* 목록 스타일 */
@@ -86,18 +89,32 @@
 
         /* 버튼 스타일 */
         .btn-primary {
-            background-color: #0056b3; /* 버튼 색상 */
+            background-color: #F58500; /* 버튼 색상 */
+            color: white;
+            font-size: 20px;
             border: none;
+            padding: 0.5rem 1rem; /* 패딩을 조절하여 더 클릭하기 쉽게 만듭니다. */
+            border-radius: 20px;
+            width: 330px;
+            height: 60px;
+            text-align: center;
+            display: flex; /* 플렉스 박스 설정 */
+            justify-content: center; /* 수평 중앙 정렬 */
+            align-items: center; /* 수직 중앙 정렬 */
+            position: absolute; /* 절대적 위치 지정 */
+            bottom: 42px; /* 카드의 아래에서부터 42px 위로 위치 */
         }
 
         .mb-4 {
             margin-bottom: 2rem; /* 하단 마진 확장 */
         }
         .card-body {
+            position: relative;
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* 내용과 버튼 사이에 공간을 균등하게 분배 */
-            height: 100%; /* 카드 전체 높이를 사용 */
+            gap: 10px;
+            height: 430px;
+            padding:40px;
         }
 
         /* 텍스트의 가독성을 위한 스타일 */
@@ -106,12 +123,6 @@
         h5 {
             line-height: 1.5; /* 줄간격을 늘려서 가독성을 높입니다. */
             margin-bottom: .5rem; /* 요소들 사이에 충분한 여백을 제공 */
-        }
-
-        /* 버튼 스타일 변경 */
-        .btn-primary {
-            font-size: 1rem; /* 버튼의 글꼴 크기를 조절합니다. */
-            padding: .5rem 1rem; /* 패딩을 조절하여 더 클릭하기 쉽게 만듭니다. */
         }
 
         /* 스크롤바 전체의 스타일 */
@@ -148,9 +159,47 @@
         <h1 class="my-4"><strong>학식 정보</strong></h1>
     </div>
 
-    <!-- 좌우로 넘길 수 있다는 안내 문구 추가 -->
-    <p style="font-weight: bold; text-align: left; opacity: 0.7;">좌우로 넘기면 다른 학식을 볼 수 있습니다.</p>
+    <!--    &lt;!&ndash; 좌우로 넘길 수 있다는 안내 문구 추가 &ndash;&gt;-->
+    <!--    <p style="font-weight: bold; text-align: left; opacity: 0.7;">좌우로 넘기면 다른 학식을 볼 수 있습니다.</p>-->
 
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Buon Pranzo <br/> 부온 프란조</h5>
+                        <p class="card-text text-muted">학생미래인재관 2층</p>
+                        <p class="card-text mb-0"><span class="info-label">운영시간: <span class="inner-label"> 중식 : 11:30 - 14:00</span></span></p>
+                        <a th:href="${buonPranzo}" class="btn btn-primary">식단표 보기</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Cafe Bona <br/> 카페 보나</h5>
+                        <p class="card-text text-muted">학생미래인재관 1층</p>
+                        <p class="card-text mb-0"><span class="info-label">운영시간: <span class="inner-label">조식 : 08:00 - 09:30</span></span></p>
+                        <p class="card-text mb-0"><span class="info-label">운영시간: <span class="inner-label">중식 : 11:30 - 14:00</span></span></p>
+                        <p class="card-text mb-0"><span class="info-label">운영시간: <span class="inner-label">석식 : 17:30 - 19:00</span></span></p>
+                        <a th:href="${cafeBona}" class="btn btn-primary">식단표 보기</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Cafe Mensa <br/> 카페 멘사</h5>
+                        <p class="card-text text-muted">학생미래인재관 1층</p>
+                        <p class="card-text mb-0"><span class="info-label">운영시간: <span class="inner-label">중식 : 11:30 - 15:00</span></span></p>
+                        <p class="card-text mb-0"><span class="info-label">운영시간: <span class="inner-label">석식 : 17:00 - 20:00</span></span></p>
+                        <p class="card-text mb-0"><span class="info-label"><span class="inner-label">(휴게시간 : 15:00 - 17:00)</span></span></p>
+                        <a th:href="${cafeBona}" class="btn btn-primary">식단표 보기</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="container mt-3 carousel-container">
         <!-- Bootstrap Carousel -->
@@ -180,60 +229,6 @@
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
             </button>
-        </div>
-    </div>
-
-    <div class="container py-5">
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Buon Pranzo 부온 프란조</h5>
-                        <p class="card-text text-muted">학생미래인재관 2층</p>
-                        <p class="card-text mb-0"><span class="info-label">운영시간:</span></p>
-                        <ul class="mb-10" style="padding-left: 20px;">
-                            <li>중식 11:30 - 14:00</li>
-                        </ul>
-                        <div class="d-grid">
-                            <a th:href="${buonPranzo}" class="btn btn-primary">식단표 보기</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Cafe Bona 카페 보나</h5>
-                        <p class="card-text text-muted">학생미래인재관 1층</p>
-                        <p class="card-text mb-0"><span class="info-label">운영시간:</span></p>
-                        <ul class="mb-10" style="padding-left: 20px;">
-                            <li>조식 08:00 - 09:30</li>
-                            <li>중식 11:30 - 14:00</li>
-                            <li>석식 17:30 - 19:00</li>
-                        </ul>
-                        <div class="d-grid">
-                            <a th:href="${cafeBona}" class="btn btn-primary">식단표 보기</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Cafe Mensa 카페 멘사</h5>
-                        <p class="card-text text-muted">김수환관 1층</p>
-                        <p class="card-text mb-0"><span class="info-label">운영시간:</span></p>
-                        <ul class="mb-10" style="padding-left: 20px;">
-                            <li>중식 11:30 - 15:00</li>
-                            <li>석식 17:00 - 20:00</li>
-                            <li>(휴게시간 15:00~17:00)</li>
-                        </ul>
-                        <div class="d-grid">
-                            <a th:href="${cafeMensa}" class="btn btn-primary">식단표 보기</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
