@@ -8,6 +8,7 @@ import com.nyumtolic.nyumtolic.review.ReviewService;
 import com.nyumtolic.nyumtolic.review.ReviewWithVotesDTO;
 import com.nyumtolic.nyumtolic.service.CategoryService;
 import com.nyumtolic.nyumtolic.service.RestaurantService;
+import com.nyumtolic.nyumtolic.service.VisitLogService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +32,7 @@ import java.util.UUID;
 @Controller
 public class RestaurantController {
 
+    private final VisitLogService visitLogService;
     private final RestaurantService restaurantService;
     private final ReviewService reviewService;
     private final CategoryService categoryService;
@@ -39,7 +42,16 @@ public class RestaurantController {
 
     @GetMapping(value = "/detail/{id}")
     public String detail(Model model, @PathVariable("id") Long id,
-                         @PageableDefault(size = 6) Pageable pageable) {
+                         @PageableDefault(size = 6) Pageable pageable,
+                         Principal principal) {
+
+        // 로그인된 사용자가 있는 경우 userId 가져오기
+        if (principal != null) {
+            String userId = principal.getName();  // 보통 username 또는 userId가 됩니다.
+            visitLogService.logVisit(userId, id);  // 방문 로그 기록
+        }
+
+
         this.restaurantService.getRestaurantsById(id).ifPresent(restaurant -> model.addAttribute("restaurant", restaurant));
         Restaurant restaurant = restaurantService.getRestaurantsById(id).orElse(null);
         restaurant.getReviews().forEach(review ->
