@@ -16,7 +16,7 @@ public class VisitLogService {
         this.visitLogRepository = visitLogRepository;
     }
 
-    public void logVisit(String userId, Long restaurantId) {
+    public void logVisit(Long userId, Long restaurantId) {
         VisitLog visitLog = new VisitLog();
         visitLog.setUserId(userId);
         visitLog.setRestaurantId(restaurantId);

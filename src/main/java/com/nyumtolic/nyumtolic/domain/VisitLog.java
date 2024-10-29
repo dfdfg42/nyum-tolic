@@ -14,7 +14,7 @@ public class VisitLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String userId;
+    private Long userId;
     private Long restaurantId;
     private LocalDateTime visitedAt;  // 방문 시간을 저장하는 필드
 }

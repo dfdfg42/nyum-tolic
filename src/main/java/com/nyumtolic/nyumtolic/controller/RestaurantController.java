@@ -6,6 +6,7 @@ import com.nyumtolic.nyumtolic.domain.Category;
 import com.nyumtolic.nyumtolic.domain.Restaurant;
 import com.nyumtolic.nyumtolic.review.ReviewService;
 import com.nyumtolic.nyumtolic.review.ReviewWithVotesDTO;
+import com.nyumtolic.nyumtolic.security.oauth.PrincipalDetails;
 import com.nyumtolic.nyumtolic.service.CategoryService;
 import com.nyumtolic.nyumtolic.service.RestaurantService;
 import com.nyumtolic.nyumtolic.service.VisitLogService;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -43,11 +45,11 @@ public class RestaurantController {
     @GetMapping(value = "/detail/{id}")
     public String detail(Model model, @PathVariable("id") Long id,
                          @PageableDefault(size = 6) Pageable pageable,
-                         Principal principal) {
+                         @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
         // 로그인된 사용자가 있는 경우 userId 가져오기
-        if (principal != null) {
-            String userId = principal.getName();  // 보통 username 또는 userId가 됩니다.
+        if (principalDetails != null) {
+            Long userId = principalDetails.getSiteUser().getId();  // SiteUser의 PK ID
             visitLogService.logVisit(userId, id);  // 방문 로그 기록
         }
 
