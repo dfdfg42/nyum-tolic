@@ -69,6 +69,10 @@ public class ReviewService {
                 .orElseThrow(() -> new DataNotFoundException("Review not found"));
     }
 
+    public List<Review> getUserReviews(Long userId) {
+        return reviewRepository.findByAuthorId(userId);
+    }
+
     @Transactional(readOnly = true)
     public Review getReviewById(Long id) {
         return getReview(id);

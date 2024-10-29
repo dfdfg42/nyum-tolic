@@ -25,7 +25,6 @@
             <div class="list-group">
                 <a href="#profile" class="list-group-item list-group-item-action active">프로필</a>
                 <a href="#reviews" class="list-group-item list-group-item-action">내가 작성한 리뷰</a>
-                <a href="#favorites" class="list-group-item list-group-item-action">좋아하는 식당</a>
             </div>
         </div>
         <div class="col-md-9">
@@ -51,22 +50,12 @@
                     <div class="card-body">
                         <h5 class="card-title" th:text="${review.restaurant.name}"></h5>
                         <p class="card-text" th:text="${review.content}"></p>
-                        <p class="card-text"><small class="text-muted" th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd HH:mm')}"></small></p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Favorites Section -->
-            <div id="favorites" class="mt-4">
-                <h2>찜한 식당</h2>
-                <div th:if="${#lists.isEmpty(favorites)}">
-                    <p>찜한 식당이 없습니다.</p>
-                </div>
-                <div th:each="favorite : ${favorites}" class="card mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title" th:text="${favorite.restaurant.name}"></h5>
-                        <p class="card-text" th:text="${favorite.restaurant.description}"></p>
-                        <a th:href="@{/restaurant/detail/{id}(id=${favorite.restaurant.id})}" class="btn btn-primary">상세보기</a>
+                        <p class="card-text">
+                            <small class="text-muted" th:text="${#temporals.format(review.createDate, 'yyyy-MM-dd HH:mm')}"></small>
+                        </p>
+                        <div>
+                            <span th:text="'별점: ' + ${review.rating}"></span>
+                        </div>
                     </div>
                 </div>
             </div>
