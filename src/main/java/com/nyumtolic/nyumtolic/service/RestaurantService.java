@@ -137,6 +137,8 @@ public class RestaurantService {
     }
 
 
+
+
     public RestaurantDTO createRestaurantDTO(Restaurant restaurant) {
         List<CategoryDTO> categoryDTOs = restaurant.getCategories().stream()
                 .map(category -> new CategoryDTO(category.getId(), category.getName()))

@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -42,4 +45,16 @@ public class RestaurantApiController {
         return restaurantService.getAllRestaurantsDTO(pageable);
     }
 
+
+    @GetMapping("/restaurants/all")
+    @Operation(summary = "GET all restaurants", description = "모든 음식점 목록을 가져옵니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
+    })
+    public List<RestaurantDTO> getAllRestaurants() {
+        // findAll 메서드를 활용하여 전체 음식점 목록을 DTO로 반환
+        return restaurantService.findAll().stream()
+                .map(restaurantService::createRestaurantDTO)
+                .collect(Collectors.toList());
+    }
 }
