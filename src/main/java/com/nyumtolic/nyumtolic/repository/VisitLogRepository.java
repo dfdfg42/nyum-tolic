@@ -3,6 +3,8 @@ package com.nyumtolic.nyumtolic.repository;
 import com.nyumtolic.nyumtolic.domain.VisitLog;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface VisitLogRepository extends JpaRepository<VisitLog, Long> {
+import java.util.List;
 
+public interface VisitLogRepository extends JpaRepository<VisitLog, Long> {
+    List<VisitLog> findByUserId(Long userId);  // 특정 사용자의 방문 기록 조회
 }
