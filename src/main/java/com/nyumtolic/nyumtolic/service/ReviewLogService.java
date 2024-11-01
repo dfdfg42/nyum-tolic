@@ -20,6 +20,6 @@ public class ReviewLogService {
     }
 
     public List<ReviewLog> getReviewLogsByUserId(Long userId) {
-        return reviewLogRepository.findByUserId(userId);  // 특정 사용자의 리뷰 기록 반환
+        return reviewLogRepository.findByAuthor_Id(userId);  // 특정 사용자의 리뷰 기록 반환
     }
 }

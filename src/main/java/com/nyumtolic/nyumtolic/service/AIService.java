@@ -1,5 +1,7 @@
 package com.nyumtolic.nyumtolic.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -8,7 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.nyumtolic.nyumtolic.domain.VisitLog;
 import com.nyumtolic.nyumtolic.domain.ReviewLog;
@@ -29,7 +34,7 @@ public class AIService {
     public String sendUserLogsToAI(Long userId, LocalDateTime startDate, LocalDateTime endDate) {
         // 특정 조건의 VisitLog와 ReviewLog 데이터를 모으기
         List<VisitLog> visitLogs = visitLogRepository.findByUserIdAndVisitedAtBetween(userId, startDate, endDate);
-        List<ReviewLog> reviewLogs = reviewLogRepository.findByUserIdAndCreatedAtBetween(userId, startDate, endDate);
+        List<ReviewLog> reviewLogs = reviewLogRepository.findByAuthor_IdAndCreatedAtBetween(userId, startDate, endDate);
 
         // 데이터 전송
         String visitLogResponse = sendVisitLogsToAI(visitLogs);
@@ -59,4 +64,41 @@ public class AIService {
 
         return response.getBody();
     }
+
+    public List<Long> getRecommendationsForUser(Long userId) {
+        String url = FLASK_URL + "/recommend";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // 요청 바디에 userId 추가
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("userId", userId);
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
+        ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+
+        // 응답 파싱
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode root;
+        try {
+            root = objectMapper.readTree(response.getBody());
+            if (root.has("recommendations")) {
+                JsonNode recommendationsNode = root.get("recommendations");
+                List<Long> recommendations = new ArrayList<>();
+                for (JsonNode node : recommendationsNode) {
+                    recommendations.add(node.asLong());
+                }
+                return recommendations;
+            } else {
+                // 에러 처리
+                String errorMessage = root.has("error") ? root.get("error").asText() : "Unknown error";
+                throw new RuntimeException("AI Service Error: " + errorMessage);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse AI Service response", e);
+        }
+    }
+
+
+
 }

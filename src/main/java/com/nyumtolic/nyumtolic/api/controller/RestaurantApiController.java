@@ -3,6 +3,8 @@ package com.nyumtolic.nyumtolic.api.controller;
 
 import com.nyumtolic.nyumtolic.api.domain.PageResponse;
 import com.nyumtolic.nyumtolic.api.domain.RestaurantDTO;
+import com.nyumtolic.nyumtolic.security.dto.UserDTO;
+import com.nyumtolic.nyumtolic.security.service.UserService;
 import com.nyumtolic.nyumtolic.service.RestaurantService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,6 +33,7 @@ import java.util.stream.Collectors;
 public class RestaurantApiController {
 
     private final RestaurantService restaurantService;
+    private final UserService userService;
 
     @GetMapping("/restaurants")
     @Operation(summary = "GET restaurant", description = "음식점 목록을 가져옵니다.")
@@ -56,5 +59,11 @@ public class RestaurantApiController {
         return restaurantService.findAll().stream()
                 .map(restaurantService::createRestaurantDTO)
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/users")
+    @Operation(summary = "GET all users", description = "모든 사용자 목록을 가져옵니다.")
+    public List<UserDTO> getAllUsers() {
+        return userService.getAllUserDTOs();
     }
 }
