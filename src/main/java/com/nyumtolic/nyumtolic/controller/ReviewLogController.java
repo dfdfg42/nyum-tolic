@@ -1,11 +1,13 @@
 package com.nyumtolic.nyumtolic.controller;
 
+import com.nyumtolic.nyumtolic.api.domain.ReviewLogDTO;
 import com.nyumtolic.nyumtolic.domain.ReviewLog;
 import com.nyumtolic.nyumtolic.service.ReviewLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/review-logs")
@@ -15,8 +17,10 @@ public class ReviewLogController {
     private final ReviewLogService reviewLogService;
 
     @GetMapping
-    public List<ReviewLog> getAllReviewLogs() {
-        return reviewLogService.getAllReviewLogs();  // 모든 리뷰 기록
+    public List<ReviewLogDTO> getAllReviewLogs() {
+        return reviewLogService.getAllReviewLogs().stream()
+                .map(ReviewLogDTO::new)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/user/{userId}")
