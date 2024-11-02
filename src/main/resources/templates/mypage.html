@@ -25,13 +25,10 @@
             <!-- Profile Section -->
             <div id="profile">
                 <h2>프로필 관리</h2>
-                <form th:action="@{/user/update-profile}" method="post">
-                    <div class="mb-3">
-                        <label for="nickname" class="form-label">닉네임</label>
-                        <input type="text" class="form-control" id="nickname" name="nickname" th:value="${user.nickname}" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">업데이트</button>
-                </form>
+                <!-- Trigger button for nickname update modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#nicknameModal">
+                    닉네임 업데이트
+                </button>
             </div>
 
             <!-- Reviews Section -->
@@ -83,5 +80,40 @@
 
 <div th:replace="fragments/footer.html :: custom-footer"></div>
 <script src="/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+    $(document).ready(function () {
+        var header = $("meta[name='_csrf_header']").attr('content');
+        var token = $("meta[name='_csrf']").attr('content');
+
+        $('#saveNickname').click(function () {
+            var newNickname = $('#newNickname').val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/api/user/update',
+                data: JSON.stringify({nickname: newNickname}),
+                contentType: 'application/json',
+                beforeSend: function (xhr) {
+                    if (header && token) {
+                        xhr.setRequestHeader(header, token);
+                    }
+                },
+                success: function (response) {
+                    console.log("Nickname updated successfully:", response);
+                    $('#nicknameModal').modal('hide'); // Hide the modal after successful update
+                    location.reload(); // Reload the page to reflect the change
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error updating nickname:", error);
+                    $('#error').text('잘못된 닉네임입니다.').show();
+                }
+            });
+        });
+    });
+</script>
+
+
 </body>
 </html>
