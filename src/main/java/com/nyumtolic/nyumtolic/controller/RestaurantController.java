@@ -86,31 +86,28 @@ public class RestaurantController {
 
     @GetMapping("/list")
     public String showRestaurantList(@RequestParam(value = "categoryId", required = false) Long categoryId, Model model,
-                                     @RequestParam(value = "sort", defaultValue = "id") String sort) {
+                                     @RequestParam(value = "sort", defaultValue = "name") String sort) {
         List<Restaurant> restaurants;
         if (categoryId != null) {
-
-            if ("userRating".equals(sort)||"name".equals(sort)){
+            if ("userRating".equals(sort) || "name".equals(sort)) {
                 restaurants = restaurantService.getAllByCategoryIdSorted(categoryId, sort);
-            }
-            else {
+            } else {
                 // 특정 카테고리 ID가 제공된 경우, 해당 카테고리의 맛집 리스트를 가져옵니다.
                 restaurants = restaurantService.findAllByCategoryId(categoryId);
             }
-        }
-        else {
-            if ("userRating".equals(sort)||"name".equals(sort)){
+        } else {
+            if ("userRating".equals(sort) || "name".equals(sort)) {
                 restaurants = restaurantService.getAllRestaurantsBySorted(sort);
-            }
-            else {
+            } else {
                 // 카테고리 ID가 제공되지 않은 경우, 전체 맛집 리스트를 가져옵니다.
                 restaurants = restaurantService.getAllRestaurants();
             }
         }
         model.addAttribute("restaurants", restaurants);
-        model.addAttribute("categoryId",categoryId);
+        model.addAttribute("categoryId", categoryId);
         return "restaurant/list"; // 맛집 리스트 페이지로 이동
     }
+
 
     @GetMapping("/recommendation")
     public String recommendRestaurant(@RequestParam(value = "excludedCategories", required = false) String excludedCategories, Model model) {
