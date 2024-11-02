@@ -48,12 +48,12 @@ public class RestaurantController {
     public String detail(Model model, @PathVariable("id") Long id,
                          @PageableDefault(size = 6) Pageable pageable,
                          @AuthenticationPrincipal PrincipalDetails principalDetails) {
-
-        // 로그인된 사용자가 있는 경우 userId 가져오기
+            //visitlogs는 필요없어서 비활성화
+/*        // 로그인된 사용자가 있는 경우 userId 가져오기
         if (principalDetails != null) {
             Long userId = principalDetails.getSiteUser().getId();  // SiteUser의 PK ID
             visitLogService.logVisit(userId, id);  // 방문 로그 기록
-        }
+        }*/
 
 
         this.restaurantService.getRestaurantsById(id).ifPresent(restaurant -> model.addAttribute("restaurant", restaurant));
