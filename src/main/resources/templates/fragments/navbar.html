@@ -59,7 +59,7 @@
                     <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/user/login}"><strong>로그인</strong></a>
                     <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/mypage}" style="text-decoration: underline;">
                         <strong>
-                            [[${#authentication.principal.name}]]님, 환영합니다!
+                            마이페이지
                         </strong>
                     </a>
                     <li class="nav-item">
