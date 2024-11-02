@@ -286,6 +286,32 @@
     <div style="margin-bottom: 50px; text-align: left;">  <!-- Removed 'text-center' class -->
         <h1 class="my-4"><strong>음식점 리스트</strong></h1>
     </div>
+    <!-- 카테고리 버튼들 추가 -->
+    <div class="mb-4">
+        <!-- 전체 보기 버튼 -->
+        <a th:href="@{/restaurant/list}" class="btn btn-outline-secondary"
+           th:classappend="${categoryId == null} ? ' active'">
+            전체
+        </a>
+        <!-- 메인 카테고리 버튼들 -->
+        <span th:each="category : ${mainCategories}">
+        <a th:href="@{'/restaurant/list'(categoryId=${category.id})}"
+           class="btn btn-primary btn-sm m-1"
+           th:classappend="${categoryId == category.id} ? ' active'">
+            <span th:text="${category.name}">카테고리 이름</span>
+        </a>
+    </span>
+        <!-- 기타 카테고리 버튼들 -->
+        <span th:each="category : ${otherCategories}">
+        <a th:href="@{'/restaurant/list'(categoryId=${category.id})}"
+           class="btn btn-secondary btn-sm m-1"
+           th:classappend="${categoryId == category.id} ? ' active'">
+            <span th:text="${category.name}">카테고리 이름</span>
+        </a>
+    </span>
+    </div>
+
+
     <div style="text-align: left; margin-bottom: 30px;">  <!-- Removed 'text-center' and added 'text-align: left' -->
         <!-- Conditional Rendering for Buttons -->
         <a th:if="${categoryId == null}" href="?sort=name" class="btn custom-btn">이름순</a>

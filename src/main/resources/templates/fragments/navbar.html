@@ -50,32 +50,19 @@
                     <!-- 메인 카테고리와 기타 카테고리 사이의 세로선 추가 -->
                     <div class="navbar-text vertical-divider"></div>
                     <!-- 메인 카테고리 -->
-                    <li class="nav-item" th:each="category : ${mainCategories}">
-                        <a class="nav-link" th:href="@{/restaurant/list(categoryId=${category.id})}" th:text="${category.name}">메인 카테고리 이름</a>
-                    </li>
-                    <!-- 더보기 드롭다운 -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            더보기
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li th:each="category : ${otherCategories}">
-                                <a class="dropdown-item" th:href="@{/restaurant/list(categoryId=${category.id})}" th:text="${category.name}">기타 카테고리 이름</a>
-                            </li>
-                        </ul>
-                    </li>
                 </ul>
 
                 <ul class="navbar-nav">
                     <a class="nav-link" th:href="@{/user/suggestions}">건의사항</a>
                     <!-- Kakao login button or logout button based on authentication status -->
+                    <!-- 사용자 이름을 클릭하면 '/mypage'로 이동하도록 변경 -->
                     <li class="nav-item">
                         <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/user/login}"><strong>로그인</strong></a>
-                        <button type="button" data-bs-toggle="modal" data-bs-target="#nicknameModal" class="nav-link" sec:authorize="isAuthenticated()" style="text-decoration: underline;">
+                        <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/mypage}" style="text-decoration: underline;">
                             <strong>
-                            [[${#authentication.principal.name}]]님, 환영합니다!
+                                [[${#authentication.principal.name}]]님, 환영합니다!
                             </strong>
-                        </button>
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/user/signup}"><strong>회원가입</strong></a>
@@ -86,61 +73,8 @@
         </div>
     </nav>
 
-    <!-- Modal -->
-    <div class="modal fade" sec:authorize="isAuthenticated()" id="nicknameModal" tabindex="-1" aria-labelledby="nicknameModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="nicknameModalLabel">닉네임 변경</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="error" class="alert alert-danger" style="display: none;">
-                    </div>
-                    <div class="form-group">
-                        <label for="newNickname">새로운 닉네임을 적어주세요:</label>
-                        <input type="text" class="form-control" id="newNickname">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                    <button type="button" class="btn btn-primary" id="saveNickname">저장</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script src="/js/jquery-3.7.1.min.js"></script>
-
-    <script>
-        var header = $("meta[name='_csrf_header']").attr('content');
-        var token = $("meta[name='_csrf']").attr('content');
-
-        if (header&&token) {
-            $(document).ready(function () {
-                $('#saveNickname').click(function () {
-                    var newNickname = $('#newNickname').val();
-
-                    $.ajax({
-                        type: 'POST',
-                        url: '/api/user/update',
-                        data: {nickname: newNickname},
-                        beforeSend: function(xhr){
-                            xhr.setRequestHeader(header, token);
-                        },
-                        success: function (response) {
-                            console.log("Nickname saved successfully:", response);
-                            location.reload();
-                        },
-                        error: function (xhr, status, error) {
-                            console.error("Error saving nickname:", error);
-                            $('#error').text('잘못된 별명입니다.').show();
-                        }
-                    });
-                });
-            });
-        }
-    </script>
 
 </div>
 
