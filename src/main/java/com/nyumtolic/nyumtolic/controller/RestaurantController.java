@@ -8,6 +8,7 @@ import com.nyumtolic.nyumtolic.review.ReviewService;
 import com.nyumtolic.nyumtolic.review.ReviewWithVotesDTO;
 import com.nyumtolic.nyumtolic.security.oauth.PrincipalDetails;
 import com.nyumtolic.nyumtolic.service.CategoryService;
+import com.nyumtolic.nyumtolic.service.RecommendationService;
 import com.nyumtolic.nyumtolic.service.RestaurantService;
 import com.nyumtolic.nyumtolic.service.VisitLogService;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,7 @@ public class RestaurantController {
     private final ReviewService reviewService;
     private final CategoryService categoryService;
     private final S3Service s3Service;
+    private final RecommendationService recommendationService;
     private static final Logger logger = LoggerFactory.getLogger(RestaurantController.class);
 
 
@@ -205,4 +207,12 @@ public class RestaurantController {
     }
 
 
+
+    // 어드민 권한이 있는 사용자만 접근 가능하도록 설정
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/admin/update-recommendations")
+    public String updateRecommendations() {
+        recommendationService.fetchRecommendations();
+        return "redirect:/restaurant/admin/list";  // 어드민 페이지로 리다이렉트 또는 원하는 페이지로 이동
+    }
 }

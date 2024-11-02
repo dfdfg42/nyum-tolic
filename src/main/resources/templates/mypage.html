@@ -57,21 +57,20 @@
             <!-- Recommendations Section -->
             <div id="recommendations" class="mt-4">
                 <h2>추천 레스토랑 (상위 3개)</h2>
-                <div th:if="${#maps.isEmpty(topRecommendations)}">
+                <div th:if="${#lists.isEmpty(topRecommendations)}">
                     <p>추천 결과가 없습니다.</p>
                 </div>
-                <div th:each="recommendation : ${topRecommendations}">
-                    <h4 th:text="'연도: ' + ${recommendation.key}"></h4>
+                <div th:unless="${#lists.isEmpty(topRecommendations)}">
                     <table class="table table-bordered">
                         <thead>
                         <tr>
-                            <th>레스토랑 ID</th>
+                            <th>레스토랑 이름</th>
                             <th>추천 점수</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="entry : ${recommendation.value}">
-                            <td th:text="${entry.key}">레스토랑 ID</td>
+                        <tr th:each="entry : ${topRecommendations}">
+                            <td th:text="${restaurants[entry.key]?.name}">레스토랑 이름</td>
                             <td th:text="${entry.value}">추천 점수</td>
                         </tr>
                         </tbody>
