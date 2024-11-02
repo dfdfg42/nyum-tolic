@@ -50,20 +50,18 @@
                     <!-- 메인 카테고리와 기타 카테고리 사이의 세로선 추가 -->
                     <div class="navbar-text vertical-divider"></div>
                     <!-- 메인 카테고리 -->
+
                 </ul>
 
                 <ul class="navbar-nav">
                     <a class="nav-link" th:href="@{/user/suggestions}">건의사항</a>
                     <!-- Kakao login button or logout button based on authentication status -->
-                    <!-- 사용자 이름을 클릭하면 '/mypage'로 이동하도록 변경 -->
-                    <li class="nav-item">
-                        <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/user/login}"><strong>로그인</strong></a>
-                        <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/mypage}" style="text-decoration: underline;">
-                            <strong>
-                                [[${#authentication.principal.name}]]님, 환영합니다!
-                            </strong>
-                        </a>
-                    </li>
+                    <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/user/login}"><strong>로그인</strong></a>
+                    <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/mypage}" style="text-decoration: underline;">
+                        <strong>
+                            [[${#authentication.principal.name}]]님, 환영합니다!
+                        </strong>
+                    </a>
                     <li class="nav-item">
                         <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/user/signup}"><strong>회원가입</strong></a>
                         <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/user/logout}"><strong>로그아웃</strong></a>
@@ -75,6 +73,8 @@
 
 
     <script src="/js/jquery-3.7.1.min.js"></script>
+
+
 
 </div>
 

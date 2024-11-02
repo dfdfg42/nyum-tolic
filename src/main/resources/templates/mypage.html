@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>User Management</title>
@@ -31,26 +31,6 @@
                 </button>
             </div>
 
-            <!-- Reviews Section -->
-            <div id="reviews" class="mt-4">
-                <h2>내가 작성한 리뷰</h2>
-                <div th:if="${#lists.isEmpty(reviews)}">
-                    <p>작성한 리뷰가 없습니다.</p>
-                </div>
-                <div th:each="review : ${reviews}" class="card mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title" th:text="${review.restaurant.name}"></h5>
-                        <p class="card-text" th:text="${review.content}"></p>
-                        <p class="card-text">
-                            <small class="text-muted" th:text="${#temporals.format(review.createDate, 'yyyy-MM-dd HH:mm')}"></small>
-                        </p>
-                        <div>
-                            <span th:text="'별점: ' + ${review.rating}"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Recommendations Section -->
             <div id="recommendations" class="mt-4">
                 <h2>추천 레스토랑 (상위 3개)</h2>
@@ -74,6 +54,53 @@
                     </table>
                 </div>
             </div>
+
+            <!-- Reviews Section -->
+            <div id="reviews" class="mt-4">
+                <h2>내가 작성한 리뷰</h2>
+                <div th:if="${#lists.isEmpty(reviews)}">
+                    <p>작성한 리뷰가 없습니다.</p>
+                </div>
+                <div th:each="review : ${reviews}" class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${review.restaurant.name}"></h5>
+                        <p class="card-text" th:text="${review.content}"></p>
+                        <p class="card-text">
+                            <small class="text-muted" th:text="${#temporals.format(review.createDate, 'yyyy-MM-dd HH:mm')}"></small>
+                        </p>
+                        <div>
+                            <span th:text="'별점: ' + ${review.rating}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Modal -->
+            <div class="modal fade" sec:authorize="isAuthenticated()" id="nicknameModal" tabindex="-1" aria-labelledby="nicknameModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="nicknameModalLabel">닉네임 변경</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="error" class="alert alert-danger" style="display: none;">
+                            </div>
+                            <div class="form-group">
+                                <label for="newNickname">새로운 닉네임을 적어주세요:</label>
+                                <input type="text" class="form-control" id="newNickname">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                            <button type="button" class="btn btn-primary" id="saveNickname">저장</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
         </div>
     </div>
 </div>
@@ -83,35 +110,33 @@
 
 
 <script>
-    $(document).ready(function () {
-        var header = $("meta[name='_csrf_header']").attr('content');
-        var token = $("meta[name='_csrf']").attr('content');
+    var header = $("meta[name='_csrf_header']").attr('content');
+    var token = $("meta[name='_csrf']").attr('content');
 
-        $('#saveNickname').click(function () {
-            var newNickname = $('#newNickname').val();
+    if (header&&token) {
+        $(document).ready(function () {
+            $('#saveNickname').click(function () {
+                var newNickname = $('#newNickname').val();
 
-            $.ajax({
-                type: 'POST',
-                url: '/api/user/update',
-                data: JSON.stringify({nickname: newNickname}),
-                contentType: 'application/json',
-                beforeSend: function (xhr) {
-                    if (header && token) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/api/user/update',
+                    data: {nickname: newNickname},
+                    beforeSend: function(xhr){
                         xhr.setRequestHeader(header, token);
+                    },
+                    success: function (response) {
+                        console.log("Nickname saved successfully:", response);
+                        location.reload();
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error saving nickname:", error);
+                        $('#error').text('잘못된 별명입니다.').show();
                     }
-                },
-                success: function (response) {
-                    console.log("Nickname updated successfully:", response);
-                    $('#nicknameModal').modal('hide'); // Hide the modal after successful update
-                    location.reload(); // Reload the page to reflect the change
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error updating nickname:", error);
-                    $('#error').text('잘못된 닉네임입니다.').show();
-                }
+                });
             });
         });
-    });
+    }
 </script>
 
 
