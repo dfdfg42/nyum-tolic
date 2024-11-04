@@ -263,7 +263,7 @@
 <div class="mobile-version">
     <div th:if="${restaurant}" class="container mt-4">
         <div class="card restaurant-card mb-3">
-            <img th:src="@{'/' + ${restaurant.photo}}" class="card-img-top" alt="음식점 사진">
+            <img th:src="@{${restaurant.photo}}"  class="card-img-top" alt="음식점 사진">
             <div class="card-body">
                 <h5 class="card-title fade-in" th:text="${restaurant.name}"></h5>
                 <div class="rating mt-2 fade-in">
