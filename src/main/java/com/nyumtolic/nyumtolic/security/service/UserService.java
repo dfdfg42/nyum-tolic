@@ -5,6 +5,7 @@ import com.nyumtolic.nyumtolic.DataNotFoundException;
 import com.nyumtolic.nyumtolic.security.domain.SiteUser;
 import com.nyumtolic.nyumtolic.security.domain.UserRole;
 import com.nyumtolic.nyumtolic.security.dto.UserCreateForm;
+import com.nyumtolic.nyumtolic.security.dto.UserDTO;
 import com.nyumtolic.nyumtolic.security.dto.UserUpdateForm;
 import com.nyumtolic.nyumtolic.security.oauth.PrincipalDetails;
 import com.nyumtolic.nyumtolic.security.repository.UserRepository;
@@ -24,6 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -91,5 +93,19 @@ public class UserService {
         SecurityContextHolder.getContext().setAuthentication(updatedAuthentication);
 
         return siteUser;
+    }
+
+    public List<UserDTO> getAllUserDTOs() {
+        return userRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private UserDTO convertToDTO(SiteUser user) {
+        UserDTO dto = new UserDTO();
+        dto.setId(user.getId());
+        dto.setLoginId(user.getLoginId());
+        dto.setNickname(user.getNickname());
+        return dto;
     }
 }

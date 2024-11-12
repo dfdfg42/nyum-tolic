@@ -14,6 +14,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByRestaurantId(Long restaurantId);
     List<Review> findByAuthor(SiteUser author);
 
+    List<Review> findByAuthorId(Long userId);
+
     @Query("SELECT r, COUNT(v) FROM Review r LEFT JOIN r.voter v WHERE r.restaurant.id = :restaurantId GROUP BY r.id ORDER BY COUNT(v) DESC,r.modifyDate DESC ,r.createDate DESC")
     Page<Object[]> findReviewsAndVoteCountByRestaurantId(@Param("restaurantId") Long restaurantId, Pageable pageable);
 

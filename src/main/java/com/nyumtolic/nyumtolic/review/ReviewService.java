@@ -1,6 +1,8 @@
 package com.nyumtolic.nyumtolic.review;
 
 import com.nyumtolic.nyumtolic.DataNotFoundException;
+import com.nyumtolic.nyumtolic.domain.ReviewLog;
+import com.nyumtolic.nyumtolic.repository.ReviewLogRepository;
 import com.nyumtolic.nyumtolic.s3.S3Service;
 import com.nyumtolic.nyumtolic.domain.Restaurant;
 import com.nyumtolic.nyumtolic.repository.RestaurantRepository;
@@ -26,6 +28,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final RestaurantRepository restaurantRepository;
     private final S3Service s3Service;
+    private final ReviewLogRepository reviewLogRepository;
 
     public void vote(Review review, SiteUser siteUser) {
         review.getVoter().add(siteUser);
@@ -48,12 +51,26 @@ public class ReviewService {
 
         reviewRepository.save(review);
         updateRestaurantUserRating(restaurantId);
+
+        // 리뷰 로그 생성 및 저장
+        ReviewLog reviewLog = new ReviewLog();
+        reviewLog.setCreatedAt(LocalDateTime.now());
+        reviewLog.setContent(content);
+        reviewLog.setRating(rating);
+        reviewLog.setAuthor(author);
+        reviewLog.setRestaurantId(restaurantId);
+        reviewLogRepository.save(reviewLog);
+
         return review;
     }
 
     public Review getReview(Long id) {
         return reviewRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Review not found"));
+    }
+
+    public List<Review> getUserReviews(Long userId) {
+        return reviewRepository.findByAuthorId(userId);
     }
 
     @Transactional(readOnly = true)

@@ -6,8 +6,11 @@ import com.nyumtolic.nyumtolic.domain.Category;
 import com.nyumtolic.nyumtolic.domain.Restaurant;
 import com.nyumtolic.nyumtolic.review.ReviewService;
 import com.nyumtolic.nyumtolic.review.ReviewWithVotesDTO;
+import com.nyumtolic.nyumtolic.security.oauth.PrincipalDetails;
 import com.nyumtolic.nyumtolic.service.CategoryService;
+import com.nyumtolic.nyumtolic.service.RecommendationService;
 import com.nyumtolic.nyumtolic.service.RestaurantService;
+import com.nyumtolic.nyumtolic.service.VisitLogService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,11 +18,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,16 +35,27 @@ import java.util.UUID;
 @Controller
 public class RestaurantController {
 
+    private final VisitLogService visitLogService;
     private final RestaurantService restaurantService;
     private final ReviewService reviewService;
     private final CategoryService categoryService;
     private final S3Service s3Service;
+    private final RecommendationService recommendationService;
     private static final Logger logger = LoggerFactory.getLogger(RestaurantController.class);
 
 
     @GetMapping(value = "/detail/{id}")
     public String detail(Model model, @PathVariable("id") Long id,
-                         @PageableDefault(size = 6) Pageable pageable) {
+                         @PageableDefault(size = 6) Pageable pageable,
+                         @AuthenticationPrincipal PrincipalDetails principalDetails) {
+            //visitlogs는 필요없어서 비활성화
+/*        // 로그인된 사용자가 있는 경우 userId 가져오기
+        if (principalDetails != null) {
+            Long userId = principalDetails.getSiteUser().getId();  // SiteUser의 PK ID
+            visitLogService.logVisit(userId, id);  // 방문 로그 기록
+        }*/
+
+
         this.restaurantService.getRestaurantsById(id).ifPresent(restaurant -> model.addAttribute("restaurant", restaurant));
         Restaurant restaurant = restaurantService.getRestaurantsById(id).orElse(null);
         restaurant.getReviews().forEach(review ->
@@ -70,31 +86,28 @@ public class RestaurantController {
 
     @GetMapping("/list")
     public String showRestaurantList(@RequestParam(value = "categoryId", required = false) Long categoryId, Model model,
-                                     @RequestParam(value = "sort", defaultValue = "id") String sort) {
+                                     @RequestParam(value = "sort", defaultValue = "name") String sort) {
         List<Restaurant> restaurants;
         if (categoryId != null) {
-
-            if ("userRating".equals(sort)||"name".equals(sort)){
+            if ("userRating".equals(sort) || "name".equals(sort)) {
                 restaurants = restaurantService.getAllByCategoryIdSorted(categoryId, sort);
-            }
-            else {
+            } else {
                 // 특정 카테고리 ID가 제공된 경우, 해당 카테고리의 맛집 리스트를 가져옵니다.
                 restaurants = restaurantService.findAllByCategoryId(categoryId);
             }
-        }
-        else {
-            if ("userRating".equals(sort)||"name".equals(sort)){
+        } else {
+            if ("userRating".equals(sort) || "name".equals(sort)) {
                 restaurants = restaurantService.getAllRestaurantsBySorted(sort);
-            }
-            else {
+            } else {
                 // 카테고리 ID가 제공되지 않은 경우, 전체 맛집 리스트를 가져옵니다.
                 restaurants = restaurantService.getAllRestaurants();
             }
         }
         model.addAttribute("restaurants", restaurants);
-        model.addAttribute("categoryId",categoryId);
+        model.addAttribute("categoryId", categoryId);
         return "restaurant/list"; // 맛집 리스트 페이지로 이동
     }
+
 
     @GetMapping("/recommendation")
     public String recommendRestaurant(@RequestParam(value = "excludedCategories", required = false) String excludedCategories, Model model) {
@@ -119,12 +132,19 @@ public class RestaurantController {
 
     // 레스토랑 생성 폼 보여주기 (관리자용)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    // 레스토랑 생성 폼 보여주기 (관리자용)
     @GetMapping("/admin/create")
     public String showCreateFormForAdmin(Model model) {
-        model.addAttribute("restaurant", new Restaurant());
+        Restaurant restaurant = new Restaurant();
+        // categories가 이미 초기화되어 있는지 확인 (엔티티에서 초기화했다면 이 단계는 생략 가능)
+        if (restaurant.getCategories() == null) {
+            restaurant.setCategories(new ArrayList<>());
+        }
+        model.addAttribute("restaurant", restaurant);
+
+        // allCategories 추가
         List<Category> allCategories = categoryService.findAll();
         model.addAttribute("allCategories", allCategories);
+
         return "restaurant/admin/restaurant_admin_form";
     }
 
@@ -184,4 +204,12 @@ public class RestaurantController {
     }
 
 
+
+    // 어드민 권한이 있는 사용자만 접근 가능하도록 설정
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/admin/update-recommendations")
+    public String updateRecommendations() {
+        recommendationService.fetchRecommendations();
+        return "redirect:/restaurant/admin/list";  // 어드민 페이지로 리다이렉트 또는 원하는 페이지로 이동
+    }
 }

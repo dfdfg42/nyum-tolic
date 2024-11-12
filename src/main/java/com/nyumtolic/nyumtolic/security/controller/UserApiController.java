@@ -32,4 +32,5 @@ public class UserApiController {
 
         return userUpdateForm.getNickname();
     }
+
 }
