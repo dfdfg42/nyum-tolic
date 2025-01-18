@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 @Tag(name = "음식점", description = "냠톨릭 음식점 데이터와 관련된 API입니다.")
 public class RestaurantApiController {
-
+    //
     private final RestaurantService restaurantService;
     private final UserService userService;
     private final ReviewLogService reviewLogService;
