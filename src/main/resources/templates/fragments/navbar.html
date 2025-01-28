@@ -5,8 +5,6 @@
     <link rel="stylesheet" href="/css/bootstrap.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/my-fonts.css">
-
-
 </head>
 <body>
 <div th:fragment="navbar">
@@ -42,16 +40,18 @@
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/user/suggestions}">건의사항</a>
                     </li>
-                    <!-- 수정된 버튼 부분 -->
+                    <!-- 로그인 상태별 표시 개선 -->
                     <li class="nav-item" sec:authorize="isAnonymous()">
                         <a class="btn nav-btn-orange" th:href="@{/user/login}">로그인</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAnonymous()">
+                        <a class="nav-link" th:href="@{/user/signup}">회원가입</a>
                     </li>
                     <li class="nav-item" sec:authorize="isAuthenticated()">
                         <a class="nav-link" th:href="@{/mypage}" style="color: #FF7F27;">마이페이지</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="btn nav-btn-orange" sec:authorize="isAnonymous()" th:href="@{/user/signup}">회원가입</a>
-                        <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/user/logout}">로그아웃</a>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link" th:href="@{/user/logout}">로그아웃</a>
                     </li>
                 </ul>
             </div>

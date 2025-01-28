@@ -1,5 +1,4 @@
-
-    /* 수정된 버튼 스타일 */
+/* 변경된 버튼 스타일 */
 .nav-btn-orange {
     background-color: #FF7F27 !important;
     border: none !important;
@@ -11,7 +10,7 @@
     box-shadow: none !important; /* 추가 */
 }
 
-/* 호버 & 포커스 상태 추가 */
+/* 호버 & 포커스 상태 */
 .nav-btn-orange:hover,
 .nav-btn-orange:focus {
     background-color: #ff6500 !important;
@@ -28,4 +27,9 @@
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+}
+
+/* 내비게이션 바 아래 검은색 밑줄 추가 */
+.custom-navbar {
+    border-bottom: 1px solid #000; /* ㅂ밑줄 */
 }
