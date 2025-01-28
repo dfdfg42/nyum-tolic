@@ -17,17 +17,55 @@
         body {
             background-color: #f8f9fa;
         }
+        .container {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            margin: 0 auto; /* 중앙 정렬 */
+            max-width: 700px; /* 최대 너비를 설정하여 페이지 전체에 퍼지지 않도록 */
+            height: 100vh; /* 세로 중앙 정렬 */
+        }
         .form-container {
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 40px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding-top: 60px;
+            width: 700px;
+            background-color: transparent;
+            text-align: center;
         }
         .form-container h2 {
-            text-align: center;
+            width: 700px;
             margin-bottom: 30px;
+            font-size: 40px;
+            text-align: left;
+            font-family: 'Gmarket', sans-serif;
+            font-weight: bold;
+            letter-spacing: 6px;
+        }
+        .form-control {
+            position: relative;
+            padding-left: 54px; /* 아이콘과 입력 필드 사이에 29px 여백을 만듦 */
+            height: 70px;
+        }
+        .form-control-icon {
+            position: absolute;
+            left: 10px; /* 아이콘 위치 */
+            top: 50%;
+            transform: translateY(-50%);
+            width: 25px; /* 아이콘 너비 */
+            height: 25px; /* 아이콘 높이 */
+            z-index: 5;
+        }
+        .form-container .btn-primary {
+            background-color: #FF7F27;
+            border-color: #FF7F27;
+            height: 80px;
+            width: 700px;
+            font-size: 35px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+        }
+        .form-container .btn-primary:hover {
+            background-color: #ff6500;
+            border-color: #ff6500;
         }
         @media (max-width: 767px) {
             .form-container {
@@ -43,7 +81,6 @@
                 margin-bottom: 15px;
             }
         }
-
     </style>
 </head>
 <body>
@@ -51,30 +88,35 @@
 <div th:replace="fragments/navbar :: navbar"></div>
 <div class="container" style="margin-top: 100px;">
     <div class="form-container">
-        <h2>회원가입</h2>
+        <h2>냠톨릭</h2>
         <form th:action="@{/user/signup}" th:object="${userCreateForm}" method="post">
             <div th:replace="~{form_errors :: formErrorsFragment}"></div>
-            <div class="mb-3">
-                <label for="loginId" class="form-label">사용자ID</label>
-                <input type="text" th:field="*{loginId}" id="loginId" class="form-control" placeholder="사용자ID" required>
+
+            <div class="mb-3 position-relative">
+                <img src="../images/formIcon/user.png" alt="아이디 아이콘" class="form-control-icon">
+                <input type="text" th:field="*{loginId}" id="loginId" class="form-control" placeholder="아이디" required>
             </div>
-            <div class="mb-3">
-                <label for="nickname" class="form-label">별명</label>
-                <input type="text" th:field="*{nickname}" id="nickname" class="form-control" placeholder="별명" required>
-            </div>
-            <div class="mb-3">
-                <label for="password1" class="form-label">비밀번호</label>
+
+            <div class="mb-3 position-relative">
+                <img src="../images/formIcon/lock.png" alt="비밀번호 아이콘" class="form-control-icon">
                 <input type="password" th:field="*{password1}" id="password1" class="form-control" placeholder="비밀번호" required>
             </div>
-            <div class="mb-3">
-                <label for="password2" class="form-label">비밀번호 확인</label>
+
+            <div class="mb-3 position-relative">
                 <input type="password" th:field="*{password2}" id="password2" class="form-control" placeholder="비밀번호 확인" required>
             </div>
-            <div class="mb-3">
-                <label for="email" class="form-label">이메일</label>
+
+            <div class="mb-3 position-relative">
+                <img src="../images/formIcon/smile.png" alt="닉네임 아이콘" class="form-control-icon">
+                <input type="text" th:field="*{nickname}" id="nickname" class="form-control" placeholder="닉네임" required>
+            </div>
+
+            <div class="mb-3 position-relative">
+                <img src="../images/formIcon/mail.png" alt="이메일 아이콘" class="form-control-icon">
                 <input type="email" th:field="*{email}" id="email" class="form-control" placeholder="이메일" required>
             </div>
-            <button type="submit" class="btn btn-primary btn-block">회원가입</button>
+
+            <button type="submit" class="btn btn-primary">회원가입</button>
         </form>
     </div>
 </div>

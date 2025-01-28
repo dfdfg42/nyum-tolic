@@ -7,15 +7,52 @@
     <link rel="stylesheet" href="/css/my-fonts.css">
 
     <style>
-        .kakao-login-btn {
-            background: none;
-            border: none;
-            padding: 0;
-            cursor: pointer;
+        /* 커스텀 내비게이션 바 스타일 */
+        .custom-navbar {
+            background-color: white !important;
+            border-bottom: 1px solid #000 !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .kakao-login-btn img {
-            width: 100px;
-            height: auto;
+
+        /* 주황색 테마 버튼 */
+        .nav-btn-orange {
+            background-color: #FF7F27 !important;
+            border-color: #FF7F27 !important;
+            color: white !important;
+            border-radius: 20px;
+            padding: 8px 20px;
+            margin: 0 5px;
+        }
+
+        .nav-btn-orange:hover {
+            background-color: #ff6500 !important;
+            border-color: #ff6500 !important;
+        }
+
+        /* 링크 색상 변경 */
+        .custom-navbar .nav-link {
+            color: #333 !important;
+            font-weight: 500;
+            margin: 0 10px;
+        }
+
+        .custom-navbar .nav-link:hover {
+            color: #FF7F27 !important;
+        }
+
+        /* 로고 강조 */
+        .navbar-brand strong {
+            color: #FF7F27 !important;
+            margin-left: 10px;
+        }
+
+        /* 토글 버튼 색상 변경 */
+        .custom-navbar .navbar-toggler {
+            border-color: rgba(0,0,0,0.1);
+        }
+
+        .custom-navbar .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(0, 0, 0, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
         }
     </style>
 </head>
@@ -24,59 +61,51 @@
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <meta name="_csrf" th:content="${_csrf.token}">
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
         <div class="container-fluid">
             <a class="navbar-brand" th:href="@{/}">
-                <img src="/images/logo.png" alt="Logo" style="height: 30px;"> <strong>냠톨릭2.0</strong>
+                <img src="/images/logo.png" alt="Logo" style="height: 30px;">
+                <strong>냠톨릭2.0</strong>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav" style="margin-right: auto;">
+                <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/restaurant/recommendation}"><strong>음식점 랜덤 추천</strong></a>
+                        <a class="nav-link" th:href="@{/restaurant/recommendation}">음식점 랜덤 추천</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/restaurant/list}"><strong>음식점 리스트</strong></a>
+                        <a class="nav-link" th:href="@{/restaurant/list}">음식점 리스트</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/catholic/menu}"><strong>학식정보</strong></a>
+                        <a class="nav-link" th:href="@{/catholic/menu}">학식정보</a>
                     </li>
-                    <!-- New nav-item for 만냠 -->
                     <li class="nav-item">
-                        <a class="nav-link" href="https://csec.site" target="_blank"><strong>만냠</strong></a>
+                        <a class="nav-link" href="https://csec.site" target="_blank">만냠</a>
                     </li>
-                    <!-- 메인 카테고리와 기타 카테고리 사이의 세로선 추가 -->
-                    <div class="navbar-text vertical-divider"></div>
-                    <!-- 메인 카테고리 -->
-
                 </ul>
 
                 <ul class="navbar-nav">
-                    <a class="nav-link" th:href="@{/user/suggestions}">건의사항</a>
-                    <!-- Kakao login button or logout button based on authentication status -->
-                    <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/user/login}"><strong>로그인</strong></a>
-                    <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/mypage}" style="text-decoration: underline;">
-                        <strong>
-                            마이페이지
-                        </strong>
-                    </a>
                     <li class="nav-item">
-                        <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/user/signup}"><strong>회원가입</strong></a>
-                        <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/user/logout}"><strong>로그아웃</strong></a>
+                        <a class="nav-link" th:href="@{/user/suggestions}">건의사항</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAnonymous()">
+                        <a class="nav-link nav-btn-orange" th:href="@{/user/login}">로그인</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link" th:href="@{/mypage}" style="color: #FF7F27;">마이페이지</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-btn-orange" sec:authorize="isAnonymous()" th:href="@{/user/signup}">회원가입</a>
+                        <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/user/logout}">로그아웃</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-
     <script src="/js/jquery-3.7.1.min.js"></script>
-
-
-
 </div>
-
 </body>
 </html>

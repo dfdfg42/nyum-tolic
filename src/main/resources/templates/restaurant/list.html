@@ -103,6 +103,42 @@
                 font-size: 0.7rem; /* 카테고리 및 메뉴 텍스트 크기 줄임 */
             }
         }
+        /* 카테고리 버튼 스타일 */
+        .btn.category-btn {
+            background-color: white;
+            border: 2px solid #FFA500;
+            color: #FFA500;
+            border-radius: 20px;
+            margin: 0 5px 5px 0;
+        }
+        .btn.category-btn.active {
+            background-color: #FFA500 !important;
+            color: white !important;
+        }
+        .btn.category-btn:hover {
+            background-color: #FFA500;
+            color: white;
+        }
+
+        /* 카드 테두리 스타일 */
+        .card {
+            border: 2px solid #FFA500 !important;
+            border-radius: 15px;
+            overflow: hidden; /* 이미지가 테두리를 넘지 않게 */
+        }
+        .card-img-top {
+            border-radius: 13px 13px 0 0 !important;
+        }
+
+        /* 모바일 대응 */
+        @media (max-width: 576px) {
+            .card {
+                border-radius: 12px !important;
+            }
+            .card-img-top {
+                border-radius: 10px 10px 0 0 !important;
+            }
+        }
     </style>
 </head>
 
@@ -118,25 +154,23 @@
     <!-- 카테고리 버튼들 추가 -->
     <div class="mb-4">
         <div>
-            <a th:href="@{/restaurant/list}" class="btn btn-outline-secondary" th:classappend="${categoryId == null} ? ' active'">전체</a>
+            <a th:href="@{/restaurant/list}" class="btn category-btn" th:classappend="${categoryId == null} ? ' active'">전체</a>
         </div>
         <br>
         <div>
-            <!-- 메인 카테고리 버튼들 -->
-            <span th:each="category : ${mainCategories}">
-                <a th:href="@{'/restaurant/list'(categoryId=${category.id})}" class="btn btn-primary btn-sm m-1" th:classappend="${categoryId == category.id} ? ' active'">
-                    <span th:text="${category.name}">카테고리 이름</span>
-                </a>
-            </span>
+        <span th:each="category : ${mainCategories}">
+            <a th:href="@{'/restaurant/list'(categoryId=${category.id})}" class="btn category-btn" th:classappend="${categoryId == category.id} ? ' active'">
+                <span th:text="${category.name}"></span>
+            </a>
+        </span>
         </div>
         <br>
         <div>
-            <!-- 기타 카테고리 버튼들 -->
-            <span th:each="category : ${otherCategories}">
-                <a th:href="@{'/restaurant/list'(categoryId=${category.id})}" class="btn btn-secondary btn-sm m-1" th:classappend="${categoryId == category.id} ? ' active'">
-                    <span th:text="${category.name}">카테고리 이름</span>
-                </a>
-            </span>
+        <span th:each="category : ${otherCategories}">
+            <a th:href="@{'/restaurant/list'(categoryId=${category.id})}" class="btn category-btn" th:classappend="${categoryId == category.id} ? ' active'">
+                <span th:text="${category.name}"></span>
+            </a>
+        </span>
         </div>
     </div>
 
