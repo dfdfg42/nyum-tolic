@@ -110,7 +110,7 @@
 </head>
 
 <body>
-<div th:replace="fragments/navbar :: navbar"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 <div class="desktop-version">
     <div class="container mt-4">
         <div class="row">
@@ -258,7 +258,7 @@
             </div>
         </div>
     </div>
-    <div th:replace="fragments/footer.html :: custom-footer"></div>
+    <div th:replace="~{fragments/footer.html :: custom-footer}"></div>
 </div>
 
 <div class="mobile-version">

@@ -35,7 +35,7 @@
 </head>
 <body>
 
-<div th:replace="fragments/navbar :: navbar"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 
 
 <div class="container mt-3 ps-0">
@@ -136,7 +136,7 @@
 
 </div>
 
-<div th:replace="fragments/footer.html :: custom-footer"></div>
+<div th:replace="~{fragments/footer.html :: custom-footer}"></div>
 <script src="/js/bootstrap.bundle.min.js"></script>
 <script src="/js/lazyload.js"></script>
 

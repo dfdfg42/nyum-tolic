@@ -27,8 +27,7 @@
 </head>
 <body>
 <!-- 네비게이션 바 -->
-<div th:replace="fragments/navbar :: navbar" class="navbar-custom"></div>
-
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 <!-- 페이지 컨테이너 -->
 <div class="container">
     <!-- 폼 컨테이너 -->
@@ -68,7 +67,7 @@
 </div>
 
 <!-- 푸터 (선택) -->
-<div th:replace="fragments/footer.html :: custom-footer"></div>
+<div th:replace="~{fragments/footer.html :: custom-footer}"></div>
 
 <!-- Bootstrap JS -->
 <script src="/js/bootstrap.bundle.min.js"></script>

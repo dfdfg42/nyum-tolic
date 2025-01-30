@@ -180,7 +180,7 @@
 </head>
 
 <body>
-<div th:replace="fragments/navbar :: navbar"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 <div class="container mt-3 ps-0">
     <p class="text-left text-muted small">냠톨릭-가톨릭대 주변 음식점 사이트</p>
 </div>
@@ -253,7 +253,7 @@
     </div>
 </div>
 
-<div th:replace="fragments/footer.html :: custom-footer"></div>
+<div th:replace="~{fragments/footer.html :: custom-footer}"></div>
 <script src="/js/bootstrap.bundle.min.js"></script>
 <script src="/js/lazyload.js"></script>
 </body>
