@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>유저 게시글 작성</title>
+</head>
+<body>
+<h1>유저 게시글 작성</h1>
+<form th:action="@{/posts/user-board/create}" th:object="${userPost}" method="post">
+    <div>
+        <label>제목:</label>
+        <input type="text" th:field="*{title}" required />
+    </div>
+    <div>
+        <label>내용:</label>
+        <textarea th:field="*{content}" required></textarea>
+    </div>
+    <div>
+        <label>익명 여부:</label>
+        <input type="checkbox" th:field="*{anonymous}" />
+    </div>
+    <div>
+        <label>해시태그:</label>
+        <input type="text" th:field="*{hashtags}" />
+    </div>
+    <button type="submit">작성 완료</button>
+</form>
+</body>
+</html>

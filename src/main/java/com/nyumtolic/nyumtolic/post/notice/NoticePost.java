@@ -1,6 +1,7 @@
-package com.nyumtolic.nyumtolic.post;
+package com.nyumtolic.nyumtolic.post.notice;
 
 
+import com.nyumtolic.nyumtolic.post.BasePost;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.Getter;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
-public class NoticePost extends  BasePost {
+public class NoticePost extends BasePost {
 
     private boolean isPinned;
     private LocalDateTime startDate;

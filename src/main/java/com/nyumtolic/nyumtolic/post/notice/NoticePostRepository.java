@@ -1,4 +1,4 @@
-package com.nyumtolic.nyumtolic.post;
+package com.nyumtolic.nyumtolic.post.notice;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

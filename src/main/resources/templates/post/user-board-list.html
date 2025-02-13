@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>유저 게시판</title>
+</head>
+<body>
+<h1>유저 게시판</h1>
+<a th:href="@{/posts/user-board/create}">새 글 작성</a>
+<ul>
+    <li th:each="post : ${userPosts}">
+        <h3 th:text="${post.title}"></h3>
+        <p th:text="${post.content}"></p>
+        <p>작성일: <span th:text="${#temporals.format(post.createDate, 'yyyy-MM-dd HH:mm')}"></span></p>
+    </li>
+</ul>
+</body>
+</html>
