@@ -184,6 +184,18 @@
 <div class="container mt-3 ps-0">
     <p class="text-left text-muted small">냠톨릭-가톨릭대 주변 음식점 사이트</p>
 </div>
+
+<!-- 고정 공지 제목 목록 -->
+<div class="container mt-3">
+    <div th:if="${pinnedNotices != null and !#lists.isEmpty(pinnedNotices)}">
+        <div th:each="notice : ${pinnedNotices}">
+            <a th:href="@{/posts/notices}"
+               th:text="${notice.title}"
+               class="fw-bold text-decoration-none d-block mb-2"></a>
+        </div>
+    </div>
+</div>
+
 <div class="container mt-3">
     <!-- 카테고리 버튼들 추가 -->
     <div class="mb-4" style="margin-left: 10px;">
