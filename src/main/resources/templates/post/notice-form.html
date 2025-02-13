@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>공지 작성</title>
+</head>
+<body>
+<h1>공지 작성</h1>
+<form th:action="@{/posts/notices/create}" th:object="${noticePost}" method="post">
+    <div>
+        <label>제목:</label>
+        <input type="text" th:field="*{title}" required />
+    </div>
+    <div>
+        <label>내용:</label>
+        <textarea th:field="*{content}" required></textarea>
+    </div>
+    <div>
+        <label>고정 여부:</label>
+        <input type="checkbox" th:field="*{pinned}" />
+    </div>
+    <div>
+        <label>시작일:</label>
+        <input type="datetime-local" th:field="*{startDate}" required />
+    </div>
+    <div>
+        <label>종료일:</label>
+        <input type="datetime-local" th:field="*{endDate}" required />
+    </div>
+    <button type="submit">작성 완료</button>
+</form>
+</body>
+</html>
