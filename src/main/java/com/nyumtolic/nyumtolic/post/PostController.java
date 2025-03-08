@@ -4,12 +4,16 @@ import com.nyumtolic.nyumtolic.post.notice.NoticePost;
 import com.nyumtolic.nyumtolic.post.notice.NoticePostService;
 import com.nyumtolic.nyumtolic.post.user.UserPost;
 import com.nyumtolic.nyumtolic.post.user.UserPostService;
+import com.nyumtolic.nyumtolic.security.domain.SiteUser;
+import com.nyumtolic.nyumtolic.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -20,6 +24,7 @@ public class PostController {
     private final BasePostService basePostService;
     private final NoticePostService noticePostService;
     private final UserPostService userPostService;
+    private final UserRepository userRepository;
 
     // 공지사항 목록
     @GetMapping("/notices")
@@ -40,9 +45,13 @@ public class PostController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/notices/create")
-    public String createNotice(@ModelAttribute NoticePost noticePost) {
-        // 필요하다면 현재 로그인한 사용자를 noticePost에 설정
-        basePostService.createPost(noticePost); // 혹은 noticePostService.createNotice(noticePost);
+    public String createNotice(@ModelAttribute NoticePost noticePost, Principal principal) {
+        SiteUser author = userRepository.findByLoginId(principal.getName())
+                .orElseThrow(() -> new UsernameNotFoundException("유저를 찾을 수 없습니다."));
+
+        noticePost.setAuthor(author);
+        basePostService.createPost(noticePost);
+
         return "redirect:/posts/notices";
     }
 
