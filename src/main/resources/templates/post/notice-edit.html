@@ -15,11 +15,11 @@
         </div>
         <div class="mb-3">
             <label class="form-label">내용</label>
-            <textarea th:field="*{content}" class="form-control" required></textarea>
+            <textarea th:field="*{content}" class="form-control" rows="5" required></textarea>
         </div>
-        <div class="mb-3 form-check">
+        <div class="form-check mb-3">
             <input type="checkbox" th:field="*{pinned}" class="form-check-input">
-            <label class="form-check-label">고정 여부</label>
+            <label class="form-check-label">상단 고정</label>
         </div>
         <div class="mb-3">
             <label class="form-label">시작일</label>
@@ -30,7 +30,7 @@
             <input type="datetime-local" th:field="*{endDate}" class="form-control" required>
         </div>
         <button type="submit" class="btn btn-primary">수정 완료</button>
-        <a th:href="@{/posts/notices}" class="btn btn-secondary">취소</a>
+        <a href="/posts/notices" class="btn btn-secondary">취소</a>
     </form>
 </div>
 </body>
