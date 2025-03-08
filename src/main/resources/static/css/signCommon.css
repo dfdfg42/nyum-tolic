@@ -1,0 +1,163 @@
+/* 공통 CSS: common.css */
+
+/* 기본 바디 스타일 */
+body {
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+/* 네비게이션 바 관련 스타일 */
+.navbar-custom {
+    background-color: white;
+    border-bottom: 1px solid #ccc;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+/* 페이지 전체 컨테이너 */
+.container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding-top: 100px; /* 상단 네비게이션 바와의 간격 */
+    padding-bottom: 50px;
+}
+
+/* 폼을 감싸는 컨테이너 */
+.form-container {
+    width: 100%;
+    background-color: transparent;
+    text-align: center;
+}
+
+/* 상단 제목 */
+.form-container h2 {
+    margin-bottom: 30px;
+    font-size: 60px;
+    font-family: 'Gmarket', sans-serif; /* 예시 폰트 */
+    font-weight: bold;
+    letter-spacing: 10px;
+}
+
+/* 공통 인풋 스타일 */
+.form-control {
+    width: 100%;
+    height: 80px;
+    font-size: 1.5rem;
+    border-radius: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    margin-bottom: 20px; /* 인풋들 간 간격 */
+}
+
+/* textarea 추가 설정 - 건의사항 작성칸 크게 */
+textarea.form-control {
+    height: auto;        /* 고정 높이가 아닌 내용에 따라 늘어날 수 있게 */
+    min-height: 300px;   /* 기본 높이를 넉넉히 크게 지정 */
+    resize: vertical;    /* 세로로만 크기 조절 가능 */
+}
+
+/* 체크박스 영역 */
+.form-check {
+    margin-bottom: 20px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-check-input {
+    margin-top: 4px;
+}
+
+/* 기본 버튼 스타일 (주황색) */
+.btn-primary {
+    background-color: #FF7F27;
+    border-color: #FF7F27;
+    height: 80px;
+    width: 100%;
+    font-size: 35px;
+    border-radius: 20px;
+    margin-bottom: 15px;
+}
+
+.btn-primary:hover {
+    background-color: #ff6500;
+    border-color: #ff6500;
+}
+
+/* 카카오 로그인 버튼 */
+.btn-kakao {
+    background-color: #FEE500;
+    color: black !important;
+    border-color: #FEE500;
+    font-size: 35px;
+    height: 80px;
+    width: 100%;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+    text-decoration: none; /* 앵커일 경우 밑줄 제거 */
+}
+
+.btn-kakao:hover {
+    background-color: #e4cc00;
+}
+
+/* 하단 링크 스타일 */
+.text-center a {
+    text-decoration: none;
+    color: #FF7F27;
+    font-size: 1.1rem;
+    margin: 0 10px;
+}
+
+.text-center a:hover {
+    color: #ff6500;
+}
+
+/* 아이콘이 들어가는 인풋을 위한 포지션 관련 */
+.position-relative {
+    position: relative;
+}
+
+.form-control-icon {
+    position: absolute;
+    left: 15px; /* 아이콘 x좌표 */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 25px;
+    height: 25px;
+    z-index: 5;
+}
+
+/* 반응형 설정 */
+@media (max-width: 767px) {
+    .container {
+        width: 90%;
+        padding: 20px;
+        padding-top: 70px;
+    }
+
+    .form-container h2 {
+        font-size: 40px;
+        letter-spacing: 6px;
+    }
+
+    .form-control {
+        height: 50px;
+        font-size: 16px;
+    }
+
+    .btn-primary,
+    .btn-kakao {
+        height: 50px;
+        font-size: 16px;
+        border-radius: 10px;
+    }
+}

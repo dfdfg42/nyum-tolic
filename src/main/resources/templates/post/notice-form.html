@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>새 공지 작성</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/my-fonts.css">
+</head>
+<body>
+
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container mt-4">
+    <h2 class="mb-4">새 공지 작성</h2>
+    <form th:action="@{/posts/notices/create}" th:object="${noticePost}" method="post">
+        <div class="mb-3">
+            <label class="form-label">제목</label>
+            <input type="text" class="form-control" th:field="*{title}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">내용</label>
+            <textarea class="form-control" rows="6" th:field="*{content}" required></textarea>
+        </div>
+        <div class="form-check mb-3">
+            <input type="checkbox" class="form-check-input" th:field="*{pinned}">
+            <label class="form-check-label">상단 고정</label>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">시작일</label>
+            <input type="datetime-local" class="form-control" th:field="*{startDate}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">종료일</label>
+            <input type="datetime-local" class="form-control" th:field="*{endDate}" required>
+        </div>
+        <button type="submit" class="btn btn-success">작성 완료</button>
+        <a href="/posts/notices" class="btn btn-secondary">취소</a>
+    </form>
+</div>
+</body>
+</html>

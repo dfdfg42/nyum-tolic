@@ -1,6 +1,8 @@
 package com.nyumtolic.nyumtolic.controller;
 
 
+import com.nyumtolic.nyumtolic.post.notice.NoticePost;
+import com.nyumtolic.nyumtolic.post.notice.NoticePostService;
 import com.nyumtolic.nyumtolic.s3.S3Service;
 import com.nyumtolic.nyumtolic.domain.Category;
 import com.nyumtolic.nyumtolic.domain.Restaurant;
@@ -41,6 +43,7 @@ public class RestaurantController {
     private final CategoryService categoryService;
     private final S3Service s3Service;
     private final RecommendationService recommendationService;
+    private final NoticePostService noticePostService;
     private static final Logger logger = LoggerFactory.getLogger(RestaurantController.class);
 
 
@@ -105,6 +108,11 @@ public class RestaurantController {
         }
         model.addAttribute("restaurants", restaurants);
         model.addAttribute("categoryId", categoryId);
+
+
+        List<NoticePost> pinnedNotices = noticePostService.getPinnedNotices();
+        model.addAttribute("pinnedNotices", pinnedNotices);
+
         return "restaurant/list"; // 맛집 리스트 페이지로 이동
     }
 
@@ -206,10 +214,10 @@ public class RestaurantController {
 
 
     // 어드민 권한이 있는 사용자만 접근 가능하도록 설정
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    /*@PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/admin/update-recommendations")
     public String updateRecommendations() {
         recommendationService.fetchRecommendations();
         return "redirect:/restaurant/admin/list";  // 어드민 페이지로 리다이렉트 또는 원하는 페이지로 이동
-    }
+    }*/
 }

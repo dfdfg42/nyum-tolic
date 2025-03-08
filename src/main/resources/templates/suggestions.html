@@ -4,76 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>건의사항</title>
+
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/navbar.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/my-fonts.css">
+
+    <!-- 공통 CSS (로그인/회원가입과 동일) -->
+    <link rel="stylesheet" href="/css/signCommon.css">
+
+    <!-- 파비콘들 -->
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
+
+    <!-- CSRF 토큰 (Spring Security 사용 시) -->
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .suggestion-form {
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        .suggestion-form h2 {
-            margin-bottom: 20px;
-            color: #333;
-        }
-        .suggestion-form .form-group {
-            margin-bottom: 20px;
-        }
-        .suggestion-form label {
-            font-weight: bold;
-        }
-        .suggestion-form textarea {
-            resize: vertical;
-        }
-        .suggestion-form button {
-            width: 100%;
-        }
-    </style>
 </head>
 <body>
-<div th:replace="fragments/navbar :: navbar"></div>
+<!-- 네비게이션 바 -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<!-- 페이지 컨테이너 -->
+<div class="container">
+    <!-- 폼 컨테이너 -->
+    <div class="form-container">
+        <!-- 헤더/제목 -->
+        <h2><i class="bi bi-lightbulb"></i> 건의사항</h2>
 
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-6 offset-md-3">
-            <div class="suggestion-form">
-                <h2><i class="bi bi-lightbulb"></i> Suggestions</h2>
-                <form id="suggestionForm">
-                    <div class="form-group">
-                        <label for="name">Your Name</label>
-                        <input type="text" class="form-control" id="name" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Your Email</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="suggestionText">Suggestion</label>
-                        <textarea class="form-control" id="suggestionText" name="suggestionText" rows="5" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary"><i class="bi bi-paper-plane"></i> Submit</button>
-                </form>
-            </div>
-        </div>
+        <!-- 건의사항 폼 -->
+        <form id="suggestionForm">
+            <!-- 이름 -->
+            <input type="text"
+                   class="form-control"
+                   id="name"
+                   name="name"
+                   placeholder="건의사항 신청자 이름"
+                   required>
+            <!-- 이메일 -->
+            <input type="email"
+                   class="form-control"
+                   id="email"
+                   name="email"
+                   placeholder="답변받을 이메일"
+                   required>
+            <!-- 건의사항 작성 칸 (크게) -->
+            <textarea class="form-control"
+                      id="suggestionText"
+                      name="suggestionText"
+                      rows="5"
+                      placeholder="건의사항을 작성해주세요..."
+                      required></textarea>
+            <!-- 제출 버튼 -->
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-paper-plane"></i> Submit
+            </button>
+        </form>
     </div>
 </div>
 
-<div th:replace="fragments/footer.html :: custom-footer"></div>
+<!-- 푸터 (선택) -->
+<div th:replace="~{fragments/footer.html :: custom-footer}"></div>
 
+<!-- Bootstrap JS -->
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+<!-- 폼 제출 스크립트 -->
 <script>
     document.getElementById("suggestionForm").addEventListener("submit", function(event) {
         event.preventDefault();
@@ -84,6 +83,7 @@
         const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
+        // 실제 서버 URL 확인 후 수정
         fetch("/suggestions", {
             method: "POST",
             headers: {
@@ -110,6 +110,5 @@
             });
     });
 </script>
-<script src="/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

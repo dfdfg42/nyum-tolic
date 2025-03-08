@@ -17,7 +17,7 @@ import java.util.Map;
 @Service
 public class RecommendationService {
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    /*private final RestTemplate restTemplate = new RestTemplate();
     private static final String FLASK_RECOMMEND_URL = "http://localhost:5000/recommendations";
 
     private Map<String, Map<String, Double>> recommendations;
@@ -44,6 +44,6 @@ public class RecommendationService {
         return recommendations;
     }
 
-
+*/
 
 }
