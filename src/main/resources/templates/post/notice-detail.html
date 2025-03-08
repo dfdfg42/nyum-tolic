@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"  xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title th:text="${notice.title}">공지 상세</title>
@@ -24,12 +24,14 @@
             </p>
             <hr>
             <div class="mb-4" th:text="${notice.content}">공지 내용</div>
-            <div>
+            <div class="card-footer text-end">
+            <span sec:authorize="hasRole('ADMIN')">
                 <a th:href="@{/posts/notices/{id}/edit(id=${notice.id})}" class="btn btn-outline-primary">수정</a>
                 <form th:action="@{/posts/notices/{id}/delete(id=${notice.id})}" method="post" class="d-inline">
                     <button type="submit" class="btn btn-outline-danger">삭제</button>
                 </form>
-                <a href="/posts/notices" class="btn btn-outline-secondary">목록으로 돌아가기</a>
+            </span>
+                <a th:href="@{/posts/notices}" class="btn btn-secondary">목록으로 돌아가기</a>
             </div>
         </div>
     </div>

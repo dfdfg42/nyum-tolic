@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"  xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>공지사항 목록</title>
@@ -16,7 +16,9 @@
 <div class="container py-5">
     <h1 class="mb-4">공지사항 목록</h1>
 
-    <a th:href="@{/posts/notices/create}" class="btn btn-success mb-4">새 공지 작성</a>
+    <div sec:authorize="hasRole('ADMIN')">
+        <a th:href="@{/posts/notices/create}" class="btn btn-success mb-4">새 공지 작성</a>
+    </div>
 
     <div class="card mb-4">
         <div class="card-header bg-warning">
@@ -25,7 +27,8 @@
         <ul class="list-group list-group-flush">
             <li class="list-group-item d-flex justify-content-between align-items-center" th:each="notice : ${pinnedNotices}">
                 <a th:href="@{/posts/notices/{id}(id=${notice.id})}" class="fw-bold text-decoration-none text-dark" th:text="${notice.title}"></a>
-                <div>
+                <!-- 관리자만 수정/삭제 버튼 표시 -->
+                <div sec:authorize="hasRole('ADMIN')">
                     <a th:href="@{/posts/notices/{id}/edit(id=${notice.id})}" class="btn btn-sm btn-primary">수정</a>
                     <form th:action="@{/posts/notices/{id}/delete(id=${notice.id})}" method="post" class="d-inline">
                         <button type="submit" class="btn btn-sm btn-danger">삭제</button>
@@ -48,7 +51,7 @@
                     <a th:href="@{/posts/notices/{id}(id=${notice.id})}" class="text-decoration-none" th:text="${notice.title}"></a>
                     <span class="badge bg-light text-muted ms-2" th:text="${#temporals.format(notice.createDate, 'yyyy-MM-dd HH:mm')}"></span>
                 </div>
-                <div>
+                <div sec:authorize="hasRole('ADMIN')">
                     <a th:href="@{/posts/notices/{id}/edit(id=${notice.id})}" class="btn btn-sm btn-outline-primary">수정</a>
                     <form th:action="@{/posts/notices/{id}/delete(id=${notice.id})}" method="post" class="d-inline">
                         <button type="submit" class="btn btn-sm btn-outline-danger">삭제</button>
