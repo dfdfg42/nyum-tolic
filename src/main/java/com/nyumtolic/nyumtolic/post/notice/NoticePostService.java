@@ -2,8 +2,10 @@ package com.nyumtolic.nyumtolic.post.notice;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -54,5 +56,20 @@ public class NoticePostService {
     public void setPinned(Long noticeId, boolean isPinned) {
         NoticePost notice = getNoticeById(noticeId);
         notice.setPinned(isPinned);
+    }
+
+
+    //매일 자정 고정된 공지 일자 지났는지 확인
+    @Transactional
+    @Scheduled(cron = "0 0 0 * * *") // 매일 자정 실행
+    public void unpinExpiredNotices() {
+        LocalDateTime now = LocalDateTime.now();
+        List<NoticePost> pinnedNotices = noticePostRepository.findByIsPinnedTrueOrderByCreateDateDesc();
+
+        for (NoticePost notice : pinnedNotices) {
+            if (notice.getEndDate().isBefore(now)) {
+                notice.setPinned(false);
+            }
+        }
     }
 }
