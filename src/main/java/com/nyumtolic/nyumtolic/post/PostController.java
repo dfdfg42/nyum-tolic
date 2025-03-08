@@ -7,10 +7,7 @@ import com.nyumtolic.nyumtolic.post.user.UserPostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -46,6 +43,36 @@ public class PostController {
         return "redirect:/posts/notices";
     }
 
+
+    // 공지사항 상세 조회 페이지
+    @GetMapping("/notices/{id}")
+    public String noticeDetail(@PathVariable Long id, Model model) {
+        NoticePost notice = noticePostService.getNoticeById(id);
+        model.addAttribute("notice", notice);
+        return "post/notice-detail";
+    }
+
+    // 공지 수정 폼 보여주기
+    @GetMapping("/notices/{id}/edit")
+    public String editNotice(@PathVariable Long id, Model model) {
+        NoticePost notice = noticePostService.getNoticeById(id);
+        model.addAttribute("notice", notice);
+        return "post/notice-edit";
+    }
+
+    // 공지 수정 처리
+    @PostMapping("/notices/{id}/edit")
+    public String updateNotice(@PathVariable Long id, @ModelAttribute NoticePost updatedNotice) {
+        noticePostService.updateNotice(id, updatedNotice);
+        return "redirect:/posts/notices";
+    }
+
+    // 공지 삭제 처리
+    @PostMapping("/notices/{id}/delete")
+    public String deleteNotice(@PathVariable Long id) {
+        noticePostService.deleteNotice(id);
+        return "redirect:/posts/notices";
+    }
 
 
     // 유저 게시판 목록

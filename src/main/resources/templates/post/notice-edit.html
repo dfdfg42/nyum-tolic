@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>공지 수정</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+</head>
+<body>
+<div class="container mt-4">
+    <h2>공지 수정</h2>
+    <form th:action="@{/posts/notices/{id}/edit(id=${notice.id})}" th:object="${notice}" method="post">
+        <div class="mb-3">
+            <label class="form-label">제목</label>
+            <input type="text" th:field="*{title}" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">내용</label>
+            <textarea th:field="*{content}" class="form-control" required></textarea>
+        </div>
+        <div class="mb-3 form-check">
+            <input type="checkbox" th:field="*{pinned}" class="form-check-input">
+            <label class="form-check-label">고정 여부</label>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">시작일</label>
+            <input type="datetime-local" th:field="*{startDate}" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">종료일</label>
+            <input type="datetime-local" th:field="*{endDate}" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">수정 완료</button>
+        <a th:href="@{/posts/notices}" class="btn btn-secondary">취소</a>
+    </form>
+</div>
+</body>
+</html>

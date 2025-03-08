@@ -214,10 +214,10 @@ public class RestaurantController {
 
 
     // 어드민 권한이 있는 사용자만 접근 가능하도록 설정
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    /*@PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/admin/update-recommendations")
     public String updateRecommendations() {
         recommendationService.fetchRecommendations();
         return "redirect:/restaurant/admin/list";  // 어드민 페이지로 리다이렉트 또는 원하는 페이지로 이동
-    }
+    }*/
 }

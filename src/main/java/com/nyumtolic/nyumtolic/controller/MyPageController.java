@@ -32,7 +32,7 @@ public class MyPageController {
         model.addAttribute("user", user);
         model.addAttribute("reviews", reviewService.getUserReviews(user.getId()));
 
-        // RecommendationService에서 추천 결과 가져오기
+       /* // RecommendationService에서 추천 결과 가져오기
         Map<String, Map<String, Double>> recommendations = recommendationService.getRecommendations();
 
         // 추천 결과가 없을 경우 처리 (초기 서버 실행 후 추천 결과가 없을 수 있음)
@@ -61,7 +61,7 @@ public class MyPageController {
         List<Restaurant> restaurantList = restaurantService.getAllRestaurants();
         Map<String, Restaurant> restaurantMap = restaurantList.stream()
                 .collect(Collectors.toMap(r -> String.valueOf(r.getId()), r -> r));
-        model.addAttribute("restaurants", restaurantMap);
+        model.addAttribute("restaurants", restaurantMap);*/
 
         return "mypage";  // mypage.html 타임리프 템플릿 반환
     }
