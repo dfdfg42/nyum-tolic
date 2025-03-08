@@ -186,12 +186,20 @@
 </div>
 
 <!-- 고정 공지 제목 목록 -->
-<div class="container mt-3">
+<div class="container mt-4">
     <div th:if="${pinnedNotices != null and !#lists.isEmpty(pinnedNotices)}">
-        <div th:each="notice : ${pinnedNotices}">
-            <a th:href="@{/posts/notices}"
-               th:text="${notice.title}"
-               class="fw-bold text-decoration-none d-block mb-2"></a>
+        <div class="alert alert-warning d-flex align-items-center" role="alert">
+            <i class="bi bi-megaphone-fill me-2"></i>
+            <div class="fw-bold">공지사항</div>
+        </div>
+        <div class="list-group mb-4">
+            <a th:each="notice : ${pinnedNotices}"
+               th:href="@{/posts/notices/{id}(id=${notice.id})}"
+               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                <span th:text="${notice.title}">공지 제목</span>
+                <span class="badge bg-secondary"
+                      th:text="${#temporals.format(notice.createDate, 'yyyy-MM-dd')}"></span>
+            </a>
         </div>
     </div>
 </div>
