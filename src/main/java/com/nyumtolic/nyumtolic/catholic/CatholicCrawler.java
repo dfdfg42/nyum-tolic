@@ -29,6 +29,7 @@ public class CatholicCrawler {
 
     private static final Logger logger = LoggerFactory.getLogger(RestaurantController.class);
 
+    //추출 링크와 1대1로 매칭
     @Getter
     private static final String[] keys = {"buonPranzo", "cafeBona", "cafeMensa"};
 
@@ -37,9 +38,12 @@ public class CatholicCrawler {
     private static final String fullUrl = baseUrl + pdfUrl;
 
     public static ByteArrayResource downloadPdf(String url) {
+        //RestTemplate 객체를 생성해 HTTP GET 요청을 보냄
         RestTemplate restTemplate = new RestTemplate();
+        // 응답을 byte 배열로 받아옴
         ResponseEntity<byte[]> response = restTemplate.getForEntity(url, byte[].class);
 
+        //2xx(성공)인 경우 응답을 byte 배열로 받아옴
         if(response.getStatusCode().is2xxSuccessful()) {
             byte[] pdfBytes = response.getBody();
             return new ByteArrayResource(pdfBytes);
@@ -48,13 +52,17 @@ public class CatholicCrawler {
         }
     }
 
+
     public static byte[] convertPdfToJpg(byte[] pdfBytes, int pageNumber) throws IOException {
+        // ByteArrayInputStream 를 사용해PDF 의 byte 배열을 입력 스트림으로 변환
         try (PDDocument document = PDDocument.load(new ByteArrayInputStream(pdfBytes))) {
             PDFRenderer renderer = new PDFRenderer(document);
 
+            //300DPI 해상도로 렌더링하여 BufferedImage 객체 얻기
             BufferedImage image = renderer.renderImageWithDPI(pageNumber, 300);
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            //jpg 이미지의 byte 배열 반환
             ImageIO.write(image, "jpg", baos);
             return baos.toByteArray();
         }
@@ -65,9 +73,13 @@ public class CatholicCrawler {
         Map<String, String> links = new HashMap<>();
 
         try {
+            //URL 문서 불러오기
             Document document = Jsoup.connect(fullUrl).get();
+            //<a> 태그 중 클래스가 link-txt 인 요소들 선택
             Elements tags = document.select("div.restaurant a.link-txt");
 
+
+            //각 태그를 순회하면서 tag.attr("href") 를 통해 상대 경로를 추출
             links = new HashMap<>();
             for (int i = 0; i < tags.size(); i++) {
                 Element tag = tags.get(i);

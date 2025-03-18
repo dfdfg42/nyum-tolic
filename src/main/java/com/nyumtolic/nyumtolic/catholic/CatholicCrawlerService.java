@@ -37,6 +37,7 @@ public class CatholicCrawlerService {
     }
 
     public void updateData() {
+        //url 들 가져오기
         Map<String, String> data = CatholicCrawler.crawlCafeTable();
 
         for (String key : data.keySet()) {
