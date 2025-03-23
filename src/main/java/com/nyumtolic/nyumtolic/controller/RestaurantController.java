@@ -1,6 +1,7 @@
 package com.nyumtolic.nyumtolic.controller;
 
 
+import com.nyumtolic.nyumtolic.cloudinary.CloudinaryImageService;
 import com.nyumtolic.nyumtolic.post.notice.NoticePost;
 import com.nyumtolic.nyumtolic.post.notice.NoticePostService;
 import com.nyumtolic.nyumtolic.s3.S3Service;
@@ -44,6 +45,7 @@ public class RestaurantController {
     private final S3Service s3Service;
     private final RecommendationService recommendationService;
     private final NoticePostService noticePostService;
+    private final CloudinaryImageService cloudinaryImageService;
     private static final Logger logger = LoggerFactory.getLogger(RestaurantController.class);
 
 
