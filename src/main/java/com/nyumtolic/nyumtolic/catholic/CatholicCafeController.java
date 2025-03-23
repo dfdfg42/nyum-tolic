@@ -1,5 +1,7 @@
 package com.nyumtolic.nyumtolic.catholic;
 
+import com.nyumtolic.nyumtolic.post.notice.NoticePost;
+import com.nyumtolic.nyumtolic.post.notice.NoticePostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +17,7 @@ import java.util.List;
 public class CatholicCafeController {
 
     private final CatholicCafeTableRepository catholicCafeTableRepository;
+    private final NoticePostService noticePostService;
 
     @GetMapping("/menu")
     public String showCatholicMenu(Model model) {
@@ -28,6 +31,9 @@ public class CatholicCafeController {
             } else {
                 model.addAttribute(cafe.getName() + "JPG", cafe.getS3Link());
             }
+
+            List<NoticePost> pinnedNotices = noticePostService.getPinnedNotices();
+            model.addAttribute("pinnedNotices", pinnedNotices);
         }
         return "catholic/menu";
     }

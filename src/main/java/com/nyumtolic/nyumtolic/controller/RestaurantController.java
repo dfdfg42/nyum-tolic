@@ -157,7 +157,7 @@ public class RestaurantController {
     }
 
     // 레스토랑 저장 또는 업데이트 (관리자용)
-// 레스토랑 저장 또는 업데이트 (관리자용)
+    // 레스토랑 저장 또는 업데이트 (관리자용)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/admin/save")
     public String saveRestaurantForAdmin(@ModelAttribute("restaurant") Restaurant restaurant,
