@@ -16,10 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -69,28 +66,54 @@ public class RestaurantService {
     }
 
 
-    // 특정 카테고리 제외, 나머지 음식점 추천하는 메서드
-    public Optional<Restaurant> recommendRandomRestaurantExcludingCategories(String... excludedCategories) {
-        List<Restaurant> allRestaurants = getAllRestaurants();
-        if (allRestaurants.isEmpty()) {
-            return Optional.empty();
-        }
-
-        // 필터링해서 나머지 레스토랑 리스트 생성
-        List<Restaurant> filteredRestaurants = allRestaurants.stream()
-                .filter(restaurant -> !isExcluded(restaurant.getCategories(), excludedCategories))
+    /**
+     * 특정 카테고리와 이전에 추천된 레스토랑을 제외하고 랜덤 레스토랑을 추천하는 향상된 메서드
+     * 
+     * @param excludedCategories 제외할 카테고리 배열
+     * @param excludedIds 이전에 추천된 레스토랑 ID 집합
+     * @param resetExclusions 모든 레스토랑이 제외되었을 때 제외 목록을 초기화할지 여부
+     * @return 추천된 레스토랑
+     */
+    public Optional<Restaurant> recommendRandomRestaurantExcluding(
+            String[] excludedCategories, 
+            Set<Long> excludedIds,
+            boolean resetExclusions) {
+        
+        // 1. 카테고리와 이전 추천 ID로 필터링
+        List<Restaurant> candidates = getAllRestaurants().stream()
+                .filter(r -> !isExcluded(r.getCategories(), excludedCategories))
+                .filter(r -> !excludedIds.contains(r.getId()))
                 .collect(Collectors.toList());
 
-        // 리스트가 empty 인지 확인
-        if (filteredRestaurants.isEmpty()) {
+        // 2. 만약 모든 레스토랑이 제외되었고 초기화가 허용되면, 카테고리만 필터링
+        if (candidates.isEmpty() && resetExclusions) {
+            candidates = getAllRestaurants().stream()
+                    .filter(r -> !isExcluded(r.getCategories(), excludedCategories))
+                    .collect(Collectors.toList());
+            
+            // 이전 추천 목록 초기화
+            excludedIds.clear();
+        }
+
+        // 3. 그래도 없으면 빈 결과 반환
+        if (candidates.isEmpty()) {
             return Optional.empty();
         }
 
-        // 난수 생성 후 음식점 추천
+        // 4. 추천 알고리즘 - 가중치를 적용한 랜덤 선택
+        // 현재는 단순 랜덤이지만 나중에 가중치를 적용할 수 있는 구조
         Random random = new Random();
-        int randomIdx = random.nextInt(filteredRestaurants.size());
-        return Optional.of(filteredRestaurants.get(randomIdx));
-
+        Restaurant chosen = candidates.get(random.nextInt(candidates.size()));
+        
+        return Optional.of(chosen);
+    }
+    
+    /**
+     * 하위 호환성을 위한 메서드
+     */
+    public Optional<Restaurant> recommendRandomRestaurantExcluding(
+            String[] excludedCategories, Set<Long> excludedIds) {
+        return recommendRandomRestaurantExcluding(excludedCategories, excludedIds, true);
     }
 
     // 카테고리 목록에 제외할 카테고리가 있는지 확인
