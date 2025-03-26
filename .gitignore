@@ -40,9 +40,11 @@ out/
 /src/main/resources/oauth.properties
 /src/main/resources/mail.properties
 /src/main/resources/application-prod.properties
+/src/main/resources/aws.properties
+/src/main/resources/cloudinary.properties
+/src/main/resources/*.properties
 
 ### mac ###
 
 *.DS_Store
-/src/main/resources/aws.properties
 
