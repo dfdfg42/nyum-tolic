@@ -340,6 +340,19 @@
         <button id="recommendButton" class="btn btn-lg btn-primary recommend-button">
             <strong>음식점 랜덤 추천</strong>
         </button>
+
+        <div class="mt-3" th:if="${excludedCount > 0}">
+            <small class="text-muted">지금까지 <span th:text="${excludedCount}"></span>개의 음식점 추천 완료</small>
+            <form th:action="@{/restaurant/recommendation}" method="get" class="d-inline">
+                <input type="hidden" name="excludedCategories" th:value="${excludedCategories}">
+                <input type="hidden" name="reset" value="true">
+                <button type="submit" class="btn btn-sm btn-outline-secondary ms-2">추천 기록 초기화</button>
+            </form>
+        </div>
+
+        <div class="alert alert-info mt-3" th:if="${wasReset}" role="alert">
+            모든 음식점이 이미 추천되어 기록이 초기화되었습니다.
+        </div>
     </div>
 </div>
 
@@ -417,9 +430,23 @@
     </div>
 
     <div class="text-center title-space">
+
         <button id="recommendButtonMobile" class="btn btn-lg btn-primary recommend-button">
             <strong>음식점 랜덤 추천</strong>
         </button>
+
+        <div class="mt-3" th:if="${excludedCount > 0}">
+            <small class="text-muted">지금까지 <span th:text="${excludedCount}"></span>개의 음식점 추천 완료</small>
+            <form th:action="@{/restaurant/recommendation}" method="get" class="d-inline">
+                <input type="hidden" name="excludedCategories" th:value="${excludedCategories}">
+                <input type="hidden" name="reset" value="true">
+                <button type="submit" class="btn btn-sm btn-outline-secondary ms-2">추천 기록 초기화</button>
+            </form>
+        </div>
+
+        <div class="alert alert-info mt-3" th:if="${wasReset}" role="alert">
+            모든 음식점이 이미 추천되어 기록이 초기화되었습니다.
+        </div>
     </div>
 </div>
 

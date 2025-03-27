@@ -14,6 +14,7 @@ import com.nyumtolic.nyumtolic.service.CategoryService;
 import com.nyumtolic.nyumtolic.service.RecommendationService;
 import com.nyumtolic.nyumtolic.service.RestaurantService;
 import com.nyumtolic.nyumtolic.service.VisitLogService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,10 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/restaurant")
@@ -119,13 +117,49 @@ public class RestaurantController {
     }
 
 
+    /**
+     * 음식점 랜덤 추천 페이지
+     * - 제외할 카테고리 설정 가능
+     * - 이전에 추천된 음식점은 다시 추천되지 않음 (세션에 저장)
+     * - 초기화 버튼으로 추천 기록 초기화 가능
+     */
     @GetMapping("/recommendation")
-    public String recommendRestaurant(@RequestParam(value = "excludedCategories", required = false) String excludedCategories, Model model) {
-        model.addAttribute("excludedCategories", excludedCategories != null ? excludedCategories : "");
+    public String recommendRestaurant(
+            @RequestParam(value="excludedCategories", required=false) String excludedCategories,
+            @RequestParam(value="reset", required=false) Boolean reset,
+            HttpSession session, Model model) {
+
+        // 세션에서 추천 제외 ID 목록 초기화/로드
+        @SuppressWarnings("unchecked")
+        Set<Long> excludedIds = (Set<Long>) session.getAttribute("excludedIds");
+        if (excludedIds == null || Boolean.TRUE.equals(reset)) {
+            excludedIds = new HashSet<>();
+            session.setAttribute("excludedIds", excludedIds);
+        }
+
+        // 현재까지 제외된 레스토랑 수 계산
+        int excludedCount = excludedIds.size();
+        model.addAttribute("excludedCount", excludedCount);
+        model.addAttribute("excludedCategories", excludedCategories == null ? "" : excludedCategories);
+
         if (excludedCategories != null) {
             String[] categoriesArray = excludedCategories.split("\\s*,\\s*");
-            Optional<Restaurant> recommendedRestaurant = restaurantService.recommendRandomRestaurantExcludingCategories(categoriesArray);
-            model.addAttribute("recommendedRestaurant", recommendedRestaurant.orElse(null));
+
+            // 향상된 추천 알고리즘 사용
+            Optional<Restaurant> rec = restaurantService.recommendRandomRestaurantExcluding(
+                    categoriesArray, excludedIds, true);
+
+            if (rec.isPresent()) {
+                Restaurant recommended = rec.get();
+                model.addAttribute("recommendedRestaurant", recommended);
+
+                // 추천 내역에 추가
+                excludedIds.add(recommended.getId());
+
+                // 리셋 여부 모델에 추가
+                boolean wasReset = excludedCount > 0 && excludedIds.size() == 1;
+                model.addAttribute("wasReset", wasReset);
+            }
         }
         return "restaurant/recommendation";
     }
