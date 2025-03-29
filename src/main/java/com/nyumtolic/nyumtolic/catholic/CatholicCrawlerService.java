@@ -33,7 +33,8 @@ public class CatholicCrawlerService {
         updateData();
     }
 
-    @Scheduled(cron = "0 0 0 * * SAT") // 매주 토요일 00:00에 실행
+    // 매일 자정(00:00)과 정오(12:00)에 실행
+    @Scheduled(cron = "0 0 0,12 * * *")
     public void onSchedule() {
         updateData();
     }
