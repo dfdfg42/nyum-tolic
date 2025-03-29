@@ -116,52 +116,136 @@ public class RestaurantController {
         return "restaurant/list"; // 맛집 리스트 페이지로 이동
     }
 
-
     /**
-     * 음식점 랜덤 추천 페이지
-     * - 제외할 카테고리 설정 가능
-     * - 이전에 추천된 음식점은 다시 추천되지 않음 (세션에 저장)
-     * - 초기화 버튼으로 추천 기록 초기화 가능
+     * 음식점 추천 페이지
+     *
+     * 1) excludedCategories 파라미터를 받으면 세션에 갱신
+     * 2) reset=true 일 때 추천 기록(history)와 제외 목록(excludedIds) 초기화
+     * 3) history가 비어있으면 새로 추천, 그렇지 않으면 최근 추천 값을 유지
      */
     @GetMapping("/recommendation")
-    public String recommendRestaurant(
-            @RequestParam(value="excludedCategories", required=false) String excludedCategories,
-            @RequestParam(value="reset", required=false) Boolean reset,
-            HttpSession session, Model model) {
+    public String showRecommendation(
+            @RequestParam(value = "excludedCategories", required = false) String excludedCategories,
+            @RequestParam(value = "reset", required = false) Boolean reset,
+            HttpSession session,
+            Model model
+    ) {
+        // 1) 세션에서 history와 excludedIds 가져오기 (없으면 생성)
+        Deque<Long> history = getOrCreateHistory(session);
+        Set<Long> excludedIds = getOrCreateExcludedIds(session);
 
-        // 세션에서 추천 제외 ID 목록 초기화/로드
-        @SuppressWarnings("unchecked")
+        // 2) 카테고리 문자열 세션에 저장 (파라미터가 있다면 갱신)
+        if (excludedCategories != null && !excludedCategories.isBlank()) {
+            session.setAttribute("sessionExcludedCats", excludedCategories.trim());
+        }
+        String sessionCats = (String) session.getAttribute("sessionExcludedCats");
+        if (sessionCats == null) {
+            sessionCats = "";  // 세션에 없으면 빈 문자열
+        }
+
+        // 3) reset 파라미터가 true라면 기록 초기화
+        if (Boolean.TRUE.equals(reset)) {
+            history.clear();
+            excludedIds.clear();
+            model.addAttribute("wasReset", true);
+        } else {
+            model.addAttribute("wasReset", false);
+        }
+
+        // 4) 만약 history가 비어있다면 새로운 추천 시도
+        if (history.isEmpty()) {
+            recommendRandom(sessionCats, excludedIds, history, model);
+        } else {
+            // 이미 추천된 내역이 있으면 최근 추천 항목을 모델에 세팅
+            Long recentId = history.peek();
+            model.addAttribute("recommendedRestaurant", restaurantService.findById(recentId));
+        }
+
+        // 5) 뷰에 넘길 정보들
+        model.addAttribute("excludedCategories", sessionCats);
+        model.addAttribute("excludedCount", excludedIds.size());
+
+        return "restaurant/recommendation";
+    }
+
+    /**
+     * 다음 추천 (현재 추천을 제외 목록에 추가하고 새로운 추천을 하나 뽑아온 뒤 리다이렉트)
+     */
+    @PostMapping("/recommendation/next")
+    public String nextRecommendation(
+            @RequestParam(value = "excludedCategories", required = false) String excludedCategories,
+            HttpSession session
+    ) {
+        // 1) 세션에서 history, excludedIds 가져오기
+        Deque<Long> history = getOrCreateHistory(session);
+        Set<Long> excludedIds = getOrCreateExcludedIds(session);
+
+        // 2) 세션의 카테고리 문자열 갱신
+        if (excludedCategories != null) {
+            session.setAttribute("sessionExcludedCats", excludedCategories.trim());
+        }
+        String sessionCats = (String) session.getAttribute("sessionExcludedCats");
+        if (sessionCats == null) {
+            sessionCats = "";
+        }
+
+        // 3) 현재 추천된 항목이 있다면 제외 목록에 등록
+        if (!history.isEmpty()) {
+            excludedIds.add(history.pop());
+        }
+
+        // 4) 새로 추천 시도
+        recommendRandom(sessionCats, excludedIds, history, null);
+
+        // 5) 리다이렉트
+        return "redirect:/restaurant/recommendation";
+    }
+
+    /**
+     * 세션에 history(스택) 정보가 있으면 가져오고, 없으면 새로 생성
+     */
+    @SuppressWarnings("unchecked")
+    private Deque<Long> getOrCreateHistory(HttpSession session) {
+        Deque<Long> history = (Deque<Long>) session.getAttribute("history");
+        if (history == null) {
+            history = new ArrayDeque<>();
+            session.setAttribute("history", history);
+        }
+        return history;
+    }
+
+    /**
+     * 세션에 제외 목록이 있으면 가져오고, 없으면 새로 생성
+     */
+    @SuppressWarnings("unchecked")
+    private Set<Long> getOrCreateExcludedIds(HttpSession session) {
         Set<Long> excludedIds = (Set<Long>) session.getAttribute("excludedIds");
-        if (excludedIds == null || Boolean.TRUE.equals(reset)) {
+        if (excludedIds == null) {
             excludedIds = new HashSet<>();
             session.setAttribute("excludedIds", excludedIds);
         }
+        return excludedIds;
+    }
 
-        // 현재까지 제외된 레스토랑 수 계산
-        int excludedCount = excludedIds.size();
-        model.addAttribute("excludedCount", excludedCount);
-        model.addAttribute("excludedCategories", excludedCategories == null ? "" : excludedCategories);
-
-        if (excludedCategories != null) {
-            String[] categoriesArray = excludedCategories.split("\\s*,\\s*");
-
-            // 향상된 추천 알고리즘 사용
-            Optional<Restaurant> rec = restaurantService.recommendRandomRestaurantExcluding(
-                    categoriesArray, excludedIds, true);
-
-            if (rec.isPresent()) {
-                Restaurant recommended = rec.get();
-                model.addAttribute("recommendedRestaurant", recommended);
-
-                // 추천 내역에 추가
-                excludedIds.add(recommended.getId());
-
-                // 리셋 여부 모델에 추가
-                boolean wasReset = excludedCount > 0 && excludedIds.size() == 1;
-                model.addAttribute("wasReset", wasReset);
+    /**
+     * 랜덤 추천 도우미
+     *  - 후보가 있으면 history에 push & model에 세팅
+     *  - 후보가 없으면 model.noCandidates = true
+     */
+    private void recommendRandom(String sessionCats, Set<Long> excludedIds, Deque<Long> history, Model model) {
+        String[] cats = sessionCats.isEmpty() ? new String[0] : sessionCats.split("\\s*,\\s*");
+        Optional<Restaurant> optional = restaurantService.recommendRandomRestaurantExcluding(cats, excludedIds);
+        if (optional.isPresent()) {
+            Restaurant r = optional.get();
+            history.push(r.getId());
+            if (model != null) {
+                model.addAttribute("recommendedRestaurant", r);
+            }
+        } else {
+            if (model != null) {
+                model.addAttribute("noCandidates", true);
             }
         }
-        return "restaurant/recommendation";
     }
 
     //관리자 페이지용
