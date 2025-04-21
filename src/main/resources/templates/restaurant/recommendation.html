@@ -27,7 +27,7 @@
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
 
     <style>
-        /* 필요한 스타일만 남김 */
+
         .info-placeholder {
             min-height: 230px;
         }
@@ -105,6 +105,17 @@
             margin-top: 1rem;
             margin-bottom: 1rem;
             gap: 0.5rem;           /* 버튼 간 간격 */
+        }
+        .category-buttons button.active {
+            background-color: #87CEEB !important;
+            border-color:    #87CEEB !important;
+            color:           #fff !important;
+        }
+        .category-buttons button:active {
+            background-color: #87CEEB !important;
+            border-color:    #87CEEB !important;
+            color:           #fff !important;
+            transform: scale(0.97);
         }
         /* 버튼 자체는 inline-block 스타일을 유지 */
         .category-buttons button {
