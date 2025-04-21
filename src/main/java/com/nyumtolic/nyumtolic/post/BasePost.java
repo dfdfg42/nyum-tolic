@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -33,6 +34,7 @@ public abstract class BasePost {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name  = "author_id")
     private SiteUser author;
+
 
     private LocalDateTime createDate;
     private LocalDateTime modifyDate;
