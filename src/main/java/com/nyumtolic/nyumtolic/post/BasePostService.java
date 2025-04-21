@@ -22,4 +22,8 @@ public class BasePostService {
     public List<BasePost> getPostsByType(Class<? extends BasePost> type) {
         return basePostRepository.findByPostType(type);
     }
+
+    public List<BasePost> getPostsByTypeOrderByCreatedDateDesc(Class<? extends BasePost> type) {
+        return basePostRepository.findByTypeOrderByCreateDateDesc(type);
+    }
 }

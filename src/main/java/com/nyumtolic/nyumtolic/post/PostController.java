@@ -29,7 +29,7 @@ public class PostController {
     // 공지사항 목록
     @GetMapping("/notices")
     public String noticeList(Model model) {
-        List<BasePost> notices = basePostService.getPostsByType(NoticePost.class);
+        List<BasePost> notices = basePostService.getPostsByTypeOrderByCreatedDateDesc(NoticePost.class);
         List<NoticePost> pinned = noticePostService.getPinnedNotices();
         model.addAttribute("notices", notices);
         model.addAttribute("pinnedNotices", pinned);

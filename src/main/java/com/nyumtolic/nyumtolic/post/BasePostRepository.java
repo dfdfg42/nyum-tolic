@@ -13,6 +13,10 @@ public interface BasePostRepository extends JpaRepository<BasePost, Long> {
     @Query("SELECT p FROM BasePost p WHERE TYPE(p) = :type")
     List<BasePost> findByPostType(@Param("type") Class<? extends BasePost> type);
 
+
+    @Query("SELECT p FROM BasePost p WHERE TYPE(p) = :type ORDER BY p.createDate DESC")
+    List<BasePost> findByTypeOrderByCreateDateDesc(@Param("type") Class<? extends BasePost> type);
+
     // 제목 검색 (모든 타입)
     List<BasePost> findByTitleContaining(String keyword);
 }

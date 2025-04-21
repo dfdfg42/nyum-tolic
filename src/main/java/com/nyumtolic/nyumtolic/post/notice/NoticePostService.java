@@ -19,6 +19,7 @@ public class NoticePostService {
         return noticePostRepository.findByIsPinnedTrueOrderByCreateDateDesc();
     }
 
+
     // ID로 공지사항 상세 조회 추가
     public NoticePost getNoticeById(Long id) {
         return noticePostRepository.findById(id)

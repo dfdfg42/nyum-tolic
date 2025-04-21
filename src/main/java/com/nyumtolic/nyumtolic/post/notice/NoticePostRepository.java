@@ -14,4 +14,6 @@ public interface NoticePostRepository extends JpaRepository<NoticePost, Long> {
     // 현재 시간 기준 활성화된 공지사항
     @Query("SELECT n FROM NoticePost n WHERE n.startDate <= :now AND n.endDate >= :now")
     List<NoticePost> findActiveNotices(LocalDateTime now);
+
+
 }
