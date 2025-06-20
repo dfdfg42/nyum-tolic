@@ -18,7 +18,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>유저 게시판</title>
+    <title th:text="${userPost.title}">게시글 제목</title>
 
     <link rel="stylesheet" href="/css/bootstrap.css">
     <link rel="stylesheet" href="/css/navbar.css">
@@ -27,19 +27,33 @@
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
 
     <style>
-        .board-header {
+        .post-header {
             background: linear-gradient(135deg, #FF7F27, #FFA500);
             color: white;
             padding: 2rem 0;
             margin-bottom: 2rem;
         }
-        .post-card {
-            border-left: 4px solid #FF7F27;
-            transition: transform 0.2s, box-shadow 0.2s;
+        .post-content {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
-        .post-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        .post-meta {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 1rem 1.5rem;
+        }
+        .post-body {
+            padding: 2rem 1.5rem;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .post-actions {
+            background-color: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+            padding: 1rem 1.5rem;
         }
         .anonymous-badge {
             background-color: #6c757d;
@@ -49,29 +63,101 @@
             border-radius: 10px;
         }
         .hashtag {
-            background-color: #e9ecef;
-            color: #495057;
-            padding: 0.2rem 0.5rem;
-            border-radius: 10px;
-            font-size: 0.8rem;
+            background-color: #FF7F27;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
             margin-right: 0.5rem;
             text-decoration: none;
+            display: inline-block;
+            margin-bottom: 0.5rem;
         }
         .hashtag:hover {
-            background-color: #FF7F27;
-            color: white;
-        }
-        .btn-write {
-            background-color: #FF7F27;
-            border-color: #FF7F27;
-            color: white;
-            border-radius: 25px;
-            padding: 0.5rem 1.5rem;
-        }
-        .btn-write:hover {
             background-color: #ff6500;
-            border-color: #ff6500;
             color: white;
+            text-decoration: none;
+        }
+        .btn-action {
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+        .btn-edit {
+            background-color: #28a745;
+            border-color: #28a745;
+            color: white;
+        }
+        .btn-edit:hover {
+            background-color: #218838;
+            border-color: #218838;
+            color: white;
+        }
+        .btn-delete {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            color: white;
+        }
+        .btn-delete:hover {
+            background-color: #c82333;
+            border-color: #c82333;
+            color: white;
+        }
+        .btn-back {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            color: white;
+        }
+        .btn-back:hover {
+            background-color: #5a6268;
+            border-color: #5a6268;
+            color: white;
+        }
+        .btn-like {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            color: white;
+        }
+        .btn-like:hover, .btn-like.liked {
+            background-color: #c82333;
+            border-color: #c82333;
+            color: white;
+        }
+        .author-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .view-count {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        .date-info {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        .comment-section {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 2rem;
+        }
+        .comment-item {
+            border-bottom: 1px solid #f0f0f0;
+            padding: 1rem;
+        }
+        .comment-item:last-child {
+            border-bottom: none;
+        }
+        .comment-reply {
+            margin-left: 2rem;
+            border-left: 3px solid #FF7F27;
+            padding-left: 1rem;
+        }
+        .comment-form {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
         }
     </style>
 </head>
@@ -80,158 +166,392 @@
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
 <!-- 헤더 -->
-<div class="board-header">
-    <!-- 카테고리 네비게이션 -->
-    <div class="category-nav">
-        <div class="container">
-            <div class="d-flex flex-wrap justify-content-center">
-                <a th:href="@{/posts/user-board}"
-                   class="category-tab"
-                   th:classappend="${currentCategory == null ? ' active' : ''}">
-                    <i class="bi bi-grid-3x3-gap me-2"></i> 전체
-                </a>
-                <a th:each="category : ${boardCategories}"
-                   th:href="@{/posts/user-board/{category}(category=${category.urlPath})}"
-                   class="category-tab"
-                   th:classappend="${currentCategory != null and currentCategory.urlPath == category.urlPath ? ' active' : ''}">
-                    <i th:class="'bi ' + ${category.icon} + ' me-2'"></i>
-                    <span th:text="${category.displayName}">카테고리명</span>
-                </a>
-            </div>
-        </div>
-    </div>
-
+<div class="post-header">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-md-8">
-                <div class="d-flex align-items-center">
-                    <i th:if="${currentCategory != null}" th:class="'bi ' + ${currentCategory.icon} + ' me-3'" style="font-size: 2rem;"></i>
-                    <i th:unless="${currentCategory != null}" class="bi bi-chat-square-text me-3" style="font-size: 2rem;"></i>
-                    <div>
-                        <h1 class="mb-1" th:text="${currentCategory != null ? currentCategory.displayName : '전체 게시판'}">게시판 이름</h1>
-                        <p class="mb-0 opacity-75" th:text="${currentCategory != null ? currentCategory.description : '모든 카테고리의 게시글을 확인하세요'}">게시판 설명</p>
+            <div class="col-md-10">
+                <h1 class="mb-2" th:text="${userPost.title}">게시글 제목</h1>
+                <div class="d-flex align-items-center gap-3 opacity-75">
+                    <div class="author-info">
+                        <i class="bi bi-person-circle"></i>
+                        <span th:if="${userPost.anonymous}">익명</span>
+                        <span th:unless="${userPost.anonymous}" th:text="${userPost.author.nickname}">작성자</span>
+                        <span th:if="${userPost.anonymous}" class="anonymous-badge">익명</span>
+                    </div>
+                    <div class="date-info">
+                        <i class="bi bi-clock"></i>
+                        <span th:text="${#temporals.format(userPost.createDate, 'yyyy-MM-dd HH:mm')}">작성일</span>
+                        <span th:if="${userPost.modifyDate != null}">
+                            (수정: <span th:text="${#temporals.format(userPost.modifyDate, 'MM-dd HH:mm')}"></span>)
+                        </span>
+                    </div>
+                    <div class="view-count">
+                        <i class="bi bi-eye"></i>
+                        조회수 <span th:text="${userPost.viewCount ?: 0}">0</span>
+                    </div>
+                    <!-- 좋아요 수 표시 -->
+                    <div class="like-count" th:if="${userPost.liker != null and !userPost.liker.isEmpty()}">
+                        <i class="bi bi-heart-fill text-danger"></i>
+                        <span th:text="${userPost.liker.size()}">0</span>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 text-end">
-                <div class="d-flex gap-2 justify-content-end">
-                    <a th:href="@{/posts}" class="btn btn-light">
-                        <i class="bi bi-house"></i> 게시판 홈
-                    </a>
-                    <a th:href="@{/posts/user-board/create(category=${currentCategory != null ? currentCategory.urlPath : ''})}"
-                       class="btn btn-light"
-                       sec:authorize="isAuthenticated()">
-                        <i class="bi bi-pencil-square"></i> 글쓰기
-                    </a>
-                </div>
-                <div sec:authorize="isAnonymous()">
-                    <small class="text-white-50">글을 작성하려면 로그인하세요</small>
-                </div>
+            <div class="col-md-2 text-end">
+                <a th:href="@{/posts/user-board/{category}(category=${userPost.category ?: 'free'})}" class="btn btn-back">
+                    <i class="bi bi-arrow-left"></i> 목록
+                </a>
             </div>
         </div>
     </div>
 </div>
 
 <div class="container">
-    <!-- 검색 및 필터 -->
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="제목 또는 해시태그로 검색...">
-                <button class="btn btn-outline-secondary" type="button">
-                    <i class="bi bi-search"></i>
-                </button>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <select class="form-select">
-                <option value="all">전체 게시글</option>
-                <option value="normal">일반 게시글</option>
-                <option value="anonymous">익명 게시글</option>
-            </select>
-        </div>
-    </div>
-
-    <!-- 게시글 목록 -->
-    <div class="row">
-        <div class="col-12">
-            <div th:if="${#lists.isEmpty(userPosts)}" class="text-center py-5">
-                <i class="bi bi-chat-square-text text-muted" style="font-size: 4rem;"></i>
-                <h4 class="text-muted mt-3">아직 작성된 게시글이 없습니다</h4>
-                <p class="text-muted">첫 번째 게시글을 작성해보세요!</p>
-                <a th:href="@{/posts/user-board/create}"
-                   class="btn btn-write"
-                   sec:authorize="isAuthenticated()">
-                    첫 글 작성하기
-                </a>
-            </div>
-
-            <div th:unless="${#lists.isEmpty(userPosts)}">
-                <div class="card post-card mb-3" th:each="post : ${userPosts}">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <div class="flex-grow-1">
-                                <h5 class="card-title mb-1">
-                                    <a th:href="@{/posts/user-board/{category}/{id}(category=${post.category ?: 'free'}, id=${post.id})}"
-                                       class="text-decoration-none text-dark"
-                                       th:text="${post.title}">게시글 제목</a>
-                                </h5>
-                                <div class="d-flex align-items-center mb-2">
-                                    <span class="text-muted me-2">
-                                        <i class="bi bi-person-circle"></i>
-                                        <span th:if="${post.anonymous}">익명</span>
-                                        <span th:unless="${post.anonymous}" th:text="${post.author.nickname}">작성자</span>
-                                    </span>
-                                    <span th:if="${post.anonymous}" class="anonymous-badge me-2">익명</span>
-                                    <small class="text-muted">
-                                        <i class="bi bi-clock"></i>
-                                        <span th:text="${#temporals.format(post.createDate, 'yyyy-MM-dd HH:mm')}">작성일</span>
-                                    </small>
-                                    <small th:if="${post.modifyDate != null}" class="text-muted ms-2">
-                                        (수정됨: <span th:text="${#temporals.format(post.modifyDate, 'MM-dd HH:mm')}"></span>)
-                                    </small>
-                                </div>
-                            </div>
-                            <div class="text-muted">
-                                <small>
-                                    <i class="bi bi-eye"></i>
-                                    <span th:text="${post.viewCount ?: 0}">0</span>
-                                </small>
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- 게시글 내용 -->
+            <div class="post-content mb-4">
+                <!-- 메타 정보 -->
+                <div class="post-meta">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <!-- 해시태그 -->
+                            <div th:if="${!#strings.isEmpty(userPost.hashtags)}">
+                                <span th:each="tag : ${#strings.arraySplit(userPost.hashtags, ',')}"
+                                      class="hashtag"
+                                      th:text="'#' + ${#strings.trim(tag)}">
+                                    #해시태그
+                                </span>
                             </div>
                         </div>
+                        <div class="col-md-4 text-end">
+                            <small class="text-muted">
+                                ID: <span th:text="${userPost.id}">1</span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
 
-                        <p class="card-text" th:text="${#strings.abbreviate(post.content, 150)}">게시글 내용...</p>
+                <!-- 본문 -->
+                <div class="post-body">
+                    <div th:text="${userPost.content}">게시글 본문 내용</div>
+                </div>
 
-                        <!-- 해시태그 -->
-                        <div th:if="${!#strings.isEmpty(post.hashtags)}" class="mt-2">
-                            <span th:each="tag : ${#strings.arraySplit(post.hashtags, ',')}"
-                                  class="hashtag"
-                                  th:text="'#' + ${#strings.trim(tag)}">
-                                #해시태그
-                            </span>
+                <!-- 액션 버튼 -->
+                <div class="post-actions">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex gap-2">
+                            <!-- 좋아요 버튼 -->
+                            <form th:action="@{/posts/user-board/{category}/{id}/like(category=${userPost.category ?: 'free'}, id=${userPost.id})}"
+                                  method="post"
+                                  sec:authorize="isAuthenticated()"
+                                  style="display: inline;">
+                                <button type="submit"
+                                        class="btn btn-like btn-action"
+                                        th:classappend="${userPost.liker != null and userPost.liker.contains(#authentication.principal.siteUser)} ? ' liked'">
+                                    <i class="bi bi-heart-fill"></i>
+                                    좋아요 <span th:text="${userPost.liker != null ? userPost.liker.size() : 0}">0</span>
+                                </button>
+                            </form>
+
+                            <!-- 공유 버튼 등 추가 기능 -->
+                            <button type="button" class="btn btn-outline-secondary btn-action" onclick="sharePost()">
+                                <i class="bi bi-share"></i> 공유
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-action" onclick="reportPost()">
+                                <i class="bi bi-flag"></i> 신고
+                            </button>
+                        </div>
+
+                        <!-- 수정/삭제 버튼 (작성자만) -->
+                        <div sec:authorize="isAuthenticated()"
+                             th:if="${userPost.author != null and #authentication.getPrincipal().getUsername() == userPost.author.loginId}">
+                            <a th:href="@{/posts/user-board/{category}/{id}/edit(category=${userPost.category ?: 'free'}, id=${userPost.id})}"
+                               class="btn btn-edit btn-action me-2">
+                                <i class="bi bi-pencil"></i> 수정
+                            </a>
+                            <button type="button"
+                                    class="btn btn-delete btn-action"
+                                    onclick="deletePost()">
+                                <i class="bi bi-trash"></i> 삭제
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 댓글 섹션 -->
+            <div class="comment-section">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0">
+                        <i class="bi bi-chat-dots"></i> 댓글
+                        <span class="badge bg-secondary" th:text="${commentCount ?: 0}">0</span>
+                    </h5>
+                </div>
+
+                <!-- 댓글 작성 폼 -->
+                <div class="p-3" sec:authorize="isAuthenticated()">
+                    <div class="comment-form">
+                        <form th:action="@{/comments/create/{postId}(postId=${userPost.id})}" method="post">
+                            <input type="hidden" name="category" th:value="${userPost.category ?: 'free'}">
+                            <div class="mb-3">
+                                <textarea class="form-control"
+                                          name="content"
+                                          rows="3"
+                                          placeholder="댓글을 입력하세요..."
+                                          required></textarea>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="isAnonymous" id="commentAnonymous">
+                                    <label class="form-check-label" for="commentAnonymous">
+                                        익명으로 작성
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-send"></i> 댓글 작성
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 로그인 안내 (미로그인 시) -->
+                <div class="p-3 text-center text-muted" sec:authorize="isAnonymous()">
+                    <p class="mb-2"><i class="bi bi-lock"></i> 댓글을 작성하려면 로그인해주세요</p>
+                    <a th:href="@{/user/login}" class="btn btn-outline-primary btn-sm">로그인</a>
+                </div>
+
+                <!-- 댓글 목록 -->
+                <div class="card-body p-0">
+                    <!-- 댓글이 없을 때 -->
+                    <div th:if="${#lists.isEmpty(comments)}" class="text-center py-4 text-muted">
+                        <i class="bi bi-chat-square-text" style="font-size: 2rem;"></i>
+                        <p class="mt-2 mb-0">아직 댓글이 없습니다</p>
+                        <small>첫 번째 댓글을 작성해보세요!</small>
+                    </div>
+
+                    <!-- 댓글 목록 표시 -->
+                    <div th:unless="${#lists.isEmpty(comments)}">
+                        <div th:each="comment : ${comments}" class="comment-item">
+                            <!-- 댓글 내용 -->
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-person-circle text-muted"></i>
+                                    <strong th:if="${comment.anonymous}">익명</strong>
+                                    <strong th:unless="${comment.anonymous}" th:text="${comment.author.nickname}">작성자</strong>
+                                    <span th:if="${comment.anonymous}" class="anonymous-badge">익명</span>
+                                    <small class="text-muted" th:text="${#temporals.format(comment.createDate, 'yyyy-MM-dd HH:mm')}">2024-01-01 12:00</small>
+                                    <small th:if="${comment.modifyDate != null}" class="text-muted">
+                                        (수정됨)
+                                    </small>
+                                </div>
+                                <div class="d-flex gap-1">
+                                    <!-- 댓글 좋아요 버튼 -->
+                                    <form th:action="@{/comments/like/{commentId}(commentId=${comment.id})}"
+                                          method="post"
+                                          sec:authorize="isAuthenticated()"
+                                          style="display: inline;">
+                                        <input type="hidden" name="category" th:value="${userPost.category ?: 'free'}">
+                                        <input type="hidden" name="postId" th:value="${userPost.id}">
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-heart"
+                                               th:classappend="${comment.liker != null and currentUser != null and comment.liker.contains(currentUser)} ? '-fill text-danger'"></i>
+                                            <span th:text="${comment.liker != null ? comment.liker.size() : 0}">0</span>
+                                        </button>
+                                    </form>
+
+                                    <!-- 답글 버튼 -->
+                                    <button class="btn btn-sm btn-outline-secondary"
+                                            th:onclick="'toggleReplyForm(' + ${comment.id} + ')'"
+                                            sec:authorize="isAuthenticated()">답글</button>
+
+                                    <!-- 수정/삭제 버튼 (작성자만) -->
+                                    <div sec:authorize="isAuthenticated()"
+                                         th:if="${comment.author != null and currentUser != null and comment.author.loginId == currentUser.loginId}">
+                                        <button class="btn btn-sm btn-outline-secondary"
+                                                th:onclick="'editComment(' + ${comment.id} + ')'">수정</button>
+                                        <form th:action="@{/comments/delete/{commentId}(commentId=${comment.id})}"
+                                              method="post"
+                                              style="display: inline;"
+                                              th:onsubmit="'return confirm(\'댓글을 삭제하시겠습니까?\')'">
+                                            <input type="hidden" name="category" th:value="${userPost.category ?: 'free'}">
+                                            <input type="hidden" name="postId" th:value="${userPost.id}">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">삭제</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 댓글 본문 -->
+                            <p class="mb-2" th:text="${comment.content}">댓글 내용</p>
+
+                            <!-- 답글 작성 폼 (토글) -->
+                            <div th:id="'replyForm' + ${comment.id}" style="display: none;" class="mt-3">
+                                <form th:action="@{/comments/reply/{postId}/{parentId}(postId=${userPost.id}, parentId=${comment.id})}" method="post">
+                                    <input type="hidden" name="category" th:value="${userPost.category ?: 'free'}">
+                                    <div class="d-flex gap-2">
+                                        <textarea class="form-control form-control-sm"
+                                                  name="content"
+                                                  rows="2"
+                                                  placeholder="답글을 입력하세요..."
+                                                  required></textarea>
+                                        <div class="d-flex flex-column gap-1">
+                                            <button type="submit" class="btn btn-primary btn-sm">답글</button>
+                                            <button type="button" class="btn btn-secondary btn-sm"
+                                                    th:onclick="'toggleReplyForm(' + ${comment.id} + ')'">취소</button>
+                                        </div>
+                                    </div>
+                                    <div class="form-check mt-2">
+                                        <input class="form-check-input" type="checkbox" name="isAnonymous" th:id="'replyAnonymous' + ${comment.id}">
+                                        <label class="form-check-label" th:for="'replyAnonymous' + ${comment.id}">
+                                            익명으로 작성
+                                        </label>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- 대댓글 목록 -->
+                            <div th:if="${repliesMap[comment.id] != null and !#lists.isEmpty(repliesMap[comment.id])}" class="mt-3">
+                                <div th:each="reply : ${repliesMap[comment.id]}" class="comment-reply">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="bi bi-arrow-return-right text-muted"></i>
+                                            <i class="bi bi-person-circle text-muted"></i>
+                                            <strong th:if="${reply.anonymous}">익명</strong>
+                                            <strong th:unless="${reply.anonymous}" th:text="${reply.author.nickname}">답글 작성자</strong>
+                                            <span th:if="${reply.anonymous}" class="anonymous-badge">익명</span>
+                                            <small class="text-muted" th:text="${#temporals.format(reply.createDate, 'yyyy-MM-dd HH:mm')}">2024-01-01 12:00</small>
+                                        </div>
+                                        <div class="d-flex gap-1">
+                                            <!-- 대댓글 좋아요 -->
+                                            <form th:action="@{/comments/like/{commentId}(commentId=${reply.id})}"
+                                                  method="post"
+                                                  sec:authorize="isAuthenticated()"
+                                                  style="display: inline;">
+                                                <input type="hidden" name="category" th:value="${userPost.category ?: 'free'}">
+                                                <input type="hidden" name="postId" th:value="${userPost.id}">
+                                                <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                                    <i class="bi bi-heart"
+                                                       th:classappend="${reply.liker != null and currentUser != null and reply.liker.contains(currentUser)} ? '-fill text-danger'"></i>
+                                                    <span th:text="${reply.liker != null ? reply.liker.size() : 0}">0</span>
+                                                </button>
+                                            </form>
+
+                                            <!-- 대댓글 수정/삭제 -->
+                                            <div sec:authorize="isAuthenticated()"
+                                                 th:if="${reply.author != null and currentUser != null and reply.author.loginId == currentUser.loginId}">
+                                                <form th:action="@{/comments/delete/{commentId}(commentId=${reply.id})}"
+                                                      method="post"
+                                                      style="display: inline;"
+                                                      th:onsubmit="'return confirm(\'답글을 삭제하시겠습니까?\')'">
+                                                    <input type="hidden" name="category" th:value="${userPost.category ?: 'free'}">
+                                                    <input type="hidden" name="postId" th:value="${userPost.id}">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">삭제</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="mb-1" th:text="${reply.content}">답글 내용</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 이전/다음 글 네비게이션 (추후 구현) -->
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <small class="text-muted">이전 글</small>
+                            <p class="mb-0">이전 글이 없습니다</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <small class="text-muted">다음 글</small>
+                            <p class="mb-0">다음 글이 없습니다</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- 페이지네이션 (추후 구현) -->
-    <div class="d-flex justify-content-center mt-4">
-        <nav aria-label="게시글 페이지네이션">
-            <ul class="pagination">
-                <li class="page-item"><a class="page-link" href="#">이전</a></li>
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">다음</a></li>
-            </ul>
-        </nav>
-    </div>
 </div>
 
 <div th:replace="~{fragments/footer.html :: custom-footer}"></div>
 
+<!-- 삭제 확인 모달 -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">게시글 삭제</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                정말로 이 게시글을 삭제하시겠습니까?<br>
+                <small class="text-muted">삭제된 게시글은 복구할 수 없습니다.</small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                <form th:action="@{/posts/user-board/{category}/{id}/delete(category=${userPost.category ?: 'free'}, id=${userPost.id})}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">삭제</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function deletePost() {
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        deleteModal.show();
+    }
+
+    function sharePost() {
+        if (navigator.share) {
+            navigator.share({
+                title: document.title,
+                url: window.location.href
+            }).catch(console.error);
+        } else {
+            // 폴백: URL 복사
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('링크가 클립보드에 복사되었습니다!');
+            }).catch(() => {
+                alert('공유 기능을 사용할 수 없습니다.');
+            });
+        }
+    }
+
+    function reportPost() {
+        if (confirm('이 게시글을 신고하시겠습니까?')) {
+            // 신고 기능 구현 (추후)
+            alert('신고가 접수되었습니다. 검토 후 조치하겠습니다.');
+        }
+    }
+
+    // 답글 폼 토글
+    function toggleReplyForm(commentId) {
+        const replyForm = document.getElementById('replyForm' + commentId);
+        if (replyForm.style.display === 'none' || replyForm.style.display === '') {
+            replyForm.style.display = 'block';
+        } else {
+            replyForm.style.display = 'none';
+        }
+    }
+
+    // 댓글 수정 (추후 구현)
+    function editComment(commentId) {
+        alert('댓글 수정 기능은 추후 구현 예정입니다.');
+    }
+</script>
+
 </body>
 </html>

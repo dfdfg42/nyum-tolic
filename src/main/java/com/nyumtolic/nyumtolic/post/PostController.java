@@ -1,5 +1,7 @@
 package com.nyumtolic.nyumtolic.post;
 
+import com.nyumtolic.nyumtolic.post.comment.Comment;
+import com.nyumtolic.nyumtolic.post.comment.CommentService;
 import com.nyumtolic.nyumtolic.post.notice.NoticePost;
 import com.nyumtolic.nyumtolic.post.notice.NoticePostService;
 import com.nyumtolic.nyumtolic.post.user.BoardCategory;
@@ -8,6 +10,10 @@ import com.nyumtolic.nyumtolic.post.user.UserPostService;
 import com.nyumtolic.nyumtolic.security.domain.SiteUser;
 import com.nyumtolic.nyumtolic.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
@@ -28,6 +34,7 @@ public class PostController {
     private final BasePostService basePostService;
     private final NoticePostService noticePostService;
     private final UserPostService userPostService;
+    private final CommentService commentService;
     private final UserRepository userRepository;
 
     // ========== 게시판 메인 페이지 ==========
@@ -124,24 +131,30 @@ public class PostController {
 
     // ========== 유저 게시판 관련 메서드들 ==========
 
-    // 특정 카테고리 유저 게시판 목록
+    // 특정 카테고리 유저 게시판 목록 (페이징 추가)
     @GetMapping("/user-board/{category}")
-    public String userBoardByCategory(@PathVariable String category, Model model) {
+    public String userBoardByCategory(@PathVariable String category,
+                                      @PageableDefault(size = 10, sort = "createDate", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable,
+                                      Model model) {
         BoardCategory boardCategory = BoardCategory.fromUrlPath(category);
-        List<UserPost> userPosts = userPostService.getPostsByCategory(category);
+        Page<UserPost> userPostsPage = userPostService.getPostsByCategoryPaged(category, pageable);
 
-        model.addAttribute("userPosts", userPosts);
+        model.addAttribute("userPostsPage", userPostsPage);
+        model.addAttribute("userPosts", userPostsPage.getContent());
         model.addAttribute("currentCategory", boardCategory);
         model.addAttribute("boardCategories", BoardCategory.values());
 
         return "post/user-board-list";
     }
 
-    // 전체 유저 게시판 목록
+    // 전체 유저 게시판 목록 (페이징 추가)
     @GetMapping("/user-board")
-    public String userBoardList(Model model) {
-        List<UserPost> userPosts = userPostService.getUserPosts();
-        model.addAttribute("userPosts", userPosts);
+    public String userBoardList(@PageableDefault(size = 10, sort = "createDate", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable,
+                                Model model) {
+        Page<UserPost> userPostsPage = userPostService.getUserPostsPaged(pageable);
+
+        model.addAttribute("userPostsPage", userPostsPage);
+        model.addAttribute("userPosts", userPostsPage.getContent());
         model.addAttribute("currentCategory", null); // 전체 카테고리
         model.addAttribute("boardCategories", BoardCategory.values());
         return "post/user-board-list";
@@ -185,12 +198,38 @@ public class PostController {
 
     // 유저 게시글 상세 조회
     @GetMapping("/user-board/{category}/{id}")
-    public String userPostDetail(@PathVariable String category, @PathVariable Long id, Model model) {
+    public String userPostDetail(@PathVariable String category, @PathVariable Long id,
+                                 @PageableDefault(size = 10, sort = "createDate") Pageable pageable,
+                                 Model model,
+                                 Principal principal) {
         UserPost userPost = userPostService.getUserPostById(id);
         BoardCategory boardCategory = BoardCategory.fromUrlPath(category);
 
+        // 조회수 증가
+        userPostService.incrementViewCount(id);
+
+        // 댓글 목록 조회
+        List<Comment> comments = commentService.getCommentsByPostId(id);
+
+        // 각 댓글의 대댓글도 조회
+        Map<Long, List<Comment>> repliesMap = new HashMap<>();
+        for (Comment comment : comments) {
+            List<Comment> replies = commentService.getRepliesByParentId(comment.getId());
+            repliesMap.put(comment.getId(), replies);
+        }
+
+        // 현재 사용자 정보 (좋아요 상태 확인용)
+        SiteUser currentUser = null;
+        if (principal != null) {
+            currentUser = userRepository.findByLoginId(principal.getName()).orElse(null);
+        }
+
         model.addAttribute("userPost", userPost);
         model.addAttribute("currentCategory", boardCategory);
+        model.addAttribute("comments", comments);
+        model.addAttribute("repliesMap", repliesMap);
+        model.addAttribute("currentUser", currentUser);
+        model.addAttribute("commentCount", comments.size());
 
         return "post/user-board-detail";
     }
@@ -243,5 +282,16 @@ public class PostController {
 
         userPostService.deleteUserPost(id);
         return "redirect:/posts/user-board/" + category;
+    }
+
+    // 게시글 좋아요 처리
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/user-board/{category}/{id}/like")
+    public String likeUserPost(@PathVariable String category, @PathVariable Long id, Principal principal) {
+        SiteUser user = userRepository.findByLoginId(principal.getName())
+                .orElseThrow(() -> new UsernameNotFoundException("유저를 찾을 수 없습니다."));
+
+        userPostService.toggleLike(id, user);
+        return "redirect:/posts/user-board/" + category + "/" + id;
     }
 }

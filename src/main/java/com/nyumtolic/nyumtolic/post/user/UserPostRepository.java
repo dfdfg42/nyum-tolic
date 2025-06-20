@@ -1,5 +1,7 @@
 package com.nyumtolic.nyumtolic.post.user;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -8,6 +10,9 @@ public interface UserPostRepository extends JpaRepository<UserPost, Long> {
 
     // 특정 카테고리 게시글 조회 (최신순)
     List<UserPost> findByCategoryOrderByCreateDateDesc(String category);
+
+    // 특정 카테고리 게시글 페이징 조회 (최신순)
+    Page<UserPost> findByCategoryOrderByCreateDateDesc(String category, Pageable pageable);
 
     // 작성자별 게시글 조회 (최신순)
     List<UserPost> findByAuthorIdOrderByCreateDateDesc(Long authorId);
