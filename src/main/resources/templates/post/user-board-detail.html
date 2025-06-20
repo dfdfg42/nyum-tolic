@@ -177,6 +177,23 @@
             margin-top: 1rem;
             display: none;
         }
+
+        .comment-edit-form {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 0.5rem 0;
+        }
+
+        .comment-edit-form textarea {
+            border: 2px solid #FF7F27;
+        }
+
+        .comment-edit-form textarea:focus {
+            border-color: #ff6500;
+            box-shadow: 0 0 0 0.2rem rgba(255, 127, 39, 0.25);
+        }
     </style>
 </head>
 <body>
@@ -405,7 +422,30 @@
 
                             <!-- 댓글 본문 -->
                             <div class="comment-content">
-                                <p class="mb-0" th:text="${comment.content}">댓글 내용</p>
+                                <!-- 일반 댓글 표시 -->
+                                <div th:id="'commentDisplay' + ${comment.id}">
+                                    <p class="mb-0" th:text="${comment.content}">댓글 내용</p>
+                                </div>
+
+                                <!-- 댓글 수정 폼 (숨김 상태) -->
+                                <div th:id="'commentEditForm' + ${comment.id}" class="comment-edit-form" style="display: none;">
+                                    <form th:action="@{/comments/update/{commentId}(commentId=${comment.id})}" method="post">
+                                        <input type="hidden" name="category" th:value="${userPost.category ?: 'free'}">
+                                        <input type="hidden" name="postId" th:value="${userPost.id}">
+                                        <div class="mb-2">
+                                            <textarea class="form-control"
+                                                      name="content"
+                                                      rows="3"
+                                                      th:text="${comment.content}"
+                                                      required></textarea>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <button type="submit" class="btn btn-primary btn-sm">수정 완료</button>
+                                            <button type="button" class="btn btn-secondary btn-sm"
+                                                    th:onclick="'cancelEditComment(' + ${comment.id} + ')'">취소</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
 
                             <!-- 답글 작성 폼 (토글) -->
@@ -467,6 +507,8 @@
                                             <!-- 대댓글 수정/삭제 -->
                                             <div sec:authorize="isAuthenticated()"
                                                  th:if="${reply.author != null and currentUser != null and reply.author.loginId == currentUser.loginId}">
+                                                <button class="btn btn-sm btn-outline-secondary"
+                                                        th:onclick="'editComment(' + ${reply.id} + ')'">수정</button>
                                                 <form th:action="@{/comments/delete/{commentId}(commentId=${reply.id})}"
                                                       method="post"
                                                       style="display: inline;"
@@ -479,7 +521,30 @@
                                         </div>
                                     </div>
                                     <div class="comment-content">
-                                        <p class="mb-0" th:text="${reply.content}">답글 내용</p>
+                                        <!-- 일반 답글 표시 -->
+                                        <div th:id="'commentDisplay' + ${reply.id}">
+                                            <p class="mb-0" th:text="${reply.content}">답글 내용</p>
+                                        </div>
+
+                                        <!-- 답글 수정 폼 (숨김 상태) -->
+                                        <div th:id="'commentEditForm' + ${reply.id}" class="comment-edit-form" style="display: none;">
+                                            <form th:action="@{/comments/update/{commentId}(commentId=${reply.id})}" method="post">
+                                                <input type="hidden" name="category" th:value="${userPost.category ?: 'free'}">
+                                                <input type="hidden" name="postId" th:value="${userPost.id}">
+                                                <div class="mb-2">
+                                                    <textarea class="form-control"
+                                                              name="content"
+                                                              rows="2"
+                                                              th:text="${reply.content}"
+                                                              required></textarea>
+                                                </div>
+                                                <div class="d-flex gap-2">
+                                                    <button type="submit" class="btn btn-primary btn-sm">수정 완료</button>
+                                                    <button type="button" class="btn btn-secondary btn-sm"
+                                                            th:onclick="'cancelEditComment(' + ${reply.id} + ')'">취소</button>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -576,10 +641,56 @@
         }
     }
 
-    // 댓글 수정 (추후 구현)
+    // 댓글 수정 시작
     function editComment(commentId) {
-        alert('댓글 수정 기능은 추후 구현 예정입니다.');
+        const displayDiv = document.getElementById('commentDisplay' + commentId);
+        const editForm = document.getElementById('commentEditForm' + commentId);
+
+        if (displayDiv && editForm) {
+            displayDiv.style.display = 'none';
+            editForm.style.display = 'block';
+
+            // 텍스트영역에 포커스
+            const textarea = editForm.querySelector('textarea[name="content"]');
+            if (textarea) {
+                textarea.focus();
+                // 커서를 텍스트 끝으로 이동
+                textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+            }
+        }
     }
+
+    // 댓글 수정 취소
+    function cancelEditComment(commentId) {
+        const displayDiv = document.getElementById('commentDisplay' + commentId);
+        const editForm = document.getElementById('commentEditForm' + commentId);
+
+        if (displayDiv && editForm) {
+            editForm.style.display = 'none';
+            displayDiv.style.display = 'block';
+
+            // 폼 내용을 원래대로 복원 (수정사항 취소)
+            const textarea = editForm.querySelector('textarea[name="content"]');
+            const originalText = displayDiv.querySelector('p').textContent;
+            if (textarea && originalText) {
+                textarea.value = originalText.trim();
+            }
+        }
+    }
+
+    // ESC 키로 수정 취소
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            // 현재 열려있는 모든 수정 폼 닫기
+            const openEditForms = document.querySelectorAll('[id^="commentEditForm"]:not([style*="display: none"])');
+            openEditForms.forEach(form => {
+                const commentId = form.id.replace('commentEditForm', '');
+                if (commentId) {
+                    cancelEditComment(commentId);
+                }
+            });
+        }
+    });
 </script>
 
 </body>
