@@ -153,11 +153,29 @@
             margin-left: 2rem;
             border-left: 3px solid #FF7F27;
             padding-left: 1rem;
+            margin-top: 1rem;
         }
         .comment-form {
             background-color: #f8f9fa;
             padding: 1rem;
             border-radius: 10px;
+        }
+        .comment-content {
+            background-color: #f8f9fa;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin: 0.5rem 0;
+        }
+        .comment-meta {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        .reply-form {
+            background-color: #e9ecef;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
         }
     </style>
 </head>
@@ -247,7 +265,7 @@
                                   style="display: inline;">
                                 <button type="submit"
                                         class="btn btn-like btn-action"
-                                        th:classappend="${userPost.liker != null and userPost.liker.contains(#authentication.principal.siteUser)} ? ' liked'">
+                                        th:classappend="${userPost.liker != null and currentUser != null and userPost.liker.contains(currentUser)} ? ' liked'">
                                     <i class="bi bi-heart-fill"></i>
                                     좋아요 <span th:text="${userPost.liker != null ? userPost.liker.size() : 0}">0</span>
                                 </button>
@@ -264,7 +282,7 @@
 
                         <!-- 수정/삭제 버튼 (작성자만) -->
                         <div sec:authorize="isAuthenticated()"
-                             th:if="${userPost.author != null and #authentication.getPrincipal().getUsername() == userPost.author.loginId}">
+                             th:if="${userPost.author != null and currentUser != null and userPost.author.loginId == currentUser.loginId}">
                             <a th:href="@{/posts/user-board/{category}/{id}/edit(category=${userPost.category ?: 'free'}, id=${userPost.id})}"
                                class="btn btn-edit btn-action me-2">
                                 <i class="bi bi-pencil"></i> 수정
@@ -284,7 +302,7 @@
                 <div class="card-header bg-transparent">
                     <h5 class="mb-0">
                         <i class="bi bi-chat-dots"></i> 댓글
-                        <span class="badge bg-secondary" id="commentCount">0</span>
+                        <span class="badge bg-secondary" th:text="${commentCount ?: 0}">0</span>
                     </h5>
                 </div>
 
@@ -323,33 +341,149 @@
 
                 <!-- 댓글 목록 -->
                 <div class="card-body p-0">
-                    <div id="commentList">
-                        <!-- 댓글이 없을 때 -->
-                        <div class="text-center py-4 text-muted" id="noComments">
-                            <i class="bi bi-chat-square-text" style="font-size: 2rem;"></i>
-                            <p class="mt-2 mb-0">아직 댓글이 없습니다</p>
-                            <small>첫 번째 댓글을 작성해보세요!</small>
-                        </div>
+                    <!-- 댓글이 없을 때 -->
+                    <div th:if="${#lists.isEmpty(comments)}" class="text-center py-4 text-muted">
+                        <i class="bi bi-chat-square-text" style="font-size: 2rem;"></i>
+                        <p class="mt-2 mb-0">아직 댓글이 없습니다</p>
+                        <small>첫 번째 댓글을 작성해보세요!</small>
+                    </div>
 
-                        <!-- 댓글 아이템 템플릿 (실제 댓글이 로드되면 이 부분이 대체됩니다) -->
-                        <!--
-                        <div class="comment-item">
+                    <!-- 댓글 목록 표시 -->
+                    <div th:unless="${#lists.isEmpty(comments)}">
+                        <div th:each="comment : ${comments}" class="comment-item">
+                            <!-- 댓글 헤더 -->
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <div class="d-flex align-items-center gap-2">
                                     <i class="bi bi-person-circle text-muted"></i>
-                                    <strong>작성자</strong>
-                                    <small class="text-muted">2024-01-01 12:00</small>
+                                    <strong th:if="${comment.anonymous}">익명</strong>
+                                    <strong th:unless="${comment.anonymous}" th:text="${comment.author.nickname}">작성자</strong>
+                                    <span th:if="${comment.anonymous}" class="anonymous-badge">익명</span>
+                                    <div class="comment-meta">
+                                        <span th:text="${#temporals.format(comment.createDate, 'yyyy-MM-dd HH:mm')}">2024-01-01 12:00</span>
+                                        <span th:if="${comment.modifyDate != null}" class="text-muted ms-1">
+                                            (수정됨)
+                                        </span>
+                                    </div>
                                 </div>
+
                                 <div class="d-flex gap-1">
-                                    <button class="btn btn-sm btn-outline-secondary">
-                                        <i class="bi bi-heart"></i> 0
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-secondary">답글</button>
+                                    <!-- 댓글 좋아요 버튼 -->
+                                    <form th:action="@{/comments/like/{commentId}(commentId=${comment.id})}"
+                                          method="post"
+                                          sec:authorize="isAuthenticated()"
+                                          style="display: inline;">
+                                        <input type="hidden" name="category" th:value="${userPost.category ?: 'free'}">
+                                        <input type="hidden" name="postId" th:value="${userPost.id}">
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-heart"
+                                               th:classappend="${comment.liker != null and currentUser != null and comment.liker.contains(currentUser)} ? '-fill text-danger'"></i>
+                                            <span th:text="${comment.liker != null ? comment.liker.size() : 0}">0</span>
+                                        </button>
+                                    </form>
+
+                                    <!-- 답글 버튼 -->
+                                    <button class="btn btn-sm btn-outline-secondary"
+                                            th:onclick="'toggleReplyForm(' + ${comment.id} + ')'"
+                                            sec:authorize="isAuthenticated()">답글</button>
+
+                                    <!-- 수정/삭제 버튼 (작성자만) -->
+                                    <div sec:authorize="isAuthenticated()"
+                                         th:if="${comment.author != null and currentUser != null and comment.author.loginId == currentUser.loginId}">
+                                        <button class="btn btn-sm btn-outline-secondary"
+                                                th:onclick="'editComment(' + ${comment.id} + ')'">수정</button>
+                                        <form th:action="@{/comments/delete/{commentId}(commentId=${comment.id})}"
+                                              method="post"
+                                              style="display: inline;"
+                                              th:onsubmit="'return confirm(\'댓글을 삭제하시겠습니까?\')'">
+                                            <input type="hidden" name="category" th:value="${userPost.category ?: 'free'}">
+                                            <input type="hidden" name="postId" th:value="${userPost.id}">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">삭제</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
-                            <p class="mb-2">댓글 내용</p>
+
+                            <!-- 댓글 본문 -->
+                            <div class="comment-content">
+                                <p class="mb-0" th:text="${comment.content}">댓글 내용</p>
+                            </div>
+
+                            <!-- 답글 작성 폼 (토글) -->
+                            <div th:id="'replyForm' + ${comment.id}" class="reply-form">
+                                <form th:action="@{/comments/reply/{postId}/{parentId}(postId=${userPost.id}, parentId=${comment.id})}" method="post">
+                                    <input type="hidden" name="category" th:value="${userPost.category ?: 'free'}">
+                                    <div class="mb-2">
+                                        <textarea class="form-control"
+                                                  name="content"
+                                                  rows="2"
+                                                  placeholder="답글을 입력하세요..."
+                                                  required></textarea>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="isAnonymous" th:id="'replyAnonymous' + ${comment.id}">
+                                            <label class="form-check-label" th:for="'replyAnonymous' + ${comment.id}">
+                                                익명으로 작성
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <button type="submit" class="btn btn-primary btn-sm me-1">답글 작성</button>
+                                            <button type="button" class="btn btn-secondary btn-sm"
+                                                    th:onclick="'toggleReplyForm(' + ${comment.id} + ')'">취소</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- 대댓글 목록 -->
+                            <div th:if="${repliesMap[comment.id] != null and !#lists.isEmpty(repliesMap[comment.id])}">
+                                <div th:each="reply : ${repliesMap[comment.id]}" class="comment-reply">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="bi bi-arrow-return-right text-muted"></i>
+                                            <i class="bi bi-person-circle text-muted"></i>
+                                            <strong th:if="${reply.anonymous}">익명</strong>
+                                            <strong th:unless="${reply.anonymous}" th:text="${reply.author.nickname}">답글 작성자</strong>
+                                            <span th:if="${reply.anonymous}" class="anonymous-badge">익명</span>
+                                            <div class="comment-meta">
+                                                <span th:text="${#temporals.format(reply.createDate, 'yyyy-MM-dd HH:mm')}">2024-01-01 12:00</span>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex gap-1">
+                                            <!-- 대댓글 좋아요 -->
+                                            <form th:action="@{/comments/like/{commentId}(commentId=${reply.id})}"
+                                                  method="post"
+                                                  sec:authorize="isAuthenticated()"
+                                                  style="display: inline;">
+                                                <input type="hidden" name="category" th:value="${userPost.category ?: 'free'}">
+                                                <input type="hidden" name="postId" th:value="${userPost.id}">
+                                                <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                                    <i class="bi bi-heart"
+                                                       th:classappend="${reply.liker != null and currentUser != null and reply.liker.contains(currentUser)} ? '-fill text-danger'"></i>
+                                                    <span th:text="${reply.liker != null ? reply.liker.size() : 0}">0</span>
+                                                </button>
+                                            </form>
+
+                                            <!-- 대댓글 수정/삭제 -->
+                                            <div sec:authorize="isAuthenticated()"
+                                                 th:if="${reply.author != null and currentUser != null and reply.author.loginId == currentUser.loginId}">
+                                                <form th:action="@{/comments/delete/{commentId}(commentId=${reply.id})}"
+                                                      method="post"
+                                                      style="display: inline;"
+                                                      th:onsubmit="'return confirm(\'답글을 삭제하시겠습니까?\')'">
+                                                    <input type="hidden" name="category" th:value="${userPost.category ?: 'free'}">
+                                                    <input type="hidden" name="postId" th:value="${userPost.id}">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">삭제</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="comment-content">
+                                        <p class="mb-0" th:text="${reply.content}">답글 내용</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        -->
                     </div>
                 </div>
             </div>
@@ -432,16 +566,20 @@
         }
     }
 
-    // 댓글 로드 함수 (실제 구현 시 AJAX로 댓글을 불러옵니다)
-    function loadComments() {
-        // 추후 AJAX 구현
-        // 현재는 정적으로 "댓글이 없습니다" 표시
+    // 답글 폼 토글
+    function toggleReplyForm(commentId) {
+        const replyForm = document.getElementById('replyForm' + commentId);
+        if (replyForm.style.display === 'none' || replyForm.style.display === '') {
+            replyForm.style.display = 'block';
+        } else {
+            replyForm.style.display = 'none';
+        }
     }
 
-    // 페이지 로드 시 댓글 로드
-    document.addEventListener('DOMContentLoaded', function() {
-        loadComments();
-    });
+    // 댓글 수정 (추후 구현)
+    function editComment(commentId) {
+        alert('댓글 수정 기능은 추후 구현 예정입니다.');
+    }
 </script>
 
 </body>
