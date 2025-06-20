@@ -66,11 +66,50 @@
             margin-bottom: 1rem;
         }
 
+        /* 미니멀한 공지사항 스타일 */
         .notice-section {
-            background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
-            border-radius: 15px;
-            padding: 2rem;
+            background-color: #fff8e1;
+            border: 1px solid #FFE0B2;
+            border-radius: 8px;
+            padding: 1rem;
             margin-bottom: 2rem;
+        }
+
+        .notice-minimal {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .notice-minimal:last-child {
+            border-bottom: none;
+        }
+
+        .notice-minimal .notice-title {
+            font-size: 0.9rem;
+            color: #333;
+            text-decoration: none;
+            flex-grow: 1;
+        }
+
+        .notice-minimal .notice-title:hover {
+            color: #FF7F27;
+            text-decoration: underline;
+        }
+
+        .notice-minimal .notice-date {
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .notice-minimal .pin-badge {
+            background-color: #FF7F27;
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 8px;
         }
 
         .recent-post {
@@ -160,46 +199,24 @@
 </div>
 
 <div class="container">
-    <!-- 공지사항 섹션 -->
-    <div class="notice-section" th:if="${!#lists.isEmpty(pinnedNotices) or !#lists.isEmpty(recentNotices)}">
-        <h3 class="section-title">
-            <i class="bi bi-megaphone-fill"></i> 공지사항
-        </h3>
-
-        <!-- 고정 공지사항 -->
-        <div th:if="${!#lists.isEmpty(pinnedNotices)}" class="mb-4">
-            <h5 class="text-warning"><i class="bi bi-pin-angle-fill"></i> 고정 공지</h5>
-            <div th:each="notice : ${pinnedNotices}" class="recent-post bg-warning bg-opacity-10">
-                <div class="post-title">
-                    <a th:href="@{/posts/notices/{id}(id=${notice.id})}"
-                       class="text-decoration-none text-dark fw-bold"
-                       th:text="${notice.title}">공지 제목</a>
-                    <span class="badge bg-warning text-dark">고정</span>
-                </div>
-                <div class="post-meta">
-                    <span th:text="${#temporals.format(notice.createDate, 'yyyy-MM-dd HH:mm')}"></span>
-                </div>
-            </div>
+    <!-- 미니멀한 공지사항 섹션 (고정 공지만) -->
+    <div class="notice-section" th:if="${!#lists.isEmpty(pinnedNotices)}">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+            <h6 class="mb-0">
+                <i class="bi bi-megaphone-fill text-warning"></i>
+                <strong>공지사항</strong>
+            </h6>
+            <a th:href="@{/posts/notices}" class="btn btn-sm btn-outline-primary">
+                전체보기
+            </a>
         </div>
 
-        <!-- 최근 공지사항 -->
-        <div th:if="${!#lists.isEmpty(recentNotices)}">
-            <h5><i class="bi bi-clock-history"></i> 최근 공지</h5>
-            <div th:each="notice : ${recentNotices}" class="recent-post">
-                <div class="post-title">
-                    <a th:href="@{/posts/notices/{id}(id=${notice.id})}"
-                       class="text-decoration-none text-dark"
-                       th:text="${notice.title}">공지 제목</a>
-                </div>
-                <div class="post-meta">
-                    <span th:text="${#temporals.format(notice.createDate, 'yyyy-MM-dd HH:mm')}"></span>
-                </div>
-            </div>
-            <div class="text-end mt-2">
-                <a th:href="@{/posts/notices}" class="btn btn-sm btn-outline-primary">
-                    공지사항 전체보기 <i class="bi bi-arrow-right"></i>
-                </a>
-            </div>
+        <div th:each="notice : ${pinnedNotices}" class="notice-minimal">
+            <span class="pin-badge">고정</span>
+            <a th:href="@{/posts/notices/{id}(id=${notice.id})}"
+               class="notice-title"
+               th:text="${notice.title}">공지 제목</a>
+            <span class="notice-date" th:text="${#temporals.format(notice.createDate, 'MM-dd')}">날짜</span>
         </div>
     </div>
 
@@ -220,10 +237,10 @@
                 </div>
 
                 <div class="card-body">
-                    <!-- 최근 게시글 미리보기 -->
-                    <div th:if="${categoryPosts[category] != null and !#lists.isEmpty(categoryPosts[category])}">
+                    <!-- 최근 게시글 미리보기 - 조건 수정 -->
+                    <div th:if="${categoryPosts != null and categoryPosts.get(category) != null and !categoryPosts.get(category).isEmpty()}">
                         <h6 class="mb-2"><i class="bi bi-clock"></i> 최근 글</h6>
-                        <div th:each="post : ${categoryPosts[category]}" class="recent-post">
+                        <div th:each="post : ${categoryPosts.get(category)}" class="recent-post">
                             <div class="post-title">
                                 <a th:href="@{/posts/user-board/{category}/{id}(category=${category.urlPath}, id=${post.id})}"
                                    class="text-decoration-none text-dark"
@@ -237,7 +254,8 @@
                         </div>
                     </div>
 
-                    <div th:unless="${categoryPosts[category] != null and !#lists.isEmpty(categoryPosts[category])}"
+                    <!-- 게시글이 없을 때 표시 - 조건 수정 -->
+                    <div th:if="${categoryPosts == null or categoryPosts.get(category) == null or categoryPosts.get(category).isEmpty()}"
                          class="text-center text-muted py-3">
                         <i class="bi bi-chat-square-text" style="font-size: 2rem;"></i>
                         <p class="small mt-2 mb-0">아직 게시글이 없습니다</p>
@@ -309,6 +327,7 @@
     // 각 카테고리 카드에 통계 정보 표시 (선택적)
     document.addEventListener('DOMContentLoaded', function() {
         // 카테고리별 게시글 수를 표시하는 등의 추가 기능을 여기에 구현할 수 있습니다
+        console.log('게시판 메인 페이지 로드 완료');
     });
 </script>
 

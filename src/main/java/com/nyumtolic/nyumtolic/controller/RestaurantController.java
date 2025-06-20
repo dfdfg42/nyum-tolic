@@ -88,27 +88,19 @@ public class RestaurantController {
     }
 
     @GetMapping("/list")
-    public String showRestaurantList(@RequestParam(value = "categoryId", required = false) Long categoryId, Model model,
-                                     @RequestParam(value = "sort", defaultValue = "name") String sort) {
+    public String showRestaurantList(@RequestParam(value = "categoryId", required = false) Long categoryId,
+                                     @RequestParam(value = "sort", defaultValue = "name") String sort,
+                                     @RequestParam(value = "keyword", required = false) String keyword,
+                                     Model model) {
         List<Restaurant> restaurants;
-        if (categoryId != null) {
-            if ("userRating".equals(sort) || "name".equals(sort)) {
-                restaurants = restaurantService.getAllByCategoryIdSorted(categoryId, sort);
-            } else {
-                // 특정 카테고리 ID가 제공된 경우, 해당 카테고리의 맛집 리스트를 가져옵니다.
-                restaurants = restaurantService.findAllByCategoryId(categoryId);
-            }
-        } else {
-            if ("userRating".equals(sort) || "name".equals(sort)) {
-                restaurants = restaurantService.getAllRestaurantsBySorted(sort);
-            } else {
-                // 카테고리 ID가 제공되지 않은 경우, 전체 맛집 리스트를 가져옵니다.
-                restaurants = restaurantService.getAllRestaurants();
-            }
-        }
+
+        // 통합 검색 메서드 사용
+        restaurants = restaurantService.searchRestaurantsWithFilters(categoryId, keyword, sort);
+
         model.addAttribute("restaurants", restaurants);
         model.addAttribute("categoryId", categoryId);
-
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("sort", sort);
 
         List<NoticePost> pinnedNotices = noticePostService.getPinnedNotices();
         model.addAttribute("pinnedNotices", pinnedNotices);

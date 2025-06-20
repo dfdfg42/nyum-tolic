@@ -1,7 +1,5 @@
 package com.nyumtolic.nyumtolic.service;
 
-
-
 import com.nyumtolic.nyumtolic.s3.S3Service;
 import com.nyumtolic.nyumtolic.api.domain.CategoryDTO;
 import com.nyumtolic.nyumtolic.api.domain.PageResponse;
@@ -27,7 +25,6 @@ public class RestaurantService {
     private final ReviewRepository reviewRepository;
     private final S3Service s3Service;
 
-
     // 저장
     public void save(Restaurant restaurant) {
         restaurantRepository.save(restaurant);
@@ -37,7 +34,6 @@ public class RestaurantService {
     public List<Restaurant> getAllRestaurants() {
         return restaurantRepository.findAll(Sort.by("id"));
     }
-
 
     //음식점 버튼 정렬 (기본 list 페이지)
     public List<Restaurant> getAllRestaurantsBySorted(String sort) {
@@ -65,6 +61,53 @@ public class RestaurantService {
         return restaurantRepository.findAllByCategoryId(categoryId);
     }
 
+    // 검색 기능 추가
+    public List<Restaurant> searchRestaurants(String keyword, String sort) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return getAllRestaurantsBySorted(sort);
+        }
+
+        if ("userRating".equals(sort)) {
+            return restaurantRepository.findByKeywordOrderByUserRating(keyword.trim());
+        } else {
+            return restaurantRepository.findByKeyword(keyword.trim());
+        }
+    }
+
+    // 카테고리와 검색어를 함께 사용하는 메서드
+    public List<Restaurant> searchRestaurantsByCategory(Long categoryId, String keyword, String sort) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return getAllByCategoryIdSorted(categoryId, sort);
+        }
+
+        if ("userRating".equals(sort)) {
+            return restaurantRepository.findByCategoryIdAndKeywordOrderByUserRating(categoryId, keyword.trim());
+        } else {
+            return restaurantRepository.findByCategoryIdAndKeyword(categoryId, keyword.trim());
+        }
+    }
+
+    /**
+     * 통합 검색 메서드 - 카테고리, 검색어, 정렬을 모두 고려
+     */
+    public List<Restaurant> searchRestaurantsWithFilters(Long categoryId, String keyword, String sort) {
+        // 카테고리와 검색어 모두 있는 경우
+        if (categoryId != null && keyword != null && !keyword.trim().isEmpty()) {
+            return searchRestaurantsByCategory(categoryId, keyword, sort);
+        }
+        // 검색어만 있는 경우
+        else if (keyword != null && !keyword.trim().isEmpty()) {
+            return searchRestaurants(keyword, sort);
+        }
+        // 카테고리만 있는 경우
+        else if (categoryId != null) {
+            return getAllByCategoryIdSorted(categoryId, sort);
+        }
+        // 둘 다 없는 경우 (전체 목록)
+        else {
+            return getAllRestaurantsBySorted(sort);
+        }
+    }
 
     /**
      * 특정 카테고리와 이미 제외된 ID를 제외하고 랜덤으로 하나 골라 반환
@@ -97,8 +140,6 @@ public class RestaurantService {
         return false;
     }
 
-
-
     // 삭제
     public void delete(Restaurant restaurant) {
         restaurantRepository.delete(restaurant);
@@ -118,6 +159,7 @@ public class RestaurantService {
     public List<Restaurant> findAll() {
         return restaurantRepository.findAll();
     }
+
     // 이름으로 Restaurant 조회
     public Restaurant findByName(String name) {
         return restaurantRepository.findByName(name).orElse(null);
@@ -128,9 +170,6 @@ public class RestaurantService {
         Page<RestaurantDTO> data = restaurantRepository.findAll(pageable).map(this::createRestaurantDTO);
         return new PageResponse<>(data);
     }
-
-
-
 
     public RestaurantDTO createRestaurantDTO(Restaurant restaurant) {
         List<CategoryDTO> categoryDTOs = restaurant.getCategories().stream()
@@ -153,5 +192,4 @@ public class RestaurantService {
                 restaurant.getUserRating()
         );
     }
-
 }
