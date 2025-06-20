@@ -1,18 +1,237 @@
-<!--<!DOCTYPE html>-->
-<!--<html xmlns:th="http://www.thymeleaf.org">-->
-<!--<head>-->
-<!--    <meta charset="UTF-8">-->
-<!--    <title>유저 게시판</title>-->
-<!--</head>-->
-<!--<body>-->
-<!--<h1>유저 게시판</h1>-->
-<!--<a th:href="@{/posts/user-board/create}">새 글 작성</a>-->
-<!--<ul>-->
-<!--    <li th:each="post : ${userPosts}">-->
-<!--        <h3 th:text="${post.title}"></h3>-->
-<!--        <p th:text="${post.content}"></p>-->
-<!--        <p>작성일: <span th:text="${#temporals.format(post.createDate, 'yyyy-MM-dd HH:mm')}"></span></p>-->
-<!--    </li>-->
-<!--</ul>-->
-<!--</body>-->
-<!--</html>-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <!-- Google Analytics / Tag Manager -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8M9WMZF406"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-8M9WMZF406');
+    </script>
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-W22W278P');</script>
+    <!-- End Google Tag Manager -->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>유저 게시판</title>
+
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/my-fonts.css">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+
+    <style>
+        .board-header {
+            background: linear-gradient(135deg, #FF7F27, #FFA500);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        .post-card {
+            border-left: 4px solid #FF7F27;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .post-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .anonymous-badge {
+            background-color: #6c757d;
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 10px;
+        }
+        .hashtag {
+            background-color: #e9ecef;
+            color: #495057;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+            text-decoration: none;
+        }
+        .hashtag:hover {
+            background-color: #FF7F27;
+            color: white;
+        }
+        .btn-write {
+            background-color: #FF7F27;
+            border-color: #FF7F27;
+            color: white;
+            border-radius: 25px;
+            padding: 0.5rem 1.5rem;
+        }
+        .btn-write:hover {
+            background-color: #ff6500;
+            border-color: #ff6500;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<!-- 헤더 -->
+<div class="board-header">
+    <!-- 카테고리 네비게이션 -->
+    <div class="category-nav">
+        <div class="container">
+            <div class="d-flex flex-wrap justify-content-center">
+                <a th:href="@{/posts/user-board}"
+                   class="category-tab"
+                   th:classappend="${currentCategory == null ? ' active' : ''}">
+                    <i class="bi bi-grid-3x3-gap me-2"></i> 전체
+                </a>
+                <a th:each="category : ${boardCategories}"
+                   th:href="@{/posts/user-board/{category}(category=${category.urlPath})}"
+                   class="category-tab"
+                   th:classappend="${currentCategory != null and currentCategory.urlPath == category.urlPath ? ' active' : ''}">
+                    <i th:class="'bi ' + ${category.icon} + ' me-2'"></i>
+                    <span th:text="${category.displayName}">카테고리명</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <div class="d-flex align-items-center">
+                    <i th:if="${currentCategory != null}" th:class="'bi ' + ${currentCategory.icon} + ' me-3'" style="font-size: 2rem;"></i>
+                    <i th:unless="${currentCategory != null}" class="bi bi-chat-square-text me-3" style="font-size: 2rem;"></i>
+                    <div>
+                        <h1 class="mb-1" th:text="${currentCategory != null ? currentCategory.displayName : '전체 게시판'}">게시판 이름</h1>
+                        <p class="mb-0 opacity-75" th:text="${currentCategory != null ? currentCategory.description : '모든 카테고리의 게시글을 확인하세요'}">게시판 설명</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="d-flex gap-2 justify-content-end">
+                    <a th:href="@{/posts}" class="btn btn-light">
+                        <i class="bi bi-house"></i> 게시판 홈
+                    </a>
+                    <a th:href="@{/posts/user-board/create(category=${currentCategory != null ? currentCategory.urlPath : ''})}"
+                       class="btn btn-light"
+                       sec:authorize="isAuthenticated()">
+                        <i class="bi bi-pencil-square"></i> 글쓰기
+                    </a>
+                </div>
+                <div sec:authorize="isAnonymous()">
+                    <small class="text-white-50">글을 작성하려면 로그인하세요</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- 검색 및 필터 -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="제목 또는 해시태그로 검색...">
+                <button class="btn btn-outline-secondary" type="button">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <select class="form-select">
+                <option value="all">전체 게시글</option>
+                <option value="normal">일반 게시글</option>
+                <option value="anonymous">익명 게시글</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- 게시글 목록 -->
+    <div class="row">
+        <div class="col-12">
+            <div th:if="${#lists.isEmpty(userPosts)}" class="text-center py-5">
+                <i class="bi bi-chat-square-text text-muted" style="font-size: 4rem;"></i>
+                <h4 class="text-muted mt-3">아직 작성된 게시글이 없습니다</h4>
+                <p class="text-muted">첫 번째 게시글을 작성해보세요!</p>
+                <a th:href="@{/posts/user-board/create}"
+                   class="btn btn-write"
+                   sec:authorize="isAuthenticated()">
+                    첫 글 작성하기
+                </a>
+            </div>
+
+            <div th:unless="${#lists.isEmpty(userPosts)}">
+                <div class="card post-card mb-3" th:each="post : ${userPosts}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="flex-grow-1">
+                                <h5 class="card-title mb-1">
+                                    <a th:href="@{/posts/user-board/{category}/{id}(category=${post.category ?: 'free'}, id=${post.id})}"
+                                       class="text-decoration-none text-dark"
+                                       th:text="${post.title}">게시글 제목</a>
+                                </h5>
+                                <div class="d-flex align-items-center mb-2">
+                                    <span class="text-muted me-2">
+                                        <i class="bi bi-person-circle"></i>
+                                        <span th:if="${post.anonymous}">익명</span>
+                                        <span th:unless="${post.anonymous}" th:text="${post.author.nickname}">작성자</span>
+                                    </span>
+                                    <span th:if="${post.anonymous}" class="anonymous-badge me-2">익명</span>
+                                    <small class="text-muted">
+                                        <i class="bi bi-clock"></i>
+                                        <span th:text="${#temporals.format(post.createDate, 'yyyy-MM-dd HH:mm')}">작성일</span>
+                                    </small>
+                                    <small th:if="${post.modifyDate != null}" class="text-muted ms-2">
+                                        (수정됨: <span th:text="${#temporals.format(post.modifyDate, 'MM-dd HH:mm')}"></span>)
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="text-muted">
+                                <small>
+                                    <i class="bi bi-eye"></i>
+                                    <span th:text="${post.viewCount ?: 0}">0</span>
+                                </small>
+                            </div>
+                        </div>
+
+                        <p class="card-text" th:text="${#strings.abbreviate(post.content, 150)}">게시글 내용...</p>
+
+                        <!-- 해시태그 -->
+                        <div th:if="${!#strings.isEmpty(post.hashtags)}" class="mt-2">
+                            <span th:each="tag : ${#strings.arraySplit(post.hashtags, ',')}"
+                                  class="hashtag"
+                                  th:text="'#' + ${#strings.trim(tag)}">
+                                #해시태그
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 페이지네이션 (추후 구현) -->
+    <div class="d-flex justify-content-center mt-4">
+        <nav aria-label="게시글 페이지네이션">
+            <ul class="pagination">
+                <li class="page-item"><a class="page-link" href="#">이전</a></li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><a class="page-link" href="#">다음</a></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer.html :: custom-footer}"></div>
+
+<script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

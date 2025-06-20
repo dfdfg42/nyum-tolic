@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <!-- Google Analytics / Tag Manager -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8M9WMZF406"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-8M9WMZF406');
+    </script>
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-W22W278P');</script>
+    <!-- End Google Tag Manager -->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>냠톨릭 게시판</title>
+
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/my-fonts.css">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+
+    <style>
+        .board-header {
+            background: linear-gradient(135deg, #FF7F27, #FFA500);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .category-card {
+            transition: all 0.3s ease;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .category-header {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 1.5rem;
+            border-bottom: 2px solid #FF7F27;
+        }
+
+        .category-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #FF7F27, #FFA500);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .notice-section {
+            background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .recent-post {
+            border-left: 3px solid #FF7F27;
+            padding: 0.5rem 0 0.5rem 1rem;
+            margin-bottom: 0.5rem;
+            background-color: #f8f9fa;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .recent-post:hover {
+            background-color: #e9ecef;
+        }
+
+        .post-title {
+            font-size: 0.9rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .post-meta {
+            font-size: 0.75rem;
+            color: #6c757d;
+        }
+
+        .section-title {
+            color: #FF7F27;
+            border-bottom: 2px solid #FF7F27;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stats-badge {
+            background: linear-gradient(135deg, #FF7F27, #FFA500);
+            color: white;
+            border-radius: 20px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .quick-write-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF7F27, #FFA500);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(255, 127, 39, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .quick-write-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(255, 127, 39, 0.6);
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<!-- 헤더 -->
+<div class="board-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="mb-2"><i class="bi bi-collection"></i> 냠톨릭 게시판</h1>
+                <p class="mb-0 opacity-75">가톨릭대학교 학생들의 소통 공간입니다</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="d-flex gap-2 justify-content-end">
+                    <a th:href="@{/posts/notices}" class="btn btn-light">
+                        <i class="bi bi-megaphone"></i> 공지사항
+                    </a>
+                    <a th:href="@{/posts/user-board}" class="btn btn-light">
+                        <i class="bi bi-chat-dots"></i> 전체글
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- 공지사항 섹션 -->
+    <div class="notice-section" th:if="${!#lists.isEmpty(pinnedNotices) or !#lists.isEmpty(recentNotices)}">
+        <h3 class="section-title">
+            <i class="bi bi-megaphone-fill"></i> 공지사항
+        </h3>
+
+        <!-- 고정 공지사항 -->
+        <div th:if="${!#lists.isEmpty(pinnedNotices)}" class="mb-4">
+            <h5 class="text-warning"><i class="bi bi-pin-angle-fill"></i> 고정 공지</h5>
+            <div th:each="notice : ${pinnedNotices}" class="recent-post bg-warning bg-opacity-10">
+                <div class="post-title">
+                    <a th:href="@{/posts/notices/{id}(id=${notice.id})}"
+                       class="text-decoration-none text-dark fw-bold"
+                       th:text="${notice.title}">공지 제목</a>
+                    <span class="badge bg-warning text-dark">고정</span>
+                </div>
+                <div class="post-meta">
+                    <span th:text="${#temporals.format(notice.createDate, 'yyyy-MM-dd HH:mm')}"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 최근 공지사항 -->
+        <div th:if="${!#lists.isEmpty(recentNotices)}">
+            <h5><i class="bi bi-clock-history"></i> 최근 공지</h5>
+            <div th:each="notice : ${recentNotices}" class="recent-post">
+                <div class="post-title">
+                    <a th:href="@{/posts/notices/{id}(id=${notice.id})}"
+                       class="text-decoration-none text-dark"
+                       th:text="${notice.title}">공지 제목</a>
+                </div>
+                <div class="post-meta">
+                    <span th:text="${#temporals.format(notice.createDate, 'yyyy-MM-dd HH:mm')}"></span>
+                </div>
+            </div>
+            <div class="text-end mt-2">
+                <a th:href="@{/posts/notices}" class="btn btn-sm btn-outline-primary">
+                    공지사항 전체보기 <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 게시판 카테고리 -->
+    <h3 class="section-title">
+        <i class="bi bi-grid-3x3-gap-fill"></i> 게시판 카테고리
+    </h3>
+
+    <div class="row">
+        <div class="col-lg-4 col-md-6 mb-4" th:each="category : ${boardCategories}">
+            <div class="card category-card h-100">
+                <div class="category-header text-center">
+                    <div class="category-icon mx-auto">
+                        <i th:class="'bi ' + ${category.icon}"></i>
+                    </div>
+                    <h5 class="mb-1" th:text="${category.displayName}">카테고리명</h5>
+                    <p class="text-muted small mb-0" th:text="${category.description}">카테고리 설명</p>
+                </div>
+
+                <div class="card-body">
+                    <!-- 최근 게시글 미리보기 -->
+                    <div th:if="${categoryPosts[category] != null and !#lists.isEmpty(categoryPosts[category])}">
+                        <h6 class="mb-2"><i class="bi bi-clock"></i> 최근 글</h6>
+                        <div th:each="post : ${categoryPosts[category]}" class="recent-post">
+                            <div class="post-title">
+                                <a th:href="@{/posts/user-board/{category}/{id}(category=${category.urlPath}, id=${post.id})}"
+                                   class="text-decoration-none text-dark"
+                                   th:text="${#strings.abbreviate(post.title, 25)}">게시글 제목</a>
+                            </div>
+                            <div class="post-meta">
+                                <span th:if="${post.anonymous}">익명</span>
+                                <span th:unless="${post.anonymous}" th:text="${post.author.nickname}">작성자</span>
+                                · <span th:text="${#temporals.format(post.createDate, 'MM-dd HH:mm')}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div th:unless="${categoryPosts[category] != null and !#lists.isEmpty(categoryPosts[category])}"
+                         class="text-center text-muted py-3">
+                        <i class="bi bi-chat-square-text" style="font-size: 2rem;"></i>
+                        <p class="small mt-2 mb-0">아직 게시글이 없습니다</p>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a th:href="@{/posts/user-board/{category}(category=${category.urlPath})}"
+                           class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-list"></i> 게시판 보기
+                        </a>
+                        <a th:href="@{/posts/user-board/create(category=${category.urlPath})}"
+                           class="btn btn-primary btn-sm"
+                           sec:authorize="isAuthenticated()">
+                            <i class="bi bi-pencil-square"></i> 글쓰기
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 빠른 글쓰기 버튼 -->
+<button class="quick-write-btn"
+        sec:authorize="isAuthenticated()"
+        onclick="showQuickWriteModal()"
+        title="빠른 글쓰기">
+    <i class="bi bi-plus-lg"></i>
+</button>
+
+<!-- 빠른 글쓰기 모달 -->
+<div class="modal fade" id="quickWriteModal" tabindex="-1" aria-labelledby="quickWriteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="quickWriteModalLabel">
+                    <i class="bi bi-pencil-square"></i> 글쓰기
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-3">어느 게시판에 글을 작성하시겠습니까?</p>
+                <div class="d-grid gap-2">
+                    <a th:each="category : ${boardCategories}"
+                       th:href="@{/posts/user-board/create(category=${category.urlPath})}"
+                       class="btn btn-outline-primary text-start">
+                        <i th:class="'bi ' + ${category.icon}"></i>
+                        <span th:text="${category.displayName}">카테고리명</span>
+                        <small class="text-muted d-block" th:text="${category.description}">설명</small>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer.html :: custom-footer}"></div>
+
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function showQuickWriteModal() {
+        const modal = new bootstrap.Modal(document.getElementById('quickWriteModal'));
+        modal.show();
+    }
+
+    // 각 카테고리 카드에 통계 정보 표시 (선택적)
+    document.addEventListener('DOMContentLoaded', function() {
+        // 카테고리별 게시글 수를 표시하는 등의 추가 기능을 여기에 구현할 수 있습니다
+    });
+</script>
+
+</body>
+</html>

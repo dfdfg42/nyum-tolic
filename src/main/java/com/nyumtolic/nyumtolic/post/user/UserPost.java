@@ -16,5 +16,6 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class UserPost extends BasePost {
     private boolean isAnonymous;
+    private String category;
     private String hashtags;
 }

@@ -51,7 +51,7 @@ public class RestaurantController {
     public String detail(Model model, @PathVariable("id") Long id,
                          @PageableDefault(size = 6) Pageable pageable,
                          @AuthenticationPrincipal PrincipalDetails principalDetails) {
-            //visitlogs는 필요없어서 비활성화
+        //visitlogs는 필요없어서 비활성화
 /*        // 로그인된 사용자가 있는 경우 userId 가져오기
         if (principalDetails != null) {
             Long userId = principalDetails.getSiteUser().getId();  // SiteUser의 PK ID
@@ -281,7 +281,7 @@ public class RestaurantController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/admin/save")
     public String saveRestaurantForAdmin(@ModelAttribute("restaurant") Restaurant restaurant,
-                                            @RequestParam("photoFile")MultipartFile file) {
+                                         @RequestParam("photoFile")MultipartFile file) {
         Restaurant findedRestaurant = new Restaurant();
         if (restaurant.getId() != null) findedRestaurant = restaurantService.findById(restaurant.getId());
 
