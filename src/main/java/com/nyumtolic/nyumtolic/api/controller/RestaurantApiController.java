@@ -44,7 +44,7 @@ public class RestaurantApiController {
 
     // ------------------- 만냠 비활성화로 주석 처리
 
-    /*@GetMapping("/restaurants")
+    @GetMapping("/restaurants")
     @Operation(summary = "GET restaurant", description = "음식점 목록을 가져옵니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공", useReturnTypeSchema = true)
@@ -68,7 +68,7 @@ public class RestaurantApiController {
         return restaurantService.findAll().stream()
                 .map(restaurantService::createRestaurantDTO)
                 .collect(Collectors.toList());
-    }*/
+    }
 
 
 
@@ -77,7 +77,7 @@ public class RestaurantApiController {
     // --------------- 추천 로직 일시 비활성화로 주석 처리
 
 
-   /* @GetMapping("/users")
+    @GetMapping("/users")
     @Operation(summary = "GET all users", description = "모든 사용자 목록을 가져옵니다.")
     public List<UserDTO> getAllUsers() {
         return userService.getAllUserDTOs();
@@ -93,5 +93,5 @@ public class RestaurantApiController {
     @GetMapping("/review-logs/user/{userId}")
     public List<ReviewLog> getReviewLogsByUser(@PathVariable Long userId) {
         return reviewLogService.getReviewLogsByUserId(userId);  // 특정 사용자의 리뷰 기록
-    }*/
+    }
 }

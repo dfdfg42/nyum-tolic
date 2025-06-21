@@ -69,8 +69,14 @@ public class ReviewService {
                 .orElseThrow(() -> new DataNotFoundException("Review not found"));
     }
 
+    @Transactional(readOnly = true)
     public List<Review> getUserReviews(Long userId) {
-        return reviewRepository.findByAuthorId(userId);
+        try {
+            return reviewRepository.findByAuthorIdWithRestaurant(userId);
+        } catch (Exception e) {
+            //log.error("사용자 {}의 리뷰 조회 중 오류 발생: {}", userId, e.getMessage());
+            return reviewRepository.findByAuthorId(userId);
+        }
     }
 
     @Transactional(readOnly = true)
