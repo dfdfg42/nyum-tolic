@@ -2,6 +2,7 @@ package com.nyumtolic.nyumtolic.post.comment;
 
 import com.nyumtolic.nyumtolic.security.domain.SiteUser;
 import com.nyumtolic.nyumtolic.security.repository.UserRepository;
+import com.nyumtolic.nyumtolic.security.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,6 +20,7 @@ public class CommentController {
 
     private final CommentService commentService;
     private final UserRepository userRepository;
+    private final UserService userService;
 
     // 댓글 생성
     @PreAuthorize("isAuthenticated()")
@@ -113,5 +115,29 @@ public class CommentController {
         SiteUser user = userRepository.findByLoginId(principal.getName())
                 .orElse(null);
         return user != null && user.getRole().name().equals("ADMIN");
+    }
+
+
+// ========== 관리자 전용 기능 ==========
+
+    // 댓글 작성자 벤 (관리자)
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/ban-author/{commentId}")
+    public String banCommentAuthor(@PathVariable Long commentId,
+                                   @RequestParam String category,
+                                   @RequestParam Long postId) {
+        Comment comment = commentService.getComment(commentId);
+        userService.banUser(comment.getAuthor().getLoginId());
+        return "redirect:/posts/user-board/" + category + "/" + postId;
+    }
+
+    // 댓글 삭제 (관리자)
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/admin-delete/{commentId}")
+    public String adminDeleteComment(@PathVariable Long commentId,
+                                     @RequestParam String category,
+                                     @RequestParam Long postId) {
+        commentService.deleteComment(commentId);
+        return "redirect:/posts/user-board/" + category + "/" + postId;
     }
 }

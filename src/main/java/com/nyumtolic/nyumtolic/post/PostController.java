@@ -9,6 +9,7 @@ import com.nyumtolic.nyumtolic.post.user.UserPost;
 import com.nyumtolic.nyumtolic.post.user.UserPostService;
 import com.nyumtolic.nyumtolic.security.domain.SiteUser;
 import com.nyumtolic.nyumtolic.security.repository.UserRepository;
+import com.nyumtolic.nyumtolic.security.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,6 +37,7 @@ public class PostController {
     private final UserPostService userPostService;
     private final CommentService commentService;
     private final UserRepository userRepository;
+    private final UserService userService;
 
     // ========== 게시판 메인 페이지 ==========
 
@@ -224,12 +226,19 @@ public class PostController {
             currentUser = userRepository.findByLoginId(principal.getName()).orElse(null);
         }
 
+        // 이전글/다음글 네비게이션 정보 조회
+        UserPostService.PostNavigation navigation = userPostService.getPostNavigation(category, userPost);
+
         model.addAttribute("userPost", userPost);
         model.addAttribute("currentCategory", boardCategory);
         model.addAttribute("comments", comments);
         model.addAttribute("repliesMap", repliesMap);
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("commentCount", comments.size());
+
+        // 모델에 추가
+        model.addAttribute("previousPost", navigation.getPreviousPost());
+        model.addAttribute("nextPost", navigation.getNextPost());
 
         return "post/user-board-detail";
     }
@@ -293,5 +302,24 @@ public class PostController {
 
         userPostService.toggleLike(id, user);
         return "redirect:/posts/user-board/" + category + "/" + id;
+    }
+
+    // ========== 관리자 전용 기능 ==========
+
+    // 게시글 작성자 벤 (관리자)
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/user-board/{category}/{id}/ban-author")
+    public String banPostAuthor(@PathVariable String category, @PathVariable Long id) {
+        UserPost userPost = userPostService.getUserPostById(id);
+        userService.banUser(userPost.getAuthor().getLoginId());
+        return "redirect:/posts/user-board/" + category + "/" + id;
+    }
+
+    // 게시글 삭제 (관리자)
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/user-board/{category}/{id}/admin-delete")
+    public String adminDeleteUserPost(@PathVariable String category, @PathVariable Long id) {
+        userPostService.deleteUserPost(id);
+        return "redirect:/posts/user-board/" + category;
     }
 }

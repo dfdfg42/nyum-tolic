@@ -194,6 +194,44 @@
             border-color: #ff6500;
             box-shadow: 0 0 0 0.2rem rgba(255, 127, 39, 0.25);
         }
+        .post-navigation {
+            margin-top: 2rem;
+        }
+
+        .post-nav-card {
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            height: 100%;
+        }
+
+        .post-nav-card:hover {
+            border-color: #FF7F27;
+            box-shadow: 0 2px 8px rgba(255, 127, 39, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .post-nav-title {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #333;
+            text-decoration: none;
+            line-height: 1.3;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .post-nav-title:hover {
+            color: #FF7F27;
+            text-decoration: none;
+        }
+
+        .post-nav-empty {
+            text-align: center;
+            padding: 1.5rem;
+            color: #adb5bd;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -212,6 +250,16 @@
                         <span th:if="${userPost.anonymous}">익명</span>
                         <span th:unless="${userPost.anonymous}" th:text="${userPost.author.nickname}">작성자</span>
                         <span th:if="${userPost.anonymous}" class="anonymous-badge">익명</span>
+
+                        <!-- 관리자 벤 버튼 (게시글 작성자) -->
+                        <a href="#"
+                           class="btn btn-sm btn-outline-danger ms-2"
+                           sec:authorize="hasRole('ROLE_ADMIN')"
+                           th:if="${!userPost.anonymous}"
+                           th:data-uri="@{/posts/user-board/{category}/{id}/ban-author(category=${userPost.category ?: 'free'}, id=${userPost.id})}"
+                           onclick="if(confirm('이 사용자를 정말 벤하시겠습니까?')) { location.href = this.dataset.uri; }">
+                            벤(관리자)
+                        </a>
                     </div>
                     <div class="date-info">
                         <i class="bi bi-clock"></i>
@@ -297,18 +345,33 @@
                             </button>
                         </div>
 
-                        <!-- 수정/삭제 버튼 (작성자만) -->
-                        <div sec:authorize="isAuthenticated()"
-                             th:if="${userPost.author != null and currentUser != null and userPost.author.loginId == currentUser.loginId}">
-                            <a th:href="@{/posts/user-board/{category}/{id}/edit(category=${userPost.category ?: 'free'}, id=${userPost.id})}"
-                               class="btn btn-edit btn-action me-2">
-                                <i class="bi bi-pencil"></i> 수정
-                            </a>
-                            <button type="button"
-                                    class="btn btn-delete btn-action"
-                                    onclick="deletePost()">
-                                <i class="bi bi-trash"></i> 삭제
-                            </button>
+                        <!-- 수정/삭제 버튼 영역 -->
+                        <div class="d-flex gap-2">
+                            <!-- 작성자 본인 수정/삭제 버튼 -->
+                            <div sec:authorize="isAuthenticated()"
+                                 th:if="${userPost.author != null and currentUser != null and userPost.author.loginId == currentUser.loginId}">
+                                <a th:href="@{/posts/user-board/{category}/{id}/edit(category=${userPost.category ?: 'free'}, id=${userPost.id})}"
+                                   class="btn btn-edit btn-action me-2">
+                                    <i class="bi bi-pencil"></i> 수정
+                                </a>
+                                <button type="button"
+                                        class="btn btn-delete btn-action"
+                                        onclick="deletePost()">
+                                    <i class="bi bi-trash"></i> 삭제
+                                </button>
+                            </div>
+
+                            <!-- 관리자 삭제 버튼 -->
+                            <div sec:authorize="hasRole('ROLE_ADMIN')">
+                                <form th:action="@{/posts/user-board/{category}/{id}/admin-delete(category=${userPost.category ?: 'free'}, id=${userPost.id})}"
+                                      method="post"
+                                      style="display: inline;"
+                                      onsubmit="return confirm('관리자 권한으로 이 게시글을 삭제하시겠습니까?')">
+                                    <button type="submit" class="btn btn-danger btn-action">
+                                        <i class="bi bi-trash"></i> 삭제(관리자)
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -381,6 +444,17 @@
                                             (수정됨)
                                         </span>
                                     </div>
+
+                                    <!-- 관리자 벤 버튼 (댓글 작성자) -->
+                                    <a href="#"
+                                       class="btn btn-xs btn-outline-danger ms-2"
+                                       sec:authorize="hasRole('ROLE_ADMIN')"
+                                       th:if="${!comment.anonymous}"
+                                       th:data-uri="@{/comments/ban-author/{commentId}(commentId=${comment.id}, category=${userPost.category ?: 'free'}, postId=${userPost.id})}"
+                                       onclick="if(confirm('이 사용자를 정말 벤하시겠습니까?')) { location.href = this.dataset.uri; }"
+                                       style="padding: 0.1rem 0.3rem; font-size: 0.7rem;">
+                                        벤(관리자)
+                                    </a>
                                 </div>
 
                                 <div class="d-flex gap-1">
@@ -415,6 +489,18 @@
                                             <input type="hidden" name="category" th:value="${userPost.category ?: 'free'}">
                                             <input type="hidden" name="postId" th:value="${userPost.id}">
                                             <button type="submit" class="btn btn-sm btn-outline-danger">삭제</button>
+                                        </form>
+                                    </div>
+
+                                    <!-- 관리자 댓글 삭제 버튼 -->
+                                    <div sec:authorize="hasRole('ROLE_ADMIN')">
+                                        <form th:action="@{/comments/admin-delete/{commentId}(commentId=${comment.id})}"
+                                              method="post"
+                                              style="display: inline;"
+                                              onsubmit="return confirm('관리자 권한으로 이 댓글을 삭제하시겠습니까?')">
+                                            <input type="hidden" name="category" th:value="${userPost.category ?: 'free'}">
+                                            <input type="hidden" name="postId" th:value="${userPost.id}">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">삭제(관리자)</button>
                                         </form>
                                     </div>
                                 </div>
@@ -488,6 +574,17 @@
                                             <div class="comment-meta">
                                                 <span th:text="${#temporals.format(reply.createDate, 'yyyy-MM-dd HH:mm')}">2024-01-01 12:00</span>
                                             </div>
+
+                                            <!-- 관리자 벤 버튼 (대댓글 작성자) -->
+                                            <a href="#"
+                                               class="btn btn-xs btn-outline-danger ms-2"
+                                               sec:authorize="hasRole('ROLE_ADMIN')"
+                                               th:if="${!reply.anonymous}"
+                                               th:data-uri="@{/comments/ban-author/{commentId}(commentId=${reply.id}, category=${userPost.category ?: 'free'}, postId=${userPost.id})}"
+                                               onclick="if(confirm('이 사용자를 정말 벤하시겠습니까?')) { location.href = this.dataset.uri; }"
+                                               style="padding: 0.1rem 0.3rem; font-size: 0.7rem;">
+                                                벤(관리자)
+                                            </a>
                                         </div>
                                         <div class="d-flex gap-1">
                                             <!-- 대댓글 좋아요 -->
@@ -516,6 +613,18 @@
                                                     <input type="hidden" name="category" th:value="${userPost.category ?: 'free'}">
                                                     <input type="hidden" name="postId" th:value="${userPost.id}">
                                                     <button type="submit" class="btn btn-sm btn-outline-danger">삭제</button>
+                                                </form>
+                                            </div>
+
+                                            <!-- 관리자 대댓글 삭제 버튼 -->
+                                            <div sec:authorize="hasRole('ROLE_ADMIN')">
+                                                <form th:action="@{/comments/admin-delete/{commentId}(commentId=${reply.id})}"
+                                                      method="post"
+                                                      style="display: inline;"
+                                                      onsubmit="return confirm('관리자 권한으로 이 답글을 삭제하시겠습니까?')">
+                                                    <input type="hidden" name="category" th:value="${userPost.category ?: 'free'}">
+                                                    <input type="hidden" name="postId" th:value="${userPost.id}">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">삭제(관리자)</button>
                                                 </form>
                                             </div>
                                         </div>
@@ -553,21 +662,57 @@
                 </div>
             </div>
 
-            <!-- 이전/다음 글 네비게이션 (추후 구현) -->
-            <div class="row mt-4">
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-body text-center">
-                            <small class="text-muted">이전 글</small>
-                            <p class="mb-0">이전 글이 없습니다</p>
+            <!-- 이전/다음 글 네비게이션 -->
+            <div class="post-navigation">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card post-nav-card">
+                            <div class="card-body">
+                                <div class="post-nav-direction">
+                                    <i class="bi bi-chevron-left post-nav-arrow prev"></i>
+                                    <span>이전 글</span>
+                                </div>
+                                <div th:if="${previousPost != null}">
+                                    <a th:href="@{/posts/user-board/{category}/{id}(category=${userPost.category ?: 'free'}, id=${previousPost.id})}"
+                                       class="post-nav-title"
+                                       th:text="${#strings.abbreviate(previousPost.title, 40)}">
+                                        이전 게시글 제목
+                                    </a>
+                                    <div class="post-nav-meta">
+                                        <span th:if="${previousPost.anonymous}">익명</span>
+                                        <span th:unless="${previousPost.anonymous}" th:text="${previousPost.author.nickname}">작성자</span>
+                                        · <span th:text="${#temporals.format(previousPost.createDate, 'MM-dd HH:mm')}">날짜</span>
+                                    </div>
+                                </div>
+                                <div th:if="${previousPost == null}" class="post-nav-empty">
+                                    이전 글이 없습니다
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-body text-center">
-                            <small class="text-muted">다음 글</small>
-                            <p class="mb-0">다음 글이 없습니다</p>
+                    <div class="col-md-6">
+                        <div class="card post-nav-card">
+                            <div class="card-body">
+                                <div class="post-nav-direction justify-content-end">
+                                    <span>다음 글</span>
+                                    <i class="bi bi-chevron-right post-nav-arrow next"></i>
+                                </div>
+                                <div th:if="${nextPost != null}">
+                                    <a th:href="@{/posts/user-board/{category}/{id}(category=${userPost.category ?: 'free'}, id=${nextPost.id})}"
+                                       class="post-nav-title"
+                                       th:text="${#strings.abbreviate(nextPost.title, 40)}">
+                                        다음 게시글 제목
+                                    </a>
+                                    <div class="post-nav-meta text-end">
+                                        <span th:if="${nextPost.anonymous}">익명</span>
+                                        <span th:unless="${nextPost.anonymous}" th:text="${nextPost.author.nickname}">작성자</span>
+                                        · <span th:text="${#temporals.format(nextPost.createDate, 'MM-dd HH:mm')}">날짜</span>
+                                    </div>
+                                </div>
+                                <div th:if="${nextPost == null}" class="post-nav-empty">
+                                    다음 글이 없습니다
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

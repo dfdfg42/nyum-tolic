@@ -4,11 +4,13 @@ import com.nyumtolic.nyumtolic.security.domain.SiteUser;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -114,5 +116,63 @@ public class UserPostService {
     public boolean isLikedByUser(Long postId, SiteUser user) {
         UserPost userPost = getUserPostById(postId);
         return userPost.getLiker() != null && userPost.getLiker().contains(user);
+    }
+
+    // 이전글 조회
+    public Optional<UserPost> getPreviousPost(String category, UserPost currentPost) {
+        Pageable pageable = PageRequest.of(0, 1); // 첫 번째 결과 1개만
+        List<UserPost> posts;
+
+        if (category == null || "all".equals(category)) {
+            posts = userPostRepository.findPreviousPostInAllList(currentPost.getCreateDate(), pageable);
+        } else {
+            posts = userPostRepository.findPreviousPostList(category, currentPost.getCreateDate(), pageable);
+        }
+
+        return posts.isEmpty() ? Optional.empty() : Optional.of(posts.get(0));
+    }
+
+    // 다음글 조회
+    public Optional<UserPost> getNextPost(String category, UserPost currentPost) {
+        Pageable pageable = PageRequest.of(0, 1); // 첫 번째 결과 1개만
+        List<UserPost> posts;
+
+        if (category == null || "all".equals(category)) {
+            posts = userPostRepository.findNextPostInAllList(currentPost.getCreateDate(), pageable);
+        } else {
+            posts = userPostRepository.findNextPostList(category, currentPost.getCreateDate(), pageable);
+        }
+
+        return posts.isEmpty() ? Optional.empty() : Optional.of(posts.get(0));
+    }
+
+    // 이전글/다음글 네비게이션 정보를 담는 내부 클래스
+    public static class PostNavigation {
+        private final UserPost previousPost;
+        private final UserPost nextPost;
+
+        public PostNavigation(UserPost previousPost, UserPost nextPost) {
+            this.previousPost = previousPost;
+            this.nextPost = nextPost;
+        }
+
+        public UserPost getPreviousPost() {
+            return previousPost;
+        }
+
+        public UserPost getNextPost() {
+            return nextPost;
+        }
+    }
+
+    // 이전글/다음글 네비게이션 정보 조회
+    public PostNavigation getPostNavigation(String category, UserPost currentPost) {
+        Optional<UserPost> previousPost = getPreviousPost(category, currentPost);
+        Optional<UserPost> nextPost = getNextPost(category, currentPost);
+
+        return new PostNavigation(
+                previousPost.orElse(null),
+                nextPost.orElse(null)
+        );
     }
 }
