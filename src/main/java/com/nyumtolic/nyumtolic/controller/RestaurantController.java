@@ -47,42 +47,42 @@ public class RestaurantController {
     private static final Logger logger = LoggerFactory.getLogger(RestaurantController.class);
 
 
-    @GetMapping(value = "/detail/{id}")
+    @GetMapping(value = "/detail/{id:\\d+}") // 숫자만 허용(쓰레기 요청 초기에 차단)
     public String detail(Model model, @PathVariable("id") Long id,
                          @PageableDefault(size = 6) Pageable pageable,
                          @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        //visitlogs는 필요없어서 비활성화
-/*        // 로그인된 사용자가 있는 경우 userId 가져오기
-        if (principalDetails != null) {
-            Long userId = principalDetails.getSiteUser().getId();  // SiteUser의 PK ID
-            visitLogService.logVisit(userId, id);  // 방문 로그 기록
-        }*/
 
+        // 1) 한 번만 조회
+        var restaurantOpt = restaurantService.getRestaurantsById(id);
 
-        this.restaurantService.getRestaurantsById(id).ifPresent(restaurant -> model.addAttribute("restaurant", restaurant));
-        Restaurant restaurant = restaurantService.getRestaurantsById(id).orElse(null);
-        restaurant.getReviews().forEach(review ->
-                logger.info("Review by {}: {}", review.getAuthor().getNickname(), review.getContent())
-        );
+        // 2) 없으면 즉시 404
+        var restaurant = restaurantOpt.orElseThrow(() ->
+                new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND));
 
-        Optional<Restaurant> restaurantsById = restaurantService.getRestaurantsById(id);
-        if (restaurantsById.isPresent()){
+        // 3) 모델에 기본 엔티티
+        model.addAttribute("restaurant", restaurant);
 
-            //랜더링 수정
-            String manuString = String.join(", ", restaurantsById.get().getMenu());
-            model.addAttribute("menuString", manuString);
-            List<String> catagoryNames= new ArrayList<>();
-            for (Category category: restaurantsById.get().getCategories()){
-                catagoryNames.add(category.getName());
-            }
-            String categoryString = String.join(", ", catagoryNames);
-            model.addAttribute("categoryString", categoryString);
-
-            Page<ReviewWithVotesDTO> reviewWithVotesPage = reviewService.findReviewsWithVotesByRestaurantId(id, pageable);
-            model.addAttribute("reviewsPage", reviewWithVotesPage);
-
+        if (restaurant.getReviews() != null) {
+            restaurant.getReviews().forEach(review ->
+                    logger.info("Review by {}: {}",
+                            review.getAuthor() != null ? review.getAuthor().getNickname() : "unknown",
+                            review.getContent())
+            );
         }
 
+        // 4) 뷰 렌더링용 문자열 가공
+        var menu = restaurant.getMenu() != null ? restaurant.getMenu() : List.<String>of();
+        model.addAttribute("menuString", String.join(", ", menu));
+
+        var categoryNames = restaurant.getCategories() != null
+                ? restaurant.getCategories().stream().map(Category::getName).toList()
+                : List.<String>of();
+        model.addAttribute("categoryString", String.join(", ", categoryNames));
+
+        // 5) 리뷰 페이지네이션
+        Page<ReviewWithVotesDTO> reviewWithVotesPage =
+                reviewService.findReviewsWithVotesByRestaurantId(id, pageable);
+        model.addAttribute("reviewsPage", reviewWithVotesPage);
 
         return "restaurant/detail";
     }
